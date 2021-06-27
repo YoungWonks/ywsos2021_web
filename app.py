@@ -13,7 +13,7 @@ load_dotenv(dotenv_path)
 
 app = Flask(__name__)
 
-
+#loading variables
 app.config['DEBUG'] = os.environ.get('DEBUG')
 app.config['TESTING'] = os.environ.get('TESTING')
 app.config['CSRF_ENABLED'] = os.environ.get('CSRF_ENABLED')
