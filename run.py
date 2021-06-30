@@ -16,7 +16,7 @@ Session(app)
 
 ################Token Decorator#########################
 
-SECRET_KEY = "asdfdsfansdfkashfjafskdfa;sajfsdkfjas;dlfkasj;dfl"
+SECRET_KEY = app.config['SECRET_KEY']
 
 def token_required(something):
     def wrap():
