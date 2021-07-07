@@ -34,7 +34,7 @@ must add python to the path variable
 
 ## Create the 'venv' virtual environment
 ```
-ywsos2021_web/ $> python3 -m venv venv
+ywsos2021_web/ $> python -m venv venv
 ywsos2021_web/ $> source venv/bin/activate
 (venv) ywsos2021_web/ $> 
 ```
