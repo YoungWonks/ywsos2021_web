@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../static/css/theme.css">
     <link rel="shortcut icon" type="image/svg" href="../static/css/hammer.svg">
-    <title>GeoRepair - Upload</title>
+    <title>GeoRepair - About</title>
 </head>
 
 <body>
@@ -27,20 +27,32 @@
             </button>
             <span class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item px-1"><a href="/about" class="nav-link">About</a></li>
-                    <li class="nav-item px-1"><a href="#" class="nav-link active">Upload</a></li>
-                    <li class="nav-item px-1"><a href="/forum" class="nav-link">Forum</a></li>
-                    <li class="nav-item px-1"><a href="/contact" class="nav-link">Contact</a></li>
+                    <li class="nav-item px-1"><a href="#" class="nav-link active">Main</a></li>
                 </ul>
-                <a class="btn nav-button" type="button" id="login" href="/login"><span id="logintext">Login</span></a>
-                <div style="display: inline-block; width: 1em;"></div>
-                <a href="/signup" class="btn nav-button" ">
-                    <div id="buttonrect"><p>Sign Up!</p></div>
-                </a>
+                <a class="btn nav-button" type="button" id="logout" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><span id="logouttext">Logout</span></a>
             </span>
 
         </div>
     </nav>
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
+                    <a href="logout"><button type="button" class="btn btn-primary">Log Out</button></a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <div class="row">
+            <div class="column">
+                <h1>Hello, {{user['username']}}!</h1>
+            </div>
+        </div>
+    </main>
 
     <!-- Optional JavaScript; choose one of the two! -->
     <!-- Option 1: Bootstrap Bundle with Popper -->

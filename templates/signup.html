@@ -10,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../static/css/theme.css">
     <link rel="shortcut icon" type="image/svg" href="../static/css/hammer.svg">
-    <title>GeoRepair - Upload</title>
+    <title>GeoRepair - About</title>
 </head>
 
 <body>
@@ -21,16 +21,16 @@
                 <img src="../static/css/hammer.svg" id="hammer" class="d-inline-block align-text-middle">
             </a>
             <!-- <h1 class="navbar-brand">GeoRepair</h1>
-            <img src="../static/css/hammer.svg" id="hammer" class="d-inline-block align-text-top"> -->
+        <img src="../static/css/hammer.svg" id="hammer" class="d-inline-block align-text-top"> -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <span class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item px-1"><a href="/about" class="nav-link">About</a></li>
-                    <li class="nav-item px-1"><a href="#" class="nav-link active">Upload</a></li>
+                    <li class="nav-item px-1"><a href="/upload" class="nav-link">Upload</a></li>
                     <li class="nav-item px-1"><a href="/forum" class="nav-link">Forum</a></li>
-                    <li class="nav-item px-1"><a href="/contact" class="nav-link">Contact</a></li>
+                    <li class="nav-item px-1"><a href="#" class="nav-link active">Contact</a></li>
                 </ul>
                 <a class="btn nav-button" type="button" id="login" href="/login"><span id="logintext">Login</span></a>
                 <div style="display: inline-block; width: 1em;"></div>
@@ -38,9 +38,24 @@
                     <div id="buttonrect"><p>Sign Up!</p></div>
                 </a>
             </span>
-
         </div>
     </nav>
+
+    <main>
+        <form method="post" action="/signup" novalidate>
+            {{signup_form.hidden_tag()}}
+
+            {{signup_form.username.label}}<br />
+            {{signup_form.username(size=32)}}<br />
+            {{signup_form.email.label}}<br />
+            {{signup_form.email(size=32)}}<br />
+            {{signup_form.password.label}}<br />
+            {{signup_form.password(size=32)}}<br />
+            {{signup_form.confirm_password.label}}<br />
+            {{signup_form.confirm_password(size=32)}}<br /><br />
+            {{signup_form.submit(class_="btn btn-primary")}}
+        </form>
+    </main>
 
     <!-- Optional JavaScript; choose one of the two! -->
     <!-- Option 1: Bootstrap Bundle with Popper -->
