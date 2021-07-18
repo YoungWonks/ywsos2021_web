@@ -13,8 +13,9 @@ import bson
 from functools import wraps
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime, timezone
-import pytzfrom werkzeug.utils import secure_filename
-
+import pytz
+from werkzeug.utils import secure_filename
+from uuid import uuid4
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -211,11 +212,13 @@ def api_signup():
 def api_add(userId):
     scans = db['scans']
     f = request.files['image']
-    filename = secure_filename(f.filename)
-    f.save('static/scans/' + filename)
+    filename = str(uuid4())
+    f.save(os.path.join('static/images/scans/', filename))
+    dt_now = datetime.now(tz=timezone.utc)
     scans.insert_one({
         "u_id": userId
         "filename": filename,
+        "scandate": dt_now,
     })
     return {"error": "0", "message": "Succesful",}
     
