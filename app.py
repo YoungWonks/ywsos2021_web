@@ -216,7 +216,7 @@ def api_add(userId):
     f.save(os.path.join('static/images/scans/', filename))
     dt_now = datetime.now(tz=timezone.utc)
     scans.insert_one({
-        "u_id": userId
+        "u_id": userId,
         "filename": filename,
         "scandate": dt_now,
     })
