@@ -13,7 +13,8 @@ import bson
 from functools import wraps
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime, timezone
-import pytz
+import pytzfrom werkzeug.utils import secure_filename
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -205,6 +206,19 @@ def api_signup():
     }
     return jsonify(return_data)
 
+@app.route('/api/scans/add')
+@token_required
+def api_add(userId):
+    scans = db['scans']
+    f = request.files['image']
+    filename = secure_filename(f.filename)
+    f.save('static/scans/' + filename)
+    scans.insert_one({
+        "u_id": userId
+        "filename": filename,
+    })
+    return {"error": "0", "message": "Succesful",}
+    
 @app.route('/api/wel',methods=['POST'])
 @token_required
 def api_welcome(userId):
