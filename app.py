@@ -11,6 +11,9 @@ import datetime
 import jwt
 import bson
 from functools import wraps
+from passlib.hash import pbkdf2_sha256
+from datetime import datetime, timezone
+import pytz
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -117,9 +120,8 @@ def login():
         users = db['users']
         result = users.find_one({
             'username': login_form.username.data,
-            'password': login_form.password.data,
         })
-        if result != None:
+        if result != None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
             session['logged_in'] = True
             session['logged_in_id'] = result['_id']
             return redirect('/main')
@@ -130,10 +132,12 @@ def signup():
     signup_form = SignupForm()
     if signup_form.validate_on_submit():
         users = db['users']
+        dt_now = datetime.now(tz=timezone.utc)
         users.insert_one({
             "username": signup_form.username.data,
             "email": signup_form.email.data,
-            "password": signup_form.password.data,
+            "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
+            "signup_date": dt_now
         })
     return render_template("signup.html", signup_form=signup_form)
 
@@ -155,15 +159,19 @@ def api_index():
     }
     return jsonify(return_data)
 
-@app.route('/api/login', methods=['POST'])
+@app.route('/api/auth/token', methods=['POST'])
 def api_login():
     # Get details from post request
     username = request.form.get('username')
     password = request.form.get('password')
-    if password == "abcdefg":
+    users = db['users']
+    result = users.find_one({
+        'username': login_form.username.data,
+    })
+    if result != None and pbkdf2_sha256.verify(password, result['password_hash']):
         # Generate exp time and token and return them
-        timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
-        payload = {"user_id": username,"exp":timeLimit}
+        timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=24*60)
+        payload = {"user_id": result['_id'],"exp":timeLimit}
         token = jwt.encode(payload,SECRET_KEY)
         return_data = {
             "error": "0",
@@ -175,17 +183,40 @@ def api_login():
     # IF not correct credentials, give error reponse
     return_data = {
         "error": "1",
-        "message": "Invalid password"
+        "message": "Invalid username or password"
+    }
+    return jsonify(return_data)
+
+@app.route('/api/auth/signup', methods=['POST'])
+def api_signup():
+    # Get details from post request
+    username = request.form.get('username')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    users = db['users']
+    users.insert_one({
+        "username": username,
+        "email": email,
+        "password_hash": pbkdf2_sha256.hash(password),
+    })
+    return_data = {
+        "error": "0",
+        "message": "Successful",
     }
     return jsonify(return_data)
 
 @app.route('/api/wel',methods=['POST'])
 @token_required
 def api_welcome(userId):
+    users = db['users']
+    user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     #Code explains itself (note the new paraameter from the decorator)
     return_data = {
         "error": "0",
-        "welcome": "Hello {}".format(userId),
+        "user": {
+            "username": user['username'],
+            "email": user['email']
+        },
         "message": "You Are verified"
     }
     return jsonify(return_data)
