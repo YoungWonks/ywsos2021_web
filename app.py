@@ -196,10 +196,12 @@ def api_signup():
     email = request.form.get('email')
     password = request.form.get('password')
     users = db['users']
+    dt_now1 = datetime.now(tz=timezone.utc)
     users.insert_one({
         "username": username,
         "email": email,
         "password_hash": pbkdf2_sha256.hash(password),
+        "signup_date": dt_now1
     })
     return_data = {
         "error": "0",
