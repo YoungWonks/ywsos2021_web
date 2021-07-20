@@ -6,17 +6,21 @@
 .background {
     font-family: Inter !important;
     letter-spacing: -0.017em;
-    background-image: linear-gradient(to right bottom, #5c745c, #688265, #74906e, #819f77, #8fad80, #8bb087, #86b48e, #82b795, #70af9c, #66a6a1, #629ca2, #64919f);
-    overflow: hidden;
-    z-index: 1;
-    background-repeat: no-repeat !important;
-    background-attachment: fixed !important;
-    width: 100%;
+    /*background-image: linear-gradient(to right bottom, #5c745c, #688265, #74906e, #819f77, #8fad80, #8bb087, #86b48e, #82b795, #70af9c, #66a6a1, #629ca2, #64919f);
+    */overflow: hidden;
+    background-image: url("../images/background.png");
+   z-index: 1;
+   background-repeat: no-repeat !important;
+   background-position: center;
+    background-size: cover;
+/*    background-attachment: fixed !important;
+*/    width: 100%;
     height: 100%;
     height: 2653px !important;
     max-width: 1266px;
     margin: auto;
     border-radius: 2em;
+    letter-spacing: -0.017em;
 }
 
 
@@ -120,3 +124,31 @@
         border-bottom: 0 !important;
     }
 }
+
+.column-image {
+    margin: auto;
+    display: block;
+}
+
+.column-header {
+    padding: 0 4.2em;
+    font-size: 1.3em;
+    font-weight: 700;
+    background: linear-gradient(97.81deg, #A7CEAA 3.58%, rgba(244, 252, 249, 0.73) 54.85%, rgba(154, 198, 208, 0.876365) 79.61%, #70A0AF 100.52%);
+    -webkit-background-clip: text;
+    color: transparent;
+    text-align: center;
+    margin: auto;
+    position: relative;
+    top: -10rem;
+}
+
+.column-desc {
+    padding: 0 8.5em;
+    font-size: 0.7em;
+    text-align: center;
+    font-weight: 500;
+    color: #FFFFFFBF;
+    letter-spacing: -0.017em;
+    position: relative;
+    top: -9.7rem;

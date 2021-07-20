@@ -14,16 +14,17 @@
 </head>
 
 <body>
+    <div class="background">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a href="#" class="navbar-brand">
                 GeoRepair
-                <img src="../static/images/hammer.svg" id="hammer" class="d-inline-block align-text-middle">
+                <img src="../static/css/hammer.svg" id="hammer" class="d-inline-block align-text-middle">
             </a>
             <!-- <h1 class="navbar-brand">GeoRepair</h1>
             <img src="../static/css/hammer.svg" id="hammer" class="d-inline-block align-text-top"> -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+              <span class="navbar-toggler-icon"></span>
             </button>
             <span class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
@@ -32,18 +33,58 @@
                     <li class="nav-item px-1"><a href="#" class="nav-link active">Forum</a></li>
                     <li class="nav-item px-1"><a href="/contact" class="nav-link">Contact</a></li>
                 </ul>
-                <a class="btn nav-button" type="button" id="login" href="/login"><span id="logintext">Login</span></a>
-                <div style="display: inline-block; width: 1em;"></div>
-                <a href="/signup" class="btn nav-button" ">
-                    <div id="buttonrect"><p>Sign Up!</p></div>
-                </a>
+
+                <a class="btn nav-button" type="button" id="login" href="/login" data-bs-toggle="modal" data-bs-target="#loginModal"><span id="logintext">Login</span></a>
+            <div style="display: inline-block; width: 1em;"></div>
+            <a href="/signup" class="btn nav-button" data-bs-toggle="modal" data-bs-target="#signupModal">
+                <div id="buttonrect">
+                    <p>Sign Up!</p>
+                </div>
+            </a>
+
             </span>
 
         </div>
     </nav>
-   
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="loginModalLabel">Sign In</h5>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- commented out text is for when the database is integrated -->
+    <!-- {% for (entries) in forum%} -->
+    <div class="card" style="width: 30rem; margin: auto;">
+        <img class="card-img-top" src="..." alt="Crack in sidewalk (not there atm)">
+        <div class="card-body">
+            <h3 class="card-title">Crack in Sidewalk</h3>
+            <p class="card-title">_ upvotes</p>
+            <hr>
+            <p class="card-text">field for describing the problem <b>example</b> Sixty-nine people in the neighborhood have reported falling over this crack. This portion of the sidewalk needs to be repaired!</p>
+            <p class="card-text"><i>field for coordinates and street address </i><b>example</b> <i>(-68, 49.22221) around 455 Canberra Avenue.</i></p>
+            <a href="#" class="btn btn-primary">Upvote</a>
+        </div>
+    </div>
+    <!-- {%end for%} -->
+    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Optional JavaScript; choose one of the two! -->
+
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
@@ -52,6 +93,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
     -->
+</div>
 </body>
 
 </html>
