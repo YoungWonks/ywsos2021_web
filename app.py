@@ -220,7 +220,8 @@ def api_add(userId):
     scans = db['scans']
     f = request.files['image']
     filename = str(uuid4())
-    f.save(os.path.join('static/images/scans/', filename))
+    f_name, f_ext = os.path.splitext(f.filename)
+    f.save(os.path.join('static/images/scans/', filename) + f_ext)
     dt_now = datetime.utcnow()
     scans.insert_one({
         "u_id": userId,
