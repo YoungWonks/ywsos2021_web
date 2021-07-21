@@ -234,7 +234,7 @@ def api_add(userId):
 @token_required
 def api_welcome(userId):
     users = db['users']
-    user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
+    user = users.find_one({'_id': bson.ObjectId(userId)})
     #Code explains itself (note the new paraameter from the decorator)
     return_data = {
         "error": "0",
