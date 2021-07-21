@@ -135,12 +135,16 @@ def signup():
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
-        users.insert_one({
+        user = {
             "username": signup_form.username.data,
             "email": signup_form.email.data,
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
             "signup_date": dt_now
-        })
+        }
+        users.insert_one(user)
+        session['logged_in'] = True
+        session['logged_in_id'] = user['_id']
+        return redirect('/main')
     return render_template("signup.html", signup_form=signup_form)
 
 @app.route('/logout')
