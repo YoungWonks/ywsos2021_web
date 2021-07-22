@@ -12,9 +12,8 @@
     background-repeat: no-repeat !important;
     background-position: center;
     background-size: cover;
-    width: 100%;
     height: 100%;
-    height: 2653px !important;
+    min-height: 2653px !important;
     max-width: 1266px;
     margin: auto;
     border-radius: 2em;
@@ -116,20 +115,18 @@
     top: -0.2em;
 }
 
-@media only screen and (max-width: 991px) {
-    .active:after {
-        border-bottom: 0 !important;
-    }
-}
 
 .column-image {
     margin: auto;
     display: block;
+    user-select: none;
+    max-width: 532px;
+    max-height: 880px;
 }
 
 .column-header {
-    padding: 0 4.2em;
-    font-size: 1.3em;
+    /*padding: 0 4.2em;*/
+    font-size: 18px;
     font-weight: 700;
     background: linear-gradient(97.81deg, #A7CEAA 3.58%, rgba(244, 252, 249, 0.73) 54.85%, rgba(154, 198, 208, 0.876365) 79.61%, #70A0AF 100.52%);
     -webkit-background-clip: text;
@@ -137,15 +134,37 @@
     text-align: center;
     margin: auto;
     position: relative;
-    top: -10rem;
+    top: -155px;
 }
 
 .column-desc {
-    padding: 0 8.5em;
-    font-size: 0.7em;
+    /*padding: 0 8.5em;*/
+    font-size: 9px;
     text-align: center;
     font-weight: 500;
     color: #FFFFFFBF;
     letter-spacing: -0.017em;
     position: relative;
-    top: -9.7rem;
+    top: -150px;
+    width: 138px;
+    max-width: 532px;
+    margin: auto;
+}
+
+@media only screen and (max-width: 991px) {
+    .active:after {
+        border-bottom: 0 !important;
+    }
+
+    .column-header {
+        font-size: 45px;
+        max-width: 450px !important;
+        top: -300px;
+    }
+
+    .column-desc {
+        font-size: 20px;
+        width: 400px;
+        top: -290px;
+    }
+}
