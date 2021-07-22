@@ -7,4 +7,4 @@ documentation/_build/
 .idea/
 **/.DS_Store
 .vs/
-static/images/scans/
+static/images/scans/*
