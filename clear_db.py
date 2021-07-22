@@ -1,4 +1,5 @@
 from config import db
 
-db.users.remove({})
-db.scans.remove({})
+db.users.delete_many({})
+db.scans.delete_many({})
+db.places.delete_many({})

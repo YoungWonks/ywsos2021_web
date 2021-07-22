@@ -218,15 +218,29 @@ def api_signup():
 @token_required
 def api_add(userId):
     scans = db['scans']
+    places = db['places']
     f = request.files['image']
+    lat = request.form.get('lat')
+    long = request.form.get('long')
     filename = str(uuid4())
-    f_name, f_ext = os.path.splitext(f.filename)
-    f.save(os.path.join('static/images/scans/', filename) + f_ext)
+    f.save(os.path.join('static/images/scans/', filename))
     dt_now = datetime.utcnow()
-    scans.insert_one({
+    _id = scans.insert_one({
         "u_id": userId,
         "filename": filename,
         "scandate": dt_now,
+        "position": {
+            "lat": lat,
+            "long": long
+        },
+        "date": datetime.utcnow(),
+    }).inserted_id
+    places.insert_one({
+        "id": _id,
+        "loc": {
+            "type": "Point",
+            "coordinates": [lat, long]
+        },
     })
     return {"error": "0", "message": "Succesful",}
     
