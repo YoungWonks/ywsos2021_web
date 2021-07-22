@@ -43,12 +43,12 @@ def token_required(something):
                         "message": "Token has expired"
                         }
                     return jsonify(return_data)
-                '''except Exception as e:
+                except Exception as e:
                     return_data = {
                         "error": "1",
                         "message": "Invalid Token"
                     }
-                    return jsonify(return_data)'''
+                    return jsonify(return_data)
             else:
                 return_data = {
                     "error" : "2",
