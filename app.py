@@ -16,7 +16,7 @@ from datetime import datetime, timezone, timedelta
 import pytz
 from werkzeug.utils import secure_filename
 from uuid import uuid4
-from  geopy.geocoders import Nominatim
+from geopy.geocoders import Nominatim
 
 app = Flask(__name__)
 app.config.from_object(Config)
