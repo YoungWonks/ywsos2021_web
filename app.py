@@ -16,6 +16,7 @@ from datetime import datetime, timezone, timedelta
 import pytz
 from werkzeug.utils import secure_filename
 from uuid import uuid4
+from  geopy.geocoders import Nominatim
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -87,6 +88,7 @@ class SignupForm(FlaskForm):
     email = StringField("Email :", validators = [DataRequired(), Email()])
     password = PasswordField("Password :", validators = [DataRequired()])
     confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo('password')])
+    city = StringField("City :")
     submit = SubmitField("Sign Up")
 ########################################################################
 #########################Routes#########################################
@@ -135,11 +137,15 @@ def signup():
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
+        geolocator = Nominatim(user_agent="Your_Name")
+        location = geolocator.geocode(signup_form.city.data)
         user = {
             "username": signup_form.username.data,
             "email": signup_form.email.data,
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
-            "signup_date": dt_now
+            "signup_date": dt_now,
+            "latitude": location.latitude,
+            "longitude": location.longitude
         }
         users.insert_one(user)
         session['logged_in'] = True
