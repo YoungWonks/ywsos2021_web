@@ -1,9 +1,18 @@
 import requests
 import json
+import sys
 
-#res = json.loads(requests.post('http://127.0.0.1:5000/api/auth/signup', data={'username': 'NeilP', 'password': 'abcdefg', 'email': 'neilp235094@gmail.com'}).content.decode())
+if len(sys.argv) < 3:
+    raise ValueError("Please provide the username and password")
 
-res = json.loads(requests.post('http://127.0.0.1:5000/api/auth/token', data={'username': 'NeilP', 'password': 'abcdefg'}).content.decode())
+username = sys.argv[1]
+password = sys.argv[2]
+
+if len(sys.argv) == 4:
+    email = sys.argv[3]
+    res = json.loads(requests.post('http://127.0.0.1:5000/api/auth/signup', data={'username': username, 'password': password, 'email': email}).content.decode())
+
+res = json.loads(requests.post('http://127.0.0.1:5000/api/auth/token', data={'username': username, 'password': password}).content.decode())
 
 print("Login :", res)
 
