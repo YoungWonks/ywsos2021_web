@@ -218,7 +218,6 @@ def api_signup():
 @token_required
 def api_add(userId):
     scans = db['scans']
-    places = db['places']
     f = request.files['image']
     lat = request.form.get('lat')
     long = request.form.get('long')
@@ -233,15 +232,12 @@ def api_add(userId):
             "lat": lat,
             "long": long
         },
-        "date": datetime.utcnow(),
-    }).inserted_id
-    places.insert_one({
-        "id": _id,
         "loc": {
             "type": "Point",
             "coordinates": [lat, long]
         },
-    })
+        "date": datetime.utcnow(),
+    }).inserted_id
     return {"error": "0", "message": "Succesful",}
     
 @app.route('/api/wel',methods=['POST'])
