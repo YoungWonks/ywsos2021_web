@@ -118,6 +118,7 @@ def main(user_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm()
+    error = False
     if login_form.validate_on_submit():
         users = db['users']
         result = users.find_one({
@@ -127,11 +128,15 @@ def login():
             session['logged_in'] = True
             session['logged_in_id'] = result['_id']
             return redirect('/main')
-    return render_template("login.html", login_form=login_form)
+        else:
+            error = True
+    return render_template("login.html", login_form=login_form, error=error)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     signup_form = SignupForm()
+    usererror = False
+    emailerror = False
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
@@ -141,11 +146,16 @@ def signup():
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
             "signup_date": dt_now
         }
-        users.insert_one(user)
-        session['logged_in'] = True
-        session['logged_in_id'] = user['_id']
-        return redirect('/main')
-    return render_template("signup.html", signup_form=signup_form)
+        if users.find_one({"username":user["username"]}) is not None:
+            usererror = True
+        elif users.find_one({"email":user["email"]}) is not None:
+            emailerror = True
+        else:
+            users.insert_one(user)
+            session['logged_in'] = True
+            session['logged_in_id'] = user['_id']
+            return redirect('/main')
+    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror)
 
 @app.route('/logout')
 @login_required

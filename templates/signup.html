@@ -54,6 +54,15 @@
             {{signup_form.password(size=32)}}<br />
             {{signup_form.confirm_password.label}}<br />
             {{signup_form.confirm_password(size=32)}}<br /><br />
+
+            {% if usererror %}
+                <p style="color:red;">Username already exists</p>
+            {% endif %}
+            {% if emailerror %}
+                <p style="color:red;">Email already in use</p>
+
+            {% endif %}
+
             {{signup_form.submit(class_="btn btn-primary")}}
         </form>
     </main>

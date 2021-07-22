@@ -50,6 +50,11 @@
             {{login_form.username(size=32)}}<br />
             {{login_form.password.label}}<br />
             {{login_form.password(size=32)}}<br /><br />
+
+            {% if error %}
+                <p style="color:red;">Incorrect username or password</p>
+            {% endif %}
+            
             {{login_form.submit(class_="btn btn-primary")}}
         </form>
     </main>
