@@ -224,7 +224,7 @@ def api_add(userId):
     filename = str(uuid4())
     f.save(os.path.join('static/images/scans/', filename))
     dt_now = datetime.utcnow()
-    _id = scans.insert_one({
+    scans.insert_one({
         "u_id": userId,
         "filename": filename,
         "scandate": dt_now,
@@ -237,7 +237,7 @@ def api_add(userId):
             "coordinates": [lat, long]
         },
         "date": datetime.utcnow(),
-    }).inserted_id
+    })
     return {"error": "0", "message": "Succesful",}
     
 @app.route('/api/wel',methods=['POST'])
