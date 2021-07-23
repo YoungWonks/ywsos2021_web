@@ -94,19 +94,19 @@ class SignupForm(FlaskForm):
 @app.route('/about')
 @app.route('/')
 def about():
-    return render_template('index.html',session=session)
+    return render_template('index.html')
 
 @app.route('/upload')
 def upload():
-    return render_template('upload.html',session=session)
+    return render_template('upload.html')
 
 @app.route('/forum')
 def forum():
-    return render_template('forum.html',session=session)
+    return render_template('forum.html')
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html',session=session)
+    return render_template('contact.html')
 
 @app.route('/main',methods=['GET','POST'])
 @login_required
