@@ -94,31 +94,36 @@ class SignupForm(FlaskForm):
 @app.route('/about')
 @app.route('/')
 def about():
-    return render_template('index.html')
+    return render_template('index.html',session=session)
 
 @app.route('/upload')
 def upload():
-    return render_template('upload.html')
+    return render_template('upload.html',session=session)
 
 @app.route('/forum')
 def forum():
-    return render_template('forum.html')
+    return render_template('forum.html',session=session)
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html')
+    return render_template('contact.html',session=session)
 
-@app.route('/main')
+@app.route('/main',methods=['GET','POST'])
 @login_required
 def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
+    if request.method == "POST":
+        if request.form.get("changepass"):
+            print("hi")
     return render_template("main.html", user=user)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm()
     error = False
+    if session['logged_in']:
+        return redirect('/main')
     if login_form.validate_on_submit():
         users = db['users']
         result = users.find_one({

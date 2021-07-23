@@ -40,7 +40,7 @@
     margin-top: 0 !important;
 }
 
-.buttonrect {
+.buttonrect,.flask-buttonrect {
     margin: 0 !important;
     width: 6em;
     height: 2.5em;
@@ -71,9 +71,22 @@
     letter-spacing: -0.017em;
     background-image: linear-gradient(180deg, #FFFFFF 0%, rgba(238, 238, 238, 0.58) 100%);
     -webkit-background-clip: text !important;
-    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
     
 
+}
+
+.flask-buttonrect {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: bolder;
+    font-size: 1em;
+    color: #e6e6e6;
+    line-height: 30px;
+
+    display: flex;
+    letter-spacing: -0.017em;
+    border: 0 !important;
 }
 
 .nav-button {
@@ -167,4 +180,9 @@
         width: 400px;
         top: -290px;
     }
+}
+
+#account {
+    margin: 0 !important;
+    font-weight: 500;
 }

@@ -26,11 +26,28 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <span class="collapse navbar-collapse" id="navbarSupportedContent">
+            <span class="collapse navbar-collapse dropdown" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item px-1"><a href="#" class="nav-link active">Main</a></li>
+                    <li class="nav-item px-1"><a href="/about" class="nav-link">About</a></li>
+                    <li class="nav-item px-1"><a href="/upload" class="nav-link">Upload</a></li>
+                    <li class="nav-item px-1"><a href="/forum" class="nav-link">Forum</a></li>
+                    <li class="nav-item px-1"><a href="/contact" class="nav-link">Contact</a></li>
                 </ul>
+                <div style="display: inline-block;" class="dropdown">
+                    <a class="btn nav-button dropdown-toggle" type="button" id="account" data-bs-toggle="dropdown" href="#">Account Settings</a>
+                    <ul class="dropdown-menu" aria-labelledby="account">
+                        <form method="post" action="/main">
+                            <button class="dropdown-item" value="changepass" name="changepass">Change Password</button>
+                            <button class="dropdown-item" value="changeuser" name="changeuser">Change Username</button>
+                            <button class="dropdown-item" value="deleteacc" name="changeuser">Delete Account</button>
+                        </form>
+                    </ul>
+                </div>
+                <div style="display: inline-block; width: 1em;"></div>
+                
                 <a class="btn nav-button buttonrect" type="button" id="logout" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><p id="logouttext">Logout</p></a>
+                    
+                
             </span>
 
         </div>
