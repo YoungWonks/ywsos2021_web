@@ -231,22 +231,52 @@ def api_signup():
     }
     return jsonify(return_data)
 
+@app.route('/api/scans', methods=["POST"])
+@token_required
+def api_find(userId):
+    scans = db['scans']
+    lat = float(request.form.get('lat'))
+    long = float(request.form.get('long'))
+    radius = float(request.form.get('range', 1))
+    scans.create_index([('loc', '2dsphere')])
+    result = scans.find({
+        'loc': {
+            '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
+        }
+    })
+    urls = []
+    for r in result:
+        urls.append('/static/images/scans/'+r['filename'])
+    return {
+        "urls": urls,
+    }
+
 @app.route('/api/scans/add', methods=["POST"])
 @token_required
 def api_add(userId):
     scans = db['scans']
     f = request.files['image']
+    lat = float(request.form.get('lat'))
+    long = float(request.form.get('long'))
     filename = str(uuid4())
-    f_name, f_ext = os.path.splitext(f.filename)
-    f.save(os.path.join('static/images/scans/', filename) + f_ext)
+    f.save(os.path.join('static/images/scans/', filename))
     dt_now = datetime.utcnow()
     scans.insert_one({
         "u_id": userId,
         "filename": filename,
         "scandate": dt_now,
+        "position": {
+            "lat": lat,
+            "long": long
+        },
+        "loc": {
+            "type": "Point",
+            "coordinates": [lat, long]
+        },
+        "date": datetime.utcnow(),
     })
     return {"error": "0", "message": "Succesful",}
-    
+
 @app.route('/api/wel',methods=['POST'])
 @token_required
 def api_welcome(userId):
