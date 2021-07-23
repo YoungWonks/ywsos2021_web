@@ -126,8 +126,6 @@ def main(user_id):
 def login():
     login_form = LoginForm()
     error = False
-    if session['logged_in']:
-        return redirect('/main')
     if login_form.validate_on_submit():
         users = db['users']
         result = users.find_one({
