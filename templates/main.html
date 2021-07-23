@@ -36,11 +36,14 @@
                 <div style="display: inline-block;" class="dropdown">
                     <a class="btn nav-button dropdown-toggle" type="button" id="account" data-bs-toggle="dropdown" href="#">Account Settings</a>
                     <ul class="dropdown-menu" aria-labelledby="account">
-                        <form method="post" action="/main">
+                        <form method="post">
                             <button class="dropdown-item" value="changepass" name="changepass">Change Password</button>
-                            <button class="dropdown-item" value="changeuser" name="changeuser">Change Username</button>
-                            <button class="dropdown-item" value="deleteacc" name="changeuser">Delete Account</button>
                         </form>
+                        <form method="post">
+                            <button class="dropdown-item" value="changeuser" name="changeuser">Change Username</button>
+                        </form>
+                        <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Account</button>
+                        
                     </ul>
                 </div>
                 <div style="display: inline-block; width: 1em;"></div>
@@ -58,6 +61,19 @@
                 <div class="modal-body">
                     <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
                     <a href="logout"><button type="button" class="btn btn-primary">Log Out</button></a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+                    <form method="post" action="/main">
+                        <button class="btn btn-primary" value="deleteacc" name="deleteacc">Delete Account</button>
+                    </form>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>

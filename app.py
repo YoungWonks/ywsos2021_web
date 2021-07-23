@@ -116,6 +116,10 @@ def main(user_id):
     if request.method == "POST":
         if request.form.get("changepass"):
             print("hi")
+        if request.form.get("deleteacc"):
+            print("whassup")
+            users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
+            return redirect("/logout")
     return render_template("main.html", user=user)
 
 @app.route('/login', methods=['GET', 'POST'])
