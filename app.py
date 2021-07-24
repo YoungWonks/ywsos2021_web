@@ -255,8 +255,8 @@ def api_find(userId):
         scan = {
             "url": '/static/images/scans/'+r['filename'],
             "scandate": r['scandate'],
-	    "position": r['position'],
-	}
+            "position": r['position'],
+        }
         repairs.append(scan)
     return {
         "repairs": repairs,
