@@ -17,7 +17,7 @@
     <div class="background">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-            <a href="#" class="navbar-brand">
+            <a href="/about" class="navbar-brand">
                 GeoRepair
                 <img src="../static/images/hammer.svg" id="hammer" class="d-inline-block align-text-middle">
             </a>
@@ -33,11 +33,17 @@
                     <li class="nav-item px-1"><a href="/forum" class="nav-link">Forum</a></li>
                     <li class="nav-item px-1"><a href="#" class="nav-link active">Contact</a></li>
                 </ul>
-                <a class="btn nav-button" type="button" id="login" href="/login"><span id="logintext">Login</span></a>
-                <div style="display: inline-block; width: 1em;"></div>
-                <a href="/signup" class="btn nav-button">
-                    <div class="buttonrect"><p>Sign Up!</p></div>
-                </a>
+                {% if session['logged_in'] %}
+                    <a class="btn nav-button" type="button" id="account" href="/main"><span id="accounttext">My Account</span></a>
+                    <div style="display: inline-block; width: 1em;"></div>
+                    <a class="btn nav-button buttonrect" type="button" id="logout" href="/logout"><p id="logouttext">Logout</p></a>
+                {% else %}
+                    <a class="btn nav-button" type="button" id="login" href="/login"><span id="logintext">Login</span></a>
+                    <div style="display: inline-block; width: 1em;"></div>
+                    <a href="/signup" class="btn nav-button">
+                        <div class="buttonrect"><p>Sign Up!</p></div>
+                    </a>
+                {% endif %}
             </span>
 
         </div>

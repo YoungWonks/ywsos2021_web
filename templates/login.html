@@ -17,7 +17,7 @@
     <div class="background">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-            <a href="#" class="navbar-brand">
+            <a href="/about" class="navbar-brand">
                 GeoRepair
                 <img src="../static/images/hammer.svg" id="hammer" class="d-inline-block align-text-middle">
             </a>
@@ -31,7 +31,7 @@
                     <li class="nav-item px-1"><a href="/about" class="nav-link">About</a></li>
                     <li class="nav-item px-1"><a href="/upload" class="nav-link">Upload</a></li>
                     <li class="nav-item px-1"><a href="/forum" class="nav-link">Forum</a></li>
-                    <li class="nav-item px-1"><a href="#" class="nav-link active">Contact</a></li>
+                    <li class="nav-item px-1"><a href="/contact" class="nav-link">Contact</a></li>
                 </ul>
                 <a class="btn nav-button" type="button" id="login" href="/login"><span id="logintext">Login</span></a>
                 <div style="display: inline-block; width: 1em;"></div>
@@ -50,7 +50,12 @@
             {{login_form.username(size=32)}}<br />
             {{login_form.password.label}}<br />
             {{login_form.password(size=32)}}<br /><br />
-            {{login_form.submit(class_="btn btn-primary")}}
+
+            {% if error %}
+                <p style="color:red;">Incorrect username or password</p>
+            {% endif %}
+
+            {{login_form.submit(class_="btn nav-button flask-buttonrect")}}
         </form>
     </main>
 
