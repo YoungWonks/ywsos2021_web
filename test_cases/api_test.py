@@ -30,8 +30,8 @@ if res["error"] == "0":
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans', headers=headers,
         data={'lat': 20.25, 'long': -80.98, 'range': 10}).content.decode())
     print("Welcome :", res)
-    for url in res['urls']:
-        real_url = 'http://127.0.0.1:5000' + url
+    for r in res['repairs']:
+        real_url = 'http://127.0.0.1:5000' + r['url']
         b = requests.get(real_url).content
         with open('images/read.jfif', 'wb') as f:
             f.write(b)
