@@ -20,7 +20,7 @@ class Config:
     SESSION_MONGODB_URL = os.environ.get('MONGO_URI')
     SESSION_TIME = os.environ.get('SESSION_TIME')
     MONGO_URI = os.environ.get("MONGO_URI")
-    ENV = os.environ.get('ENV')
+    FLASK_ENV = os.environ.get('FLASK_ENV')
     DOMAIN = os.environ.get('DOMAIN')
     SECRET_KEY = os.environ.get('SESSION_TYPE')
     SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT')

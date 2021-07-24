@@ -12,8 +12,11 @@ import jwt
 import bson
 from functools import wraps
 from passlib.hash import pbkdf2_sha256
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import pytz
+from werkzeug.utils import secure_filename
+from uuid import uuid4
+from geopy.geocoders import Nominatim
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -41,7 +44,7 @@ def token_required(something):
                         "message": "Token has expired"
                         }
                     return jsonify(return_data)
-                except:
+                except Exception as e:
                     return_data = {
                         "error": "1",
                         "message": "Invalid Token"
@@ -85,6 +88,7 @@ class SignupForm(FlaskForm):
     email = StringField("Email :", validators = [DataRequired(), Email()])
     password = PasswordField("Password :", validators = [DataRequired()])
     confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo('password')])
+    city = StringField("City :")
     submit = SubmitField("Sign Up")
 ########################################################################
 #########################Routes#########################################
@@ -106,16 +110,24 @@ def forum():
 def contact():
     return render_template('contact.html')
 
-@app.route('/main')
+@app.route('/main',methods=['GET','POST'])
 @login_required
 def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
+    if request.method == "POST":
+        if request.form.get("changepass"):
+            print("hi")
+        if request.form.get("deleteacc"):
+            print("whassup")
+            users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
+            return redirect("/logout")
     return render_template("main.html", user=user)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm()
+    error = False
     if login_form.validate_on_submit():
         users = db['users']
         result = users.find_one({
@@ -125,25 +137,38 @@ def login():
             session['logged_in'] = True
             session['logged_in_id'] = result['_id']
             return redirect('/main')
-    return render_template("login.html", login_form=login_form)
+        else:
+            error = True
+    return render_template("login.html", login_form=login_form, error=error)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     signup_form = SignupForm()
+    usererror = False
+    emailerror = False
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
+        geolocator = Nominatim(user_agent="Your_Name")
+        location = geolocator.geocode(signup_form.city.data)
         user = {
             "username": signup_form.username.data,
             "email": signup_form.email.data,
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
-            "signup_date": dt_now
+            "signup_date": dt_now,
+            "latitude": location.latitude,
+            "longitude": location.longitude
         }
-        users.insert_one(user)
-        session['logged_in'] = True
-        session['logged_in_id'] = user['_id']
-        return redirect('/main')
-    return render_template("signup.html", signup_form=signup_form)
+        if users.find_one({"username":user["username"]}) is not None:
+            usererror = True
+        elif users.find_one({"email":user["email"]}) is not None:
+            emailerror = True
+        else:
+            users.insert_one(user)
+            session['logged_in'] = True
+            session['logged_in_id'] = user['_id']
+            return redirect('/main')
+    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror)
 
 @app.route('/logout')
 @login_required
@@ -170,13 +195,14 @@ def api_login():
     password = request.form.get('password')
     users = db['users']
     result = users.find_one({
-        'username': login_form.username.data,
+        'username': username,
     })
     if result != None and pbkdf2_sha256.verify(password, result['password_hash']):
         # Generate exp time and token and return them
-        timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=24*60)
-        payload = {"user_id": result['_id'],"exp":timeLimit}
-        token = jwt.encode(payload,SECRET_KEY)
+        timeLimit= datetime.utcnow() + timedelta(minutes=24*60)
+        payload = {"user_id": str(result['_id']),"exp":timeLimit}
+        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+        data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
         return_data = {
             "error": "0",
             "message": "Successful",
@@ -198,7 +224,7 @@ def api_signup():
     email = request.form.get('email')
     password = request.form.get('password')
     users = db['users']
-    dt_now1 = datetime.now(tz=timezone.utc)
+    dt_now1 = datetime.utcnow()
     users.insert_one({
         "username": username,
         "email": email,
@@ -211,11 +237,57 @@ def api_signup():
     }
     return jsonify(return_data)
 
+@app.route('/api/scans', methods=["POST"])
+@token_required
+def api_find(userId):
+    scans = db['scans']
+    lat = float(request.form.get('lat'))
+    long = float(request.form.get('long'))
+    radius = float(request.form.get('range', 1))
+    scans.create_index([('loc', '2dsphere')])
+    result = scans.find({
+        'loc': {
+            '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
+        }
+    })
+    urls = []
+    for r in result:
+        urls.append('/static/images/scans/'+r['filename'])
+    return {
+        "urls": urls,
+    }
+
+@app.route('/api/scans/add', methods=["POST"])
+@token_required
+def api_add(userId):
+    scans = db['scans']
+    f = request.files['image']
+    lat = float(request.form.get('lat'))
+    long = float(request.form.get('long'))
+    filename = str(uuid4())
+    f.save(os.path.join('static/images/scans/', filename))
+    dt_now = datetime.utcnow()
+    scans.insert_one({
+        "u_id": userId,
+        "filename": filename,
+        "scandate": dt_now,
+        "position": {
+            "lat": lat,
+            "long": long
+        },
+        "loc": {
+            "type": "Point",
+            "coordinates": [lat, long]
+        },
+        "date": datetime.utcnow(),
+    })
+    return {"error": "0", "message": "Succesful",}
+
 @app.route('/api/wel',methods=['POST'])
 @token_required
 def api_welcome(userId):
     users = db['users']
-    user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
+    user = users.find_one({'_id': bson.ObjectId(userId)})
     #Code explains itself (note the new paraameter from the decorator)
     return_data = {
         "error": "0",
@@ -228,4 +300,4 @@ def api_welcome(userId):
     return jsonify(return_data)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug = True)

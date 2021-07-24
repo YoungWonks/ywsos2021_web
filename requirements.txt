@@ -21,6 +21,7 @@ Flask-Session==0.4.0
 Flask-WTF==0.15.1
 flatbuffers==1.12
 gast==0.4.0
+geopy==2.2.0
 google-auth==1.32.1
 google-auth-oauthlib==0.4.4
 google-pasta==0.2.0
