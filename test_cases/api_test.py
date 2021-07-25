@@ -30,11 +30,12 @@ if res["error"] == "0":
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans', headers=headers,
         data={'lat': 20.25, 'long': -80.98, 'range': 10}).content.decode())
     print("Welcome :", res)
-    for r in res['repairs']:
-        real_url = 'http://127.0.0.1:5000' + r['url']
-        b = requests.get(real_url).content
+    for repair in res['repairs']:
+        real_url = 'http://127.0.0.1:5000' + repair['url']
+        binary = requests.get(real_url).content
         with open('images/read.jfif', 'wb') as f:
-            f.write(b)
+            f.write(binary)
         image = cv2.imread('images/read.jfif')
         cv2.imshow("Scans", image)
+        print("Location is {}, {}".format(repair['position']['lat'], repair['position']['long']))
         cv2.waitKey()
