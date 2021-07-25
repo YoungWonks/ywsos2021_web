@@ -43,29 +43,33 @@
     </nav>
 
     <main>
-        <form method="post" action="/signup" novalidate>
-            {{signup_form.hidden_tag()}}
+        <h1>Sign Up</h1>
+        <div class="sign-up-grad" style="margin:auto; text-align:center; width:50%" >
+            <form method="post" action="/signup" novalidate>
+                <br>
+                {{signup_form.hidden_tag()}}
 
-            {{signup_form.username.label}}<br />
-            {{signup_form.username(size=32)}}<br />
-            {{signup_form.email.label}}<br />
-            {{signup_form.email(size=32)}}<br />
-            {{signup_form.password.label}}<br />
-            {{signup_form.password(size=32)}}<br />
-            {{signup_form.confirm_password.label}}<br />
-            {{signup_form.confirm_password(size=32)}}<br /><br />
-            {{signup_form.city.label}}<br />
-            {{signup_form.city(size=32)}}<br /><br />
+                {{signup_form.username.label}}<br />
+                {{signup_form.username(size=32, class = "text-input")}}<br />
+                {{signup_form.email.label}}<br />
+                {{signup_form.email(size=32, class = "text-input")}}<br />
+                {{signup_form.password.label}}<br />
+                {{signup_form.password(size=32, class = "text-input")}}<br />
+                {{signup_form.confirm_password.label}}<br />
+                {{signup_form.confirm_password(size=32, class = "text-input")}}<br /><br />
+                {{signup_form.city.label}}<br />
+                {{signup_form.city(size=32, class = "text-input")}}<br /><br />
 
-            {% if usererror %}
-                <p style="color:red;">Username already exists</p>
-            {% endif %}
-            {% if emailerror %}
-                <p style="color:red;">Email already in use</p>
+                {% if usererror %}
+                    <p style="color:red;">Username already exists</p>
+                {% endif %}
+                {% if emailerror %}
+                    <p style="color:red;">Email already in use</p>
 
-            {% endif %}
-            {{signup_form.submit(class_="btn nav-button flask-buttonrect")}}
-        </form>
+                {% endif %}
+                {{signup_form.submit(class_="btn nav-button flask-buttonrect")}}
+            </form>
+        </div>
     </main>
 
     <!-- Optional JavaScript; choose one of the two! -->

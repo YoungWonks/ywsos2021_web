@@ -141,6 +141,16 @@
     max-height: 880px;
 }
 
+.sign-up-grad {
+    background: linear-gradient(113.65deg, #C9E3B5 9.64%, rgba(255, 255, 255, 0.75) 52.21%, #64919F 106.55%);
+    box-shadow: 0px 8px 56px rgba(0, 0, 0, 0.25);
+    border-radius: 20.5px;
+}
+
+.text-input {
+    width: calc(100% - 10px);
+}
+
 .column-header {
     /*padding: 0 4.2em;*/
     font-size: 18px;
