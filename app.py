@@ -250,11 +250,16 @@ def api_find(userId):
             '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
         }
     })
-    urls = []
+    repairs = []
     for r in result:
-        urls.append('/static/images/scans/'+r['filename'])
+        scan = {
+            "url": '/static/images/scans/'+r['filename'],
+            "scandate": r['scandate'],
+            "position": r['position'],
+        }
+        repairs.append(scan)
     return {
-        "urls": urls,
+        "repairs": repairs,
     }
 
 @app.route('/api/scans/add', methods=["POST"])
