@@ -192,9 +192,9 @@ def api_index():
 
 @app.route('/api/auth/session', methods=['POST'])
 @login_required
-def api_sess():
+def api_sess(u_id):
     timeLimit= datetime.utcnow() + timedelta(minutes=24*60)
-    payload = {"user_id": session['logged_in_id'],"exp":timeLimit}
+    payload = {"user_id": u_id, "exp":timeLimit}
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
     return_data = {
