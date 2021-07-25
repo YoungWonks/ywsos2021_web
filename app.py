@@ -117,9 +117,8 @@ def main(user_id):
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     if request.method == "POST":
         if request.form.get("changepass"):
-            print("hi")
+            pass
         if request.form.get("deleteacc"):
-            print("whassup")
             users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
             return redirect("/logout")
     return render_template("main.html", user=user)
