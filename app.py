@@ -94,9 +94,12 @@ class SignupForm(FlaskForm):
 #########################Routes#########################################
 ########################################################################
 @app.route('/about')
-@app.route('/')
 def about():
     return render_template('index.html')
+
+@app.route('/')
+def home():
+    return redirect("/about")
 
 @app.route('/upload')
 def upload():
@@ -117,9 +120,8 @@ def main(user_id):
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     if request.method == "POST":
         if request.form.get("changepass"):
-            print("hi")
+            pass
         if request.form.get("deleteacc"):
-            print("whassup")
             users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
             return redirect("/logout")
     return render_template("main.html", user=user)
@@ -250,11 +252,16 @@ def api_find(userId):
             '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
         }
     })
-    urls = []
+    repairs = []
     for r in result:
-        urls.append('/static/images/scans/'+r['filename'])
+        scan = {
+            "url": '/static/images/scans/'+r['filename'],
+            "scandate": r['scandate'],
+            "position": r['position'],
+        }
+        repairs.append(scan)
     return {
-        "urls": urls,
+        "repairs": repairs,
     }
 
 @app.route('/api/scans/add', methods=["POST"])
