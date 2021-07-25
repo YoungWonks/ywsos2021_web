@@ -280,6 +280,23 @@ def api_find(userId):
         "repairs": repairs,
     }
 
+@app.route('/api/scans/all', methods=["POST"])
+def api_find_all(userId):
+    scans = db['scans']
+    result = scans.find({})
+    repairs = []
+    for r in result:
+        scan = {
+            "url": '/static/images/scans/'+r['filename'],
+            "scandate": r['scandate'],
+            "position": r['position'],
+        }
+        repairs.append(scan)
+    return {
+        "repairs": repairs,
+    }
+
+
 @app.route('/api/scans/add', methods=["POST"])
 @token_required
 def api_add(userId):
