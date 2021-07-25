@@ -190,6 +190,22 @@ def api_index():
     }
     return jsonify(return_data)
 
+@app.route('/api/auth/session', methods=['POST'])
+@login_required
+def api_sess():
+    timeLimit= datetime.utcnow() + timedelta(minutes=24*60)
+    payload = {"user_id": session['logged_in_id'],"exp":timeLimit}
+    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+    return_data = {
+        "error": "0",
+        "message": "Successful",
+        "token": token,
+        "Elapse_time": f"{timeLimit}"
+    }
+    return jsonify(return_data)
+
+
 @app.route('/api/auth/token', methods=['POST'])
 def api_login():
     # Get details from post request
