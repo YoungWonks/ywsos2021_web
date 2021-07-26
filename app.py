@@ -32,6 +32,8 @@ SECRET_KEY = app.config['SECRET_KEY']
 def token_required(something):
     @wraps(something)
     def wrap_token(*args, **kwargs):
+        if session['logged_in']:
+            return something(session['logged_in_id'], *args, **kwargs)
         try:
             token_passed = request.headers['TOKEN']
             if request.headers['TOKEN'] != '' and request.headers['TOKEN'] != None:
@@ -189,22 +191,6 @@ def api_index():
         'title' : 'API test'
     }
     return jsonify(return_data)
-
-@app.route('/api/auth/session', methods=['POST'])
-@login_required
-def api_sess(u_id):
-    timeLimit= datetime.utcnow() + timedelta(minutes=24*60)
-    payload = {"user_id": u_id, "exp":timeLimit}
-    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-    data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-    return_data = {
-        "error": "0",
-        "message": "Successful",
-        "token": token,
-        "Elapse_time": f"{timeLimit}"
-    }
-    return jsonify(return_data)
-
 
 @app.route('/api/auth/token', methods=['POST'])
 def api_login():
