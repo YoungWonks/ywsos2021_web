@@ -275,13 +275,13 @@ def api_find(userId):
         result = scans.find({
             'u_id': userId,
             'loc': {
-             '$near': {
-               '$geometry': {
-                  type: "Point" ,
-                  coordinates: [ lat , long ]
-               },
-             }
-           }
+                '$near': {
+                    '$geometry': {
+                        type: "Point" ,
+                        coordinates: [ lat , long ]
+                    },
+                }
+            }
         })
     repairs = []
     for r in result:
@@ -311,14 +311,14 @@ def api_find_all():
         })
     else:
         result = scans.find({
-           'loc': {
-             '$near': {
-               '$geometry': {
-                  type: "Point" ,
-                  coordinates: [ lat , long ]
-               },
-             }
-           }
+            'loc': {
+                '$near': {
+                    '$geometry': {
+                        type: "Point" ,
+                        coordinates: [ lat , long ]
+                    },
+                }
+            }
         })
     repairs = []
     for r in result:
@@ -332,6 +332,31 @@ def api_find_all():
         "repairs": repairs,
     }
 
+@app.route('/api/scans/forum', methods=["POST"])
+def api_find_forum():
+    scans = db['scans']
+    result = scans.find({}).sort({'upvote': 1})
+    repairs = []
+    for r in result:
+        scan = {
+            "url": '/static/images/scans/'+r['filename'],
+            "scandate": r['scandate'],
+            "position": r['position'],
+        }
+        repairs.append(scan)
+    return {
+        "repairs": repairs,
+    }
+
+@app.route('/api/scans/vote', methods=["POST"])
+@token_required
+def api_vote(userId):
+    name = request.form.get("name")
+    db.scans.update({'filename': name}, {'$inc': {'upvote': 1}})
+    return {
+        "error": "0",
+        "message": "Successful",
+    }
 
 @app.route('/api/scans/add', methods=["POST"])
 @token_required
@@ -355,6 +380,7 @@ def api_add(userId):
             "type": "Point",
             "coordinates": [lat, long]
         },
+        "upvote": 0,
         "date": datetime.utcnow(),
     })
     return {"error": "0", "message": "Succesful",}
