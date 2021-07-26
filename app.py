@@ -259,8 +259,8 @@ def api_signup():
 @token_required
 def api_find(userId):
     scans = db['scans']
-    lat = float(request.form.get('lat'))
-    long = float(request.form.get('long'))
+    lat = float(request.form.get('lat', 0))
+    long = float(request.form.get('long', 0))
     radius = float(request.form.get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
@@ -298,8 +298,8 @@ def api_find(userId):
 @app.route('/api/scans/all', methods=["POST"])
 def api_find_all():
     scans = db['scans']
-    lat = float(request.form.get('lat'), 0)
-    long = float(request.form.get('long'), 0)
+    lat = float(request.form.get('lat', 0))
+    long = float(request.form.get('long', 0))
     radius = float(request.form.get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
