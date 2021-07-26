@@ -32,8 +32,9 @@ SECRET_KEY = app.config['SECRET_KEY']
 def token_required(something):
     @wraps(something)
     def wrap_token(*args, **kwargs):
-        if session['logged_in']:
-            return something(session['logged_in_id'], *args, **kwargs)
+        if 'logged_in' in session.keys():
+            if session['logged_in']:
+                return something(session['logged_in_id'], *args, **kwargs)
         try:
             token_passed = request.headers['TOKEN']
             if request.headers['TOKEN'] != '' and request.headers['TOKEN'] != None:
@@ -139,7 +140,7 @@ def login():
         })
         if result != None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
             session['logged_in'] = True
-            session['logged_in_id'] = result['_id']
+            session['logged_in_id'] = str(result['_id'])
             return redirect('/main')
         else:
             error = True
@@ -170,7 +171,7 @@ def signup():
         else:
             users.insert_one(user)
             session['logged_in'] = True
-            session['logged_in_id'] = user['_id']
+            session['logged_in_id'] = str(user['_id'])
             return redirect('/main')
     return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror)
 
@@ -178,7 +179,7 @@ def signup():
 @login_required
 def logout(u_is):
     session['logged_in'] = False;
-    session['logged_in_id'] = 0
+    session['logged_in_id'] = ''
     return redirect('/')
 
 ########################################################################
@@ -271,6 +272,7 @@ def api_find(userId):
     ]
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
+    print(search)
     result = scans.aggregate(search)
     repairs = []
     for r in result:
