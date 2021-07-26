@@ -272,7 +272,6 @@ def api_find(userId):
     ]
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
-    print(search)
     result = scans.aggregate(search)
     repairs = []
     for r in result:
