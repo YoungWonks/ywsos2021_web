@@ -44,12 +44,12 @@ def token_required(something):
                         "message": "Token has expired"
                         }
                     return jsonify(return_data)
-                except Exception as e:
+                '''except Exception as e:
                     return_data = {
                         "error": "1",
                         "message": "Invalid Token"
                     }
-                    return jsonify(return_data)
+                    return jsonify(return_data)'''
             else:
                 return_data = {
                     "error" : "2",
@@ -264,25 +264,28 @@ def api_find(userId):
     radius = float(request.form.get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
+    search = [
+        {
+            '$geoNear': {
+                'near': [ lat, long ],
+                'distanceField': 'dist',
+                'spherical': True,
+            }
+        },
+        {
+            '$match': {
+                'u_id': userId,
+            },
+        },
+        {
+            '$sort': {
+                'dist': 1,
+            }
+        }
+    ]
     if radius:
-        result = scans.find({
-            'u_id': userId,
-            'loc': {
-                '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
-            }
-        })
-    else:
-        result = scans.find({
-            'u_id': userId,
-            'loc': {
-                '$near': {
-                    '$geometry': {
-                        type: "Point" ,
-                        coordinates: [ lat , long ]
-                    },
-                }
-            }
-        })
+        search[0]['$geoNear']['maxDistance'] = radius
+    result = scans.aggregate(search)
     repairs = []
     for r in result:
         scan = {
@@ -304,23 +307,23 @@ def api_find_all():
     radius = float(request.form.get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
+    search = [
+        {
+            '$geoNear': {
+                'near': [ lat, long ],
+                'distanceField': 'dist',
+                'spherical': True,
+            }
+        },
+        {
+            '$sort': {
+                'dist': 1,
+            }
+        }
+    ]
     if radius:
-        result = scans.find({
-            'loc': {
-                '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
-            }
-        })
-    else:
-        result = scans.find({
-            'loc': {
-                '$near': {
-                    '$geometry': {
-                        type: "Point" ,
-                        coordinates: [ lat , long ]
-                    },
-                }
-            }
-        })
+        search[0]['$geoNear']['maxDistance'] = radius
+    result = scans.aggregate(search)
     repairs = []
     for r in result:
         scan = {
