@@ -289,6 +289,7 @@ def api_find(userId):
             "url": '/static/images/scans/'+r['filename'],
             "scandate": r['scandate'],
             "position": r['position'],
+            "filename": r['filename']
         }
         repairs.append(scan)
     return {
@@ -326,6 +327,7 @@ def api_find_all():
             "url": '/static/images/scans/'+r['filename'],
             "scandate": r['scandate'],
             "position": r['position'],
+            "filename": r['filename']
         }
         repairs.append(scan)
     return {
@@ -335,13 +337,14 @@ def api_find_all():
 @app.route('/api/scans/forum', methods=["POST"])
 def api_find_forum():
     scans = db['scans']
-    result = scans.find({}).sort({'upvote': 1})
+    result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
         scan = {
             "url": '/static/images/scans/'+r['filename'],
             "scandate": r['scandate'],
             "position": r['position'],
+            "filename": r['filename']
         }
         repairs.append(scan)
     return {

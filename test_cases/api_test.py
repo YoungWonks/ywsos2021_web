@@ -46,3 +46,15 @@ if res["error"] == "0":
         cv2.imshow("Scans", image)
         print("Location is {}, {}".format(repair['position']['lat'], repair['position']['long']))
         cv2.waitKey()
+    print('With vote')
+    res = json.loads(requests.post('http://127.0.0.1:5000/api/scans/forum', headers=headers).content.decode())
+    print("Welcome :", res)
+    for repair in res['repairs']:
+        real_url = 'http://127.0.0.1:5000' + repair['url']
+        binary = requests.get(real_url).content
+        with open('images/read.jfif', 'wb') as f:
+            f.write(binary)
+        image = cv2.imread('images/read.jfif')
+        cv2.imshow("Scans", image)
+        print("Location is {}, {}".format(repair['position']['lat'], repair['position']['long']))
+        cv2.waitKey()
