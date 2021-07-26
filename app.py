@@ -261,13 +261,28 @@ def api_find(userId):
     scans = db['scans']
     lat = float(request.form.get('lat'))
     long = float(request.form.get('long'))
-    radius = float(request.form.get('range', 1))
+    radius = float(request.form.get('range', None))
     scans.create_index([('loc', '2dsphere')])
-    result = scans.find({
-        'loc': {
-            '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
-        }
-    })
+    result = []
+    if radius:
+        result = scans.find({
+            'u_id': userId,
+            'loc': {
+                '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
+            }
+        })
+    else:
+        result = scans.find({
+            'u_id': userId,
+            'loc': {
+             '$near': {
+               '$geometry': {
+                  type: "Point" ,
+                  coordinates: [ lat , long ]
+               },
+             }
+           }
+        })
     repairs = []
     for r in result:
         scan = {
@@ -281,9 +296,30 @@ def api_find(userId):
     }
 
 @app.route('/api/scans/all', methods=["POST"])
-def api_find_all(userId):
+def api_find_all():
     scans = db['scans']
-    result = scans.find({})
+    lat = float(request.form.get('lat'), 0)
+    long = float(request.form.get('long'), 0)
+    radius = float(request.form.get('range', None))
+    scans.create_index([('loc', '2dsphere')])
+    result = []
+    if radius:
+        result = scans.find({
+            'loc': {
+                '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
+            }
+        })
+    else:
+        result = scans.find({
+           'loc': {
+             '$near': {
+               '$geometry': {
+                  type: "Point" ,
+                  coordinates: [ lat , long ]
+               },
+             }
+           }
+        })
     repairs = []
     for r in result:
         scan = {
