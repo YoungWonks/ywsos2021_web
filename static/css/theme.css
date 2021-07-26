@@ -20,7 +20,6 @@
     letter-spacing: -0.017em;
 }
 
-
 .navbar-brand {
     color: #FFFFFF !important;
     font-weight: 700 !important;
@@ -148,8 +147,27 @@
     border-radius: 20.5px;
 }
 
+.sign-up-heading {
+    text-align:center;
+    margin-top:5px;
+    color:black !important;
+}
+
+.sign-up-icon {
+    width:25px;
+    object-fit:cover;
+}
+
 .text-input {
     width: calc(100% - 10px);
+    max-width: 400px;
+    background-color: transparent;
+    border:none;
+    outline:none;
+    border-bottom: 4px solid #97B88D;
+    opacity:0.5;
+    
+    
 }
 
 .column-header {
