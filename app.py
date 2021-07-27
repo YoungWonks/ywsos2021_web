@@ -32,6 +32,9 @@ SECRET_KEY = app.config['SECRET_KEY']
 def token_required(something):
     @wraps(something)
     def wrap_token(*args, **kwargs):
+        if 'logged_in' in session.keys():
+            if session['logged_in']:
+                return something(session['logged_in_id'], *args, **kwargs)
         try:
             token_passed = request.headers['TOKEN']
             if request.headers['TOKEN'] != '' and request.headers['TOKEN'] != None:
@@ -44,12 +47,12 @@ def token_required(something):
                         "message": "Token has expired"
                         }
                     return jsonify(return_data)
-                except Exception as e:
+                '''except Exception as e:
                     return_data = {
                         "error": "1",
                         "message": "Invalid Token"
                     }
-                    return jsonify(return_data)
+                    return jsonify(return_data)'''
             else:
                 return_data = {
                     "error" : "2",
@@ -137,7 +140,7 @@ def login():
         })
         if result != None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
             session['logged_in'] = True
-            session['logged_in_id'] = result['_id']
+            session['logged_in_id'] = str(result['_id'])
             return redirect('/main')
         else:
             error = True
@@ -168,7 +171,7 @@ def signup():
         else:
             users.insert_one(user)
             session['logged_in'] = True
-            session['logged_in_id'] = user['_id']
+            session['logged_in_id'] = str(user['_id'])
             return redirect('/main')
     return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror)
 
@@ -176,7 +179,7 @@ def signup():
 @login_required
 def logout(u_is):
     session['logged_in'] = False;
-    session['logged_in_id'] = 0
+    session['logged_in_id'] = ''
     return redirect('/')
 
 ########################################################################
@@ -243,25 +246,109 @@ def api_signup():
 @token_required
 def api_find(userId):
     scans = db['scans']
-    lat = float(request.form.get('lat'))
-    long = float(request.form.get('long'))
-    radius = float(request.form.get('range', 1))
+    lat = float(request.form.get('lat', 0))
+    long = float(request.form.get('long', 0))
+    radius = float(request.form.get('range', None))
     scans.create_index([('loc', '2dsphere')])
-    result = scans.find({
-        'loc': {
-            '$geoWithin': { '$centerSphere': [ [ lat, long ], radius/3963.2 ] }
+    result = []
+    search = [
+        {
+            '$geoNear': {
+                'near': [ lat, long ],
+                'distanceField': 'dist',
+                'spherical': True,
+            }
+        },
+        {
+            '$match': {
+                'u_id': userId,
+            },
+        },
+        {
+            '$sort': {
+                'dist': 1,
+            }
         }
-    })
+    ]
+    if radius:
+        search[0]['$geoNear']['maxDistance'] = radius
+    result = scans.aggregate(search)
     repairs = []
     for r in result:
         scan = {
             "url": '/static/images/scans/'+r['filename'],
             "scandate": r['scandate'],
             "position": r['position'],
+            "filename": r['filename']
         }
         repairs.append(scan)
     return {
         "repairs": repairs,
+    }
+
+@app.route('/api/scans/all', methods=["POST"])
+def api_find_all():
+    scans = db['scans']
+    lat = float(request.form.get('lat', 0))
+    long = float(request.form.get('long', 0))
+    radius = float(request.form.get('range', None))
+    scans.create_index([('loc', '2dsphere')])
+    result = []
+    search = [
+        {
+            '$geoNear': {
+                'near': [ lat, long ],
+                'distanceField': 'dist',
+                'spherical': True,
+            }
+        },
+        {
+            '$sort': {
+                'dist': 1,
+            }
+        }
+    ]
+    if radius:
+        search[0]['$geoNear']['maxDistance'] = radius
+    result = scans.aggregate(search)
+    repairs = []
+    for r in result:
+        scan = {
+            "url": '/static/images/scans/'+r['filename'],
+            "scandate": r['scandate'],
+            "position": r['position'],
+            "filename": r['filename']
+        }
+        repairs.append(scan)
+    return {
+        "repairs": repairs,
+    }
+
+@app.route('/api/scans/forum', methods=["POST"])
+def api_find_forum():
+    scans = db['scans']
+    result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
+    repairs = []
+    for r in result:
+        scan = {
+            "url": '/static/images/scans/'+r['filename'],
+            "scandate": r['scandate'],
+            "position": r['position'],
+            "filename": r['filename']
+        }
+        repairs.append(scan)
+    return {
+        "repairs": repairs,
+    }
+
+@app.route('/api/scans/vote', methods=["POST"])
+@token_required
+def api_vote(userId):
+    name = request.form.get("name")
+    db.scans.update({'filename': name}, {'$inc': {'upvote': 1}})
+    return {
+        "error": "0",
+        "message": "Successful",
     }
 
 @app.route('/api/scans/add', methods=["POST"])
@@ -286,6 +373,7 @@ def api_add(userId):
             "type": "Point",
             "coordinates": [lat, long]
         },
+        "upvote": 0,
         "date": datetime.utcnow(),
     })
     return {"error": "0", "message": "Succesful",}
