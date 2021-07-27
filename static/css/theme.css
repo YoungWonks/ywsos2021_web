@@ -158,6 +158,13 @@
     object-fit:cover;
 }
 
+.sign-up-btn {
+    background: linear-gradient(92.74deg, #A2C08B -2.29%, #ACC9AE 62.72%, #64919F 104.69%);
+    border-radius:4px;
+    width: 20% !important;
+    min-width: 85px;
+}
+
 .text-input {
     width: calc(100% - 10px);
     max-width: 400px;
@@ -166,8 +173,6 @@
     outline:none;
     border-bottom: 4px solid #97B88D;
     opacity:0.5;
-    
-    
 }
 
 .column-header {

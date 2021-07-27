@@ -11,17 +11,15 @@
                 <br>
                 {{signup_form.hidden_tag()}}
 
-                <img src="../static/images/person.png" class="sign-up-icon">
+                <img src="../static/images/person.svg" class="sign-up-icon">
                 {{signup_form.username(size=32, class = "text-input", placeholder = "Username")}}<br /><br />
-                <img src="../static/images/email.png" class="sign-up-icon">
+                <img src="../static/images/email.svg" class="sign-up-icon">
                 {{signup_form.email(size=32, class = "text-input", placeholder = "Email")}}<br /><br />
-                <img src="../static/images/key.png" class="sign-up-icon">
+                <img src="../static/images/key.svg" class="sign-up-icon">
                 {{signup_form.password(size=32, class = "text-input", placeholder = "Password")}}
                 <p class="nav-item px-1" style="color: #999999 !important; font-size:15px">(6 or more characters)</p>
-                <img src="../static/images/key.png" class="sign-up-icon">
+                <img src="../static/images/key.svg" class="sign-up-icon">
                 {{signup_form.confirm_password(size=32, class = "text-input", placeholder = "Confirm Password")}}<br /><br />
-                <img src="../static/images/building.png" class="sign-up-icon">
-                {{signup_form.city(size=32, class = "text-input", placeholder = "City")}}<br /><br />
 
                 {% if usererror %}
                     <p style="color:red;">Username already exists</p>
@@ -30,7 +28,7 @@
                     <p style="color:red;">Email already in use</p>
 
                 {% endif %}
-                {{signup_form.submit(class="btn nav-button flask-buttonrect", style="margin:auto !important;")}}<br />
+                {{signup_form.submit(class="btn nav-button flask-buttonrect sign-up-btn", style="margin:auto !important;")}}<br />
             </form>
         </div>
     </main>
