@@ -1,0 +1,42 @@
+URLs (Feel free to edit as necessary)
+/home (page) yes
+
+/about (page) yes
+
+/upload (page) yes
+GET - gets the HTML of the page with form for uploading the image
+POST - uploads the image
+
+/forum (page) yes
+
+/contact (page) yes
+
+/login (page with form) yes
+GET - gets the HTML of the page with login form
+POST - logs in user, sets session cookie in response
+
+/signup (page) yes
+GET - gets the HTML of the page with signup form
+POST - signs up user
+
+/findrepairs (page)
+
+
+/api/auth/token/ (generate token for login information)
+/api/auth/signup/ (add users)
+/api/auth/login/ (checks if user exists)
+/api/scans/ with search arguments in a JSON object
+latitude (not required)
+longitude (not required)
+range (not required, defaults to 1 mile)
+userid (not required)
+name (not required)
+urgency (not required) (Urgent, KindOfUrgent, NotUrgent)
+rating (not required)
+status (not required) (Resolved, UnResolved)
+date (not required) (this year, this month, this week, this day, custom range)
+id (not required)
+/api/scans/add/
+/api/scans/deletescan/:id
+/api/scans/updatescan/:id
+/api/forgotpass/
