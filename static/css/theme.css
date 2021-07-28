@@ -20,7 +20,6 @@
     letter-spacing: -0.017em;
 }
 
-
 .navbar-brand {
     color: #FFFFFF !important;
     font-weight: 700 !important;
@@ -140,6 +139,40 @@
     user-select: none;
     max-width: 532px;
     max-height: 880px;
+}
+
+.sign-up-grad {
+    background: linear-gradient(113.65deg, #C9E3B5 9.64%, rgba(255, 255, 255, 0.75) 52.21%, #64919F 106.55%);
+    box-shadow: 0px 8px 56px rgba(0, 0, 0, 0.25);
+    border-radius: 20.5px;
+}
+
+.sign-up-heading {
+    text-align:center;
+    margin-top:5px;
+    color:black !important;
+}
+
+.sign-up-icon {
+    width:25px;
+    object-fit:cover;
+}
+
+.sign-up-btn {
+    background: linear-gradient(92.74deg, #A2C08B -2.29%, #ACC9AE 62.72%, #64919F 104.69%);
+    border-radius:4px;
+    width: 20% !important;
+    min-width: 85px;
+}
+
+.text-input {
+    width: calc(100% - 10px);
+    max-width: 400px;
+    background-color: transparent;
+    border:none;
+    outline:none;
+    border-bottom: 4px solid #97B88D;
+    opacity:0.5;
 }
 
 .column-header {
