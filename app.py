@@ -334,7 +334,8 @@ def api_find_forum():
             "url": '/static/images/scans/'+r['filename'],
             "scandate": r['scandate'],
             "position": r['position'],
-            "filename": r['filename']
+            "filename": r['filename'],
+            "upvote":   r['upvote']
         }
         repairs.append(scan)
     return {
