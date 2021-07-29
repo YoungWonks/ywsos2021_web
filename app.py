@@ -291,7 +291,10 @@ def api_find(userId):
             "url": '/static/images/scans/'+r['filename'],
             "scandate": r['scandate'],
             "position": r['position'],
-            "filename": r['filename']
+            "filename": r['filename'],
+            "upvote":   r['upvote'],
+            "title":    r['title'],
+            "descript": r['des']
         }
         repairs.append(scan)
     return {
@@ -329,7 +332,10 @@ def api_find_all():
             "url": '/static/images/scans/'+r['filename'],
             "scandate": r['scandate'],
             "position": r['position'],
-            "filename": r['filename']
+            "filename": r['filename'],
+            "upvote":   r['upvote'],
+            "title":    r['title'],
+            "descript": r['des']
         }
         repairs.append(scan)
     return {
@@ -346,7 +352,10 @@ def api_find_forum():
             "url": '/static/images/scans/'+r['filename'],
             "scandate": r['scandate'],
             "position": r['position'],
-            "filename": r['filename']
+            "filename": r['filename'],
+            "upvote":   r['upvote'],
+            "title":    r['title'],
+            "descript": r['des']
         }
         repairs.append(scan)
     return {
@@ -371,6 +380,8 @@ def api_add(userId):
     lat = float(request.form.get('lat'))
     long = float(request.form.get('long'))
     filename = str(uuid4())
+    title = request.form.get('title')
+    des = request.form.get('des', None)
     f.save(os.path.join('static/images/scans/', filename))
     dt_now = datetime.utcnow()
     scans.insert_one({
@@ -387,6 +398,8 @@ def api_add(userId):
         },
         "upvote": 0,
         "date": datetime.utcnow(),
+        "title": title,
+        "des": des
     })
     return {"error": "0", "message": "Succesful",}
 

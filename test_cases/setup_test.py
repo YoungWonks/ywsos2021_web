@@ -22,10 +22,10 @@ if res["error"] == "0":
     res = json.loads(requests.post('http://127.0.0.1:5000/api/wel', headers=headers).content.decode())
     print("Welcome :", res)
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans/add', headers=headers, 
-        files={'image': open('images/scan.jfif', 'rb')}, data={'lat': 20.25001, 'long': -80.98001}).content.decode())
+        files={'image': open('images/scan.jfif', 'rb')}, data={'lat': 20.25001, 'long': -80.98001, 'title': 'Beach'}).content.decode())
     print("Welcome :", res)
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans/add', headers=headers, 
-        files={'image': open('images/scan2.jfif', 'rb')}, data={'lat': 20.25, 'long': -80.98}).content.decode())
+        files={'image': open('images/scan2.jfif', 'rb')}, data={'lat': 20.25, 'long': -80.98, 'title': 'Crack in sidewalk'}).content.decode())
     print("Welcome :", res)
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans', headers=headers,
         data={'lat': 20.25, 'long': -80.98, 'range': 0.0000001}).content.decode())
