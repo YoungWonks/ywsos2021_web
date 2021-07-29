@@ -92,7 +92,7 @@ class SignupForm(FlaskForm):
     password = PasswordField("Password :", validators = [DataRequired()])
     confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo('password')])
     city = StringField("City :")
-    submit = SubmitField("Sign Up")
+    submit = SubmitField("Register")
 ########################################################################
 #########################Routes#########################################
 ########################################################################

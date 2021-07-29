@@ -14,9 +14,7 @@
     background-size: cover;
     height: 100%;
     min-height: 2653px !important;
-    max-width: 1266px;
     margin: auto;
-    border-radius: 2em;
     letter-spacing: -0.017em;
 }
 
@@ -147,6 +145,13 @@
     border-radius: 20.5px;
 }
 
+.sign-up-wrapper {
+    background: linear-gradient(111.8deg, #7C9882 1.6%, #ACC9AE 48.78%, #4F8191 97.51%);
+    padding: 6px;
+    position: relative;
+    border-radius: 20.5px;
+}
+
 .sign-up-heading {
     text-align:center;
     margin-top:5px;
@@ -154,6 +159,7 @@
 }
 
 .sign-up-icon {
+    position: relative;
     width:25px;
     object-fit:cover;
 }
@@ -163,16 +169,40 @@
     border-radius:4px;
     width: 20% !important;
     min-width: 85px;
+    box-shadow: none !important;
+    font-family: Inter !important;
+    font-weight: 500 !important;
+    color: #F3F8EF !important;
+    width: 150px !important;
+}
+
+.sign-up-btn:focus {
+    text-decoration: none !important;
+    box-shadow: none !important;
+    color: #F3F8EF !important;
 }
 
 .text-input {
-    width: calc(100% - 10px);
+    --width: calc(100% - 10px);
+    width: var(--width);
     max-width: 400px;
     background-color: transparent;
     border:none;
     outline:none;
-    border-bottom: 4px solid #97B88D;
+    /*border-bottom: 6px solid #97B88D;*/
     opacity:0.5;
+}
+
+.text-border {
+    width: var(--width);
+    display: block;
+    height: 3px;
+    background: linear-gradient(90deg, #97B88D 0%, #ACC9AE 44.66%, #649197 100%);
+}
+
+.text-wrapper {
+    display: inline-block;
+    width: var(--width);
 }
 
 .column-header {
