@@ -17,9 +17,21 @@ import pytz
 from werkzeug.utils import secure_filename
 from uuid import uuid4
 from geopy.geocoders import Nominatim
+from flask_minify import minify
+import rcssmin
 
 app = Flask(__name__)
+minify(app=app,html=True,js=True,cssless=True,static=True)
 app.config.from_object(Config)
+
+css_map = {"static/css/theme.css": "static/css/theme.min.css"}
+def minify_css(css_map):
+
+
+    for source, dest in css_map.items():
+        with open(source, "r") as infile:
+            with open(dest, "w") as outfile:
+                outfile.write(rcssmin.cssmin(infile.read()))
 
 mongo = PyMongo(app)
 
@@ -395,4 +407,5 @@ def api_welcome(userId):
     return jsonify(return_data)
 
 if __name__ == "__main__":
+    minify_css(css_map)
     app.run(debug = True)
