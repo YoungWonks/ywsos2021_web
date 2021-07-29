@@ -281,7 +281,7 @@ def api_find(userId):
             "position": r['position'],
             "filename": r['filename'],
             "upvote":   r['upvote'],
-            "title":    r['title']
+            "title":    r['title'],
             "descript": r['des']
         }
         repairs.append(scan)
@@ -322,7 +322,7 @@ def api_find_all():
             "position": r['position'],
             "filename": r['filename'],
             "upvote":   r['upvote'],
-            "title":    r['title']
+            "title":    r['title'],
             "descript": r['des']
         }
         repairs.append(scan)
@@ -342,7 +342,7 @@ def api_find_forum():
             "position": r['position'],
             "filename": r['filename'],
             "upvote":   r['upvote'],
-            "title":    r['title']
+            "title":    r['title'],
             "descript": r['des']
         }
         repairs.append(scan)

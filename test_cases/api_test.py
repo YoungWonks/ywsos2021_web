@@ -32,6 +32,7 @@ if res["error"] == "0":
         image = cv2.imread('images/read.jfif')
         cv2.imshow("Scans", image)
         print("Location is {}, {}".format(repair['position']['lat'], repair['position']['long']))
+        print("Title is {}".format(repair['title']))
         cv2.waitKey()
     print('All of them')
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans/all', headers=headers,
@@ -45,6 +46,7 @@ if res["error"] == "0":
         image = cv2.imread('images/read.jfif')
         cv2.imshow("Scans", image)
         print("Location is {}, {}".format(repair['position']['lat'], repair['position']['long']))
+        print("Title is {}".format(repair['title']))
         cv2.waitKey()
     print('With vote')
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans/forum', headers=headers).content.decode())
@@ -57,4 +59,5 @@ if res["error"] == "0":
         image = cv2.imread('images/read.jfif')
         cv2.imshow("Scans", image)
         print("Location is {}, {}".format(repair['position']['lat'], repair['position']['long']))
+        print("Title is {}".format(repair['title']))
         cv2.waitKey()
