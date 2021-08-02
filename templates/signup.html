@@ -42,6 +42,12 @@
                     <span class="text-border"></span>
                 </span>
                 <br /><br />
+                <img src="../static/images/building.png" class="sign-up-icon">
+                <span class="text-wrapper">
+                    {{signup_form.city(size=32, class = "text-input", placeholder = "City")}}
+                    <span class="text-border"></span>
+                </span>
+                <br /><br />
 
                 {% if usererror %}
                     <p style="color:red;">Username already exists</p>
