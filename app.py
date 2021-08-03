@@ -150,7 +150,8 @@ def login():
         result = users.find_one({
             'username': login_form.username.data,
         })
-        if result != None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
+        print(login_form.username.data,"this is username")
+        if result is not None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
             session['logged_in'] = True
             session['logged_in_id'] = str(result['_id'])
             return redirect('/main')
