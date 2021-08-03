@@ -54,7 +54,9 @@
                 {% endif %}
                 {% if emailerror %}
                     <p style="color:red;">Email already in use</p>
-
+                {% endif %}
+                {% if notallowed %}
+                    <p style="color: red;">One or more of the fields is incorrect</p>
                 {% endif %}
                 {{signup_form.submit(class="btn nav-button flask-buttonrect sign-up-btn", style="margin:auto !important;")}}<br />
             </form>
