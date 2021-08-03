@@ -258,9 +258,9 @@ def api_signup():
 @token_required
 def api_find(userId):
     scans = db['scans']
-    lat = float(request.form.get('lat', 0))
-    long = float(request.form.get('long', 0))
-    radius = float(request.form.get('range', None))
+    lat = float(request.get_json().get('lat', 0))
+    long = float(request.get_json().get('long', 0))
+    radius = float(request.get_json().get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
     search = [
