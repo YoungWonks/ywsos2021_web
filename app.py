@@ -150,7 +150,7 @@ def login():
         result = users.find_one({
             'username': login_form.username.data,
         })
-        if result != None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
+        if result is not None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
             session['logged_in'] = True
             session['logged_in_id'] = str(result['_id'])
             return redirect('/main')
@@ -163,18 +163,19 @@ def signup():
     signup_form = SignupForm()
     usererror = False
     emailerror = False
+    notallowed = False
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
-        geolocator = Nominatim(user_agent="Your_Name")
-        location = geolocator.geocode(signup_form.city.data)
+        # geolocator = Nominatim(user_agent="Your_Name")
+        # location = geolocator.geocode(signup_form.city.data)
         user = {
             "username": signup_form.username.data,
             "email": signup_form.email.data,
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
             "signup_date": dt_now,
-            "latitude": location.latitude,
-            "longitude": location.longitude
+            # "latitude": location.latitude,
+            # "longitude": location.longitude
         }
         if users.find_one({"username":user["username"]}) is not None:
             usererror = True
@@ -185,7 +186,9 @@ def signup():
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
             return redirect('/main')
-    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror)
+    elif signup_form.is_submitted():
+        notallowed = True
+    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror,notallowed=notallowed)
 
 @app.route('/logout')
 @login_required
