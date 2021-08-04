@@ -34,6 +34,7 @@
                     <li class="nav-item px-1"><a href="/forum" class="nav-link">Forum</a></li>
                     <li class="nav-item px-1"><a href="/contact" class="nav-link">Contact</a></li>
                 </ul>
+                {% block buttons %}
                 {% if session['logged_in'] %}
                     <a class="btn nav-button" type="button" id="account" href="/main"><span id="accounttext">My Account</span></a>
                     <div style="display: inline-block; width: 1em;"></div>
@@ -45,6 +46,7 @@
                         <div class="buttonrect"><p>Sign Up!</p></div>
                     </a>
                 {% endif %}
+                {% endblock %}
 
             </span>
 
