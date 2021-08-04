@@ -150,7 +150,7 @@ def login():
         result = users.find_one({
             'username': login_form.username.data,
         })
-        if result != None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
+        if result is not None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
             session['logged_in'] = True
             session['logged_in_id'] = str(result['_id'])
             return redirect('/main')
@@ -163,6 +163,7 @@ def signup():
     signup_form = SignupForm()
     usererror = False
     emailerror = False
+    notallowed = False
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
@@ -185,7 +186,9 @@ def signup():
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
             return redirect('/main')
-    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror)
+    elif signup_form.is_submitted():
+        notallowed = True
+    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror,notallowed=notallowed)
 
 @app.route('/logout')
 @login_required
