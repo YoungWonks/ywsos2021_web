@@ -304,9 +304,9 @@ def api_find(userId):
 @app.route('/api/scans/all', methods=["POST"])
 def api_find_all():
     scans = db['scans']
-    lat = float(request.form.get('lat', 0))
-    long = float(request.form.get('long', 0))
-    radius = float(request.form.get('range', None))
+    lat = float(request.get_json().get('lat', 0))
+    long = float(request.get_json().get('long', 0))
+    radius = float(request.get_json().get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
     search = [
@@ -377,8 +377,8 @@ def api_vote(userId):
 def api_add(userId):
     scans = db['scans']
     f = request.files['image']
-    lat = float(request.form.get('lat'))
-    long = float(request.form.get('long'))
+    lat = float(request.get_json().get('lat'))
+    long = float(request.get_json().get('long'))
     filename = str(uuid4())
     title = request.form.get('title')
     des = request.form.get('des', None)
