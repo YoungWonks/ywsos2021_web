@@ -166,15 +166,15 @@ def signup():
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
-        geolocator = Nominatim(user_agent="Your_Name")
-        location = geolocator.geocode(signup_form.city.data)
+        # geolocator = Nominatim(user_agent="Your_Name")
+        # location = geolocator.geocode(signup_form.city.data)
         user = {
             "username": signup_form.username.data,
             "email": signup_form.email.data,
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
             "signup_date": dt_now,
-            "latitude": location.latitude,
-            "longitude": location.longitude
+            # "latitude": location.latitude,
+            # "longitude": location.longitude
         }
         if users.find_one({"username":user["username"]}) is not None:
             usererror = True
