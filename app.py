@@ -254,7 +254,7 @@ def api_signup():
     }
     return jsonify(return_data)
 
-@app.route('/api/scans', methods=["POST"])
+@app.route('/api/scans', methods=["GET","POST"])
 @token_required
 def api_find(userId):
     scans = db['scans']
