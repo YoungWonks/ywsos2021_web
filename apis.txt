@@ -39,4 +39,4 @@ id (not required)
 /api/scans/add/
 /api/scans/deletescan/:id
 /api/scans/updatescan/:id
-/api/forgotpass/
+/api/forgotpass/ 
