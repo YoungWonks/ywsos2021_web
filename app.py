@@ -19,6 +19,9 @@ from uuid import uuid4
 from geopy.geocoders import Nominatim
 from flask_minify import minify
 import rcssmin
+import re
+
+regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 app = Flask(__name__)
 minify(app=app,html=True,js=True,cssless=True,static=True)
@@ -160,6 +163,7 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    global regex
     signup_form = SignupForm()
     usererror = False
     emailerror = False
@@ -180,6 +184,8 @@ def signup():
         if users.find_one({"username":user["username"]}) is not None:
             usererror = True
         elif users.find_one({"email":user["email"]}) is not None:
+            emailerror = True
+        elif re.match(regex, user["email"]) is False:
             emailerror = True
         else:
             users.insert_one(user)
