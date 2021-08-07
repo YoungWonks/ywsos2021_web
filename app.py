@@ -183,9 +183,7 @@ def signup():
         }
         if users.find_one({"username":user["username"]}) is not None:
             usererror = True
-        elif users.find_one({"email":user["email"]}) is not None:
-            emailerror = True
-        elif re.match(regex, user["email"]) is False:
+        elif users.find_one({"email":user["email"]}) is not None or re.match(regex, user["email"]) is False:
             emailerror = True
         else:
             users.insert_one(user)
