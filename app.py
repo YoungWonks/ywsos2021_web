@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request, redirect, session
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, FileField
 from wtforms.validators import DataRequired, Email, EqualTo
 import pymongo
 import os
@@ -26,6 +26,7 @@ regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 app = Flask(__name__)
 minify(app=app,html=True,js=True,cssless=True,static=True)
 app.config.from_object(Config)
+
 
 css_map = {"static/css/theme.css": "static/css/theme.min.css"}
 def minify_css(css_map):
@@ -108,6 +109,10 @@ class SignupForm(FlaskForm):
     confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo('password')])
     city = StringField("City :")
     submit = SubmitField("Register")
+
+class UploadForm(FlaskForm):
+    file = FileField("Upload File")
+    submit = SubmitField("Submit")
 ########################################################################
 #########################Routes#########################################
 ########################################################################
@@ -119,9 +124,15 @@ def about():
 def home():
     return redirect("/about")
 
-@app.route('/upload')
+@app.route('/upload', methods=["GET","POST"])
+# @login_required
 def upload():
-    return render_template('upload.html')
+    # if session["logged_in"] is not True:
+    #     return redirect("/login")
+    upload_form = UploadForm()
+    if upload_form.validate_on_submit():
+        print("hello")
+    return render_template('upload.html',upload_form=upload_form, redirect=redirect)
 
 @app.route('/forum')
 def forum():
@@ -197,7 +208,7 @@ def signup():
 @app.route('/logout')
 @login_required
 def logout(u_is):
-    session['logged_in'] = False;
+    session['logged_in'] = False
     session['logged_in_id'] = ''
     return redirect('/')
 
