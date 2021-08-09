@@ -30,8 +30,8 @@ if res["error"] == "0":
         json={'position': [20.25, -80.98], 'title': 'Crack in sidewalk', 'filename': res['filename']}).content.decode())
     print("Welcome :", res)
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans', headers=headers,
-        json={'position': [20.25, -80.98], 'range': 0.0000001}).content.decode())
+        json={'position': [20.25, -80.98], 'range': 1}).content.decode())
     print("Welcome :", res)
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans/vote', headers=headers, 
-        json={'scan_id': res['repairs'][0]['id']}).content.decode())
+        json={'scan_id': res['repairs'][1]['id']}).content.decode())
     print("Welcome :", res)
