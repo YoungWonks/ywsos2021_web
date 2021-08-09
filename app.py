@@ -99,7 +99,7 @@ def create_rep(r):
         "url":      '/static/images/scans/'+r['filename'],
         "scandate": r['scandate'],
         "position": r['position'],
-        "id":       r['_id'],
+        "id":       str(r['_id']),
         "upvote":   r['upvote'],
         "title":    r['title'],
         "urgency":  r["urgency"]
@@ -191,7 +191,7 @@ def signup():
             "email": signup_form.email.data,
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
             "signup_date": dt_now,
-            "voted_scans": [],
+            "vote_scans": [],
         }
         if users.find_one({"username":user["username"]}) is not None:
             usererror = True
@@ -266,7 +266,7 @@ def api_signup():
         "email": email,
         "password_hash": pbkdf2_sha256.hash(password),
         "signup_date": dt_now1,
-        "voted_scans": [],
+        "vote_scans": [],
     })
     return_data = {
         "error": "0",
@@ -278,7 +278,7 @@ def api_signup():
 @token_required
 def api_find(userId):
     scans = db['scans']
-    position = float(request.get_json().get('position', [None, None]))
+    position = request.get_json().get('position', [None, None])
     lat = position[0] if position[0] else 0
     long = position[1] if position[1] else 0
     radius = float(request.get_json().get('range', None))
@@ -323,7 +323,7 @@ def api_find(userId):
 @app.route('/api/scans/all', methods=["POST"])
 def api_find_all():
     scans = db['scans']
-    position = float(request.get_json().get('position', [None, None]))
+    position = request.get_json().get('position', [None, None])
     lat = position[0] if position[0] else 0
     long = position[1] if position[1] else 0
     radius = float(request.get_json().get('range', None))
@@ -376,8 +376,9 @@ def api_find_forum():
 @token_required
 def api_vote(userId):
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
-    scan = db.scan.find({'_id': id_scan})
-    id_scan = request.get_json().get("scan_id")
+    id_scan = bson.ObjectId(request.get_json().get("scan_id"))
+    scan = db.scans.find_one({'_id': id_scan})
+    print(user, scan)
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = user["username"]
@@ -388,8 +389,8 @@ def api_vote(userId):
     else:
         user_list.append(user_name)
         scan_list.append(id_scan)
-        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}}})
-    db.users.update({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}}}) 
+        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
+    db.users.update({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}}) 
     return {
         "error": "0",
         "message": "Successful",
@@ -408,8 +409,9 @@ def api_upload(userId):
 @token_required
 def api_add(userId):
     scans = db['scans']
-    lat = float(request.get_json().get('lat'))
-    long = float(request.get_json().get('long'))
+    position = request.get_json().get('position')
+    lat = position[0]
+    long = position[1]
     filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)
