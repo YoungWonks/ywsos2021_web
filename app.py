@@ -379,12 +379,17 @@ def api_vote(userId):
     scan = db.scan.find({'_id': id_scan})
     id_scan = request.get_json().get("scan_id")
     user_list = scan["vote_users"]
-    if user['username'] in user_list:
-        user_list.remove(user['username'])
+    scan_list = user["vote_scans"]
+    user_name = user["username"]
+    if user_name in user_list:
+        user_list.remove(user_name)
+        scan_list.remove(id_scan)
         db.scans.update({'_id': id_scan}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
     else:
-        user_list.append(user['username'])
+        user_list.append(user_name)
+        scan_list.append(id_scan)
         db.scans.update({'_id': id_scan}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}}})
+    db.users.update({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}}}) 
     return {
         "error": "0",
         "message": "Successful",
