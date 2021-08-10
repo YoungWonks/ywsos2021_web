@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request, redirect, session
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, FileField
 from wtforms.validators import DataRequired, Email, EqualTo
 import pymongo
 import os
@@ -26,6 +26,7 @@ regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 app = Flask(__name__)
 minify(app=app,html=True,js=True,cssless=True,static=True)
 app.config.from_object(Config)
+
 
 css_map = {"static/css/theme.css": "static/css/theme.min.css"}
 def minify_css(css_map):
@@ -108,6 +109,10 @@ class SignupForm(FlaskForm):
     confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo('password')])
     city = StringField("City :")
     submit = SubmitField("Register")
+
+class UploadForm(FlaskForm):
+    file = FileField("Upload File")
+    submit = SubmitField("Submit")
 ########################################################################
 #########################Routes#########################################
 ########################################################################
@@ -119,9 +124,15 @@ def about():
 def home():
     return redirect("/about")
 
-@app.route('/upload')
+@app.route('/upload', methods=["GET","POST"])
+# @login_required
 def upload():
-    return render_template('upload.html')
+    # if session["logged_in"] is not True:
+    #     return redirect("/login")
+    upload_form = UploadForm()
+    if upload_form.validate_on_submit():
+        print("hello")
+    return render_template('upload.html',upload_form=upload_form, redirect=redirect)
 
 @app.route('/forum')
 def forum():
@@ -137,9 +148,9 @@ def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     if request.method == "POST":
-        if request.form.get("changepass"):
+        if request.get_json().get("changepass"):
             pass
-        if request.form.get("deleteacc"):
+        if request.get_json().get("deleteacc"):
             users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
             return redirect("/logout")
     return render_template("main.html", user=user)
@@ -197,7 +208,7 @@ def signup():
 @app.route('/logout')
 @login_required
 def logout(u_is):
-    session['logged_in'] = False;
+    session['logged_in'] = False
     session['logged_in_id'] = ''
     return redirect('/')
 
@@ -215,8 +226,8 @@ def api_index():
 @app.route('/api/auth/token', methods=['POST'])
 def api_login():
     # Get details from post request
-    username = request.form.get('username')
-    password = request.form.get('password')
+    username = request.get_json().get('username')
+    password = request.get_json().get('password')
     users = db['users']
     result = users.find_one({
         'username': username,
@@ -244,9 +255,9 @@ def api_login():
 @app.route('/api/auth/signup', methods=['POST'])
 def api_signup():
     # Get details from post request
-    username = request.form.get('username')
-    email = request.form.get('email')
-    password = request.form.get('password')
+    username = request.get_json().get('username')
+    email = request.get_json().get('email')
+    password = request.get_json().get('password')
     users = db['users']
     dt_now1 = datetime.utcnow()
     users.insert_one({
@@ -372,7 +383,7 @@ def api_find_forum():
 @app.route('/api/scans/vote', methods=["POST"])
 @token_required
 def api_vote(userId):
-    name = request.form.get("name")
+    name = request.get_json().get("name")
     db.scans.update({'filename': name}, {'$inc': {'upvote': 1}})
     return {
         "error": "0",
@@ -387,8 +398,8 @@ def api_add(userId):
     lat = float(request.get_json().get('lat'))
     long = float(request.get_json().get('long'))
     filename = str(uuid4())
-    title = request.form.get('title')
-    des = request.form.get('des', None)
+    title = request.get_json().get('title')
+    des = request.get_json().get('des', None)
     f.save(os.path.join('static/images/scans/', filename))
     dt_now = datetime.utcnow()
     scans.insert_one({
