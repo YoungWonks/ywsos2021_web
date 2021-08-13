@@ -29,14 +29,16 @@ POST - signs up user
 latitude (not required)
 longitude (not required)
 range (not required, defaults to 1 mile)
-userid (not required)
-name (not required)
 urgency (not required) (Urgent, KindOfUrgent, NotUrgent)
 rating (not required)
 status (not required) (Resolved, UnResolved)
 date (not required) (this year, this month, this week, this day, custom range)
 id (not required)
+/api/scans/upload/
 /api/scans/add/
+/api/scans/all/
+/api/scans/forum/
+/api/scans/vote/
 /api/scans/deletescan/:id
 /api/scans/updatescan/:id
 /api/forgotpass/ 

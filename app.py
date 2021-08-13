@@ -92,6 +92,21 @@ def login_required(something):
             return redirect('/')
     return wrap_login
 
+#########Scan representation############################################
+def create_rep(r):
+    reps =  {
+        "url":      '/static/images/scans/'+r['filename'],
+        "scandate": r['scandate'],
+        "position": r['position'],
+        "id":       str(r['_id']),
+        "upvote":   r['upvote'],
+        "title":    r['title'],
+        "urgency":  r["urgency"]
+    }
+    if r["des"]:
+        reps["description"] = r["des"]
+    return reps
+
 ########################################################################
 #########################Forms##########################################
 ########################################################################
@@ -209,15 +224,12 @@ def signup():
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
-        # geolocator = Nominatim(user_agent="Your_Name")
-        # location = geolocator.geocode(signup_form.city.data)
         user = {
             "username": signup_form.username.data,
             "email": signup_form.email.data,
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
             "signup_date": dt_now,
-            # "latitude": location.latitude,
-            # "longitude": location.longitude
+            "vote_scans": [],
         }
         if users.find_one({"username":user["username"]}) is not None:
             usererror = True
@@ -269,7 +281,7 @@ def api_login():
             "error": "0",
             "message": "Successful",
             "token": token,
-            "Elapse_time": f"{timeLimit}"
+            "Elapse_time": f"{timeLimit}",
         }
         return jsonify(return_data)
     # IF not correct credentials, give error reponse
@@ -291,7 +303,8 @@ def api_signup():
         "username": username,
         "email": email,
         "password_hash": pbkdf2_sha256.hash(password),
-        "signup_date": dt_now1
+        "signup_date": dt_now1,
+        "vote_scans": [],
     })
     return_data = {
         "error": "0",
@@ -303,8 +316,9 @@ def api_signup():
 @token_required
 def api_find(userId):
     scans = db['scans']
-    lat = float(request.get_json().get('lat', 0))
-    long = float(request.get_json().get('long', 0))
+    position = request.get_json().get('position', [None, None])
+    lat = position[0] if position[0] else 0
+    long = position[1] if position[1] else 0
     radius = float(request.get_json().get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
@@ -326,21 +340,19 @@ def api_find(userId):
                 'dist': 1,
             }
         }
-    ]
+    ]        
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
+    elif notposition[0]:
+        search = [search[1], {
+            '$sort': {
+                'vote': -1,
+            }
+        }]
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = {
-            "url": '/static/images/scans/'+r['filename'],
-            "scandate": r['scandate'],
-            "position": r['position'],
-            "filename": r['filename'],
-            "upvote":   r['upvote'],
-            "title":    r['title'],
-            "descript": r['des']
-        }
+        scan = create_rep(r)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -349,8 +361,9 @@ def api_find(userId):
 @app.route('/api/scans/all', methods=["POST"])
 def api_find_all():
     scans = db['scans']
-    lat = float(request.get_json().get('lat', 0))
-    long = float(request.get_json().get('long', 0))
+    position = request.get_json().get('position', [None, None])
+    lat = position[0] if position[0] else 0
+    long = position[1] if position[1] else 0
     radius = float(request.get_json().get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
@@ -370,18 +383,16 @@ def api_find_all():
     ]
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
+    elif notposition[0]:
+        search = [{
+            '$sort': {
+                'vote': -1,
+            }
+        }]
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = {
-            "url": '/static/images/scans/'+r['filename'],
-            "scandate": r['scandate'],
-            "position": r['position'],
-            "filename": r['filename'],
-            "upvote":   r['upvote'],
-            "title":    r['title'],
-            "descript": r['des']
-        }
+        scan = create_rep(r)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -393,15 +404,7 @@ def api_find_forum():
     result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
-        scan = {
-            "url": '/static/images/scans/'+r['filename'],
-            "scandate": r['scandate'],
-            "position": r['position'],
-            "filename": r['filename'],
-            "upvote":   r['upvote'],
-            "title":    r['title'],
-            "descript": r['des']
-        }
+        scan = create_rep(r)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -410,24 +413,47 @@ def api_find_forum():
 @app.route('/api/scans/vote', methods=["POST"])
 @token_required
 def api_vote(userId):
-    name = request.get_json().get("name")
-    db.scans.update({'filename': name}, {'$inc': {'upvote': 1}})
+    user = db.users.find_one({'_id': bson.ObjectId(userId)})
+    id_scan = bson.ObjectId(request.get_json().get("scan_id"))
+    scan = db.scans.find_one({'_id': id_scan})
+    print(user, scan)
+    user_list = scan["vote_users"]
+    scan_list = user["vote_scans"]
+    user_name = user["username"]
+    if user_name in user_list:
+        user_list.remove(user_name)
+        scan_list.remove(id_scan)
+        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
+    else:
+        user_list.append(user_name)
+        scan_list.append(id_scan)
+        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
+    db.users.update({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}}) 
     return {
         "error": "0",
         "message": "Successful",
     }
 
+@app.route('/api/scans/upload', methods=["POST"])
+@token_required
+def api_upload(userId):
+    f = request.files['image']
+    filename = str(uuid4())
+    f.save(os.path.join('static/images/scans/', filename))
+    return {"error": "0", "filename":filename,}
+
+
 @app.route('/api/scans/add', methods=["POST"])
 @token_required
 def api_add(userId):
     scans = db['scans']
-    f = request.files['image']
-    lat = float(request.get_json().get('lat'))
-    long = float(request.get_json().get('long'))
-    filename = str(uuid4())
+    position = request.get_json().get('position')
+    lat = position[0]
+    long = position[1]
+    filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)
-    f.save(os.path.join('static/images/scans/', filename))
+    urgency = request.get_json().get('urgency', 0)
     dt_now = datetime.utcnow()
     scans.insert_one({
         "u_id": userId,
@@ -444,7 +470,9 @@ def api_add(userId):
         "upvote": 0,
         "date": datetime.utcnow(),
         "title": title,
-        "des": des
+        "des": des,
+        "urgency": urgency,
+        "vote_users": [],
     })
     return {"error": "0", "message": "Succesful",}
 
