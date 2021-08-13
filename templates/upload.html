@@ -7,7 +7,21 @@
         <a href="/login" class="btn" style="padding: 0 !important;"><div class="buttonrect" style="width: 7em !important;"><p>Log in here</p></div></a>
     {% else %}
     <form action="/upload" enctype="multipart/form-data" method="post">
-        {{ upload_form.file }}
+        {{ upload_form.hidden_tag() }}
+        {{ upload_form.title.label(size=32) }}
+        {{ upload_form.title }}
+        <br>
+        {{ upload_form.des.label(size=32) }}
+        {{ upload_form.des }}
+        <br>
+        {{ upload_form.lat.label(size=32) }}
+        {{ upload_form.lat }}
+        <br>
+        {{ upload_form.des.label(size=32) }}
+        {{ upload_form.long }}
+        <br>
+        {{ upload_form.image(accept = "image/png, image/jpeg") }}
+        <br>
         {{ upload_form.submit }}
     </form>
     {% endif %}

@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request, redirect, session
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField
+from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo
 import pymongo
 import os
@@ -30,8 +30,6 @@ app.config.from_object(Config)
 
 css_map = {"static/css/theme.css": "static/css/theme.min.css"}
 def minify_css(css_map):
-
-
     for source, dest in css_map.items():
         with open(source, "r") as infile:
             with open(dest, "w") as outfile:
@@ -111,7 +109,11 @@ class SignupForm(FlaskForm):
     submit = SubmitField("Register")
 
 class UploadForm(FlaskForm):
-    file = FileField("Upload File")
+    lat = IntegerField("Latitude", validators=[DataRequired()])
+    long = IntegerField("Longitude", validators=[DataRequired()])
+    title = StringField("Scan Title", validators=[DataRequired()])
+    des = TextAreaField("Scan Description", validators=[DataRequired()])
+    image = FileField("Upload File", validators=[DataRequired()])
     submit = SubmitField("Submit")
 ########################################################################
 #########################Routes#########################################
@@ -130,10 +132,38 @@ def upload():
     # if session["logged_in"] is not True:
     #     return redirect("/login")
     upload_form = UploadForm()
-    if upload_form.validate_on_submit():
-        print("hello")
-    return render_template('upload.html',upload_form=upload_form, redirect=redirect)
+    if request.method == "POST":
+        scans = db['scans']
+        f = request.files['image']
 
+        lat = float(request.form.get('lat'))
+        long = float(request.form.get('long'))
+        filename = secure_filename(str(uuid4()))
+        print(f.mimetype)
+        filename = filename + ".jpeg"
+
+        title = request.form.get('title')
+        des = request.form.get('des', None)
+        f.save(os.path.join('static/images/scans/', filename))
+        dt_now = datetime.utcnow()
+        scans.insert_one({
+            "u_id": session['logged_in_id'],
+            "filename": filename,
+            "scandate": dt_now,
+            "position": {
+                "lat": lat,
+                "long": long
+            },
+            "loc": {
+                "type": "Point",
+                "coordinates": [lat, long]
+            },
+            "upvote": 0,
+            "date": datetime.utcnow(),
+            "title": title,
+            "des": des
+        })
+    return render_template('upload.html',upload_form=upload_form)
 @app.route('/forum')
 def forum():
     return render_template('forum.html')
