@@ -118,13 +118,10 @@ class UploadForm(FlaskForm):
 ########################################################################
 #########################Routes#########################################
 ########################################################################
-@app.route('/about')
+@app.route('/')
 def about():
     return render_template('index.html')
 
-@app.route('/')
-def home():
-    return redirect("/about")
 
 @app.route('/upload', methods=["GET","POST"])
 # @login_required

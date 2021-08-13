@@ -18,7 +18,7 @@
     <div class="background container">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-            <a href="/about" class="navbar-brand">
+            <a href="/" class="navbar-brand">
                 GeoRepair
                 <img src="../static/images/hammer.svg" id="hammer" class="d-inline-block align-text-middle">
             </a>
@@ -29,9 +29,13 @@
             </button>
             <span class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item px-1"><a href="/about" class="nav-link">About</a></li>
-                    <li class="nav-item px-1"><a href="/upload" class="nav-link">Upload</a></li>
                     <li class="nav-item px-1"><a href="/forum" class="nav-link">Forum</a></li>
+                    {% if session['logged_in'] %}
+                    <li class="nav-item px-1"><a href="/upload" class="nav-link">Upload</a></li>
+                    {% else %}
+                    <li class="nav-item px-1"><a href="/login" class="nav-link">Upload</a></li>
+                    {% endif %}
+                    <li class="nav-item px-1"><a href="/login" class="nav-link">Gallery</a></li>
                     <li class="nav-item px-1"><a href="/contact" class="nav-link">Contact</a></li>
                 </ul>
                 {% block buttons %}

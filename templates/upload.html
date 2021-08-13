@@ -2,10 +2,6 @@
 {% block title %}Upload{% endblock %}
 
 {% block content %}
-    {% if not session['logged_in'] %}
-        <p style="color: red;">You need to be logged in to upload scans!</p>
-        <a href="/login" class="btn" style="padding: 0 !important;"><div class="buttonrect" style="width: 7em !important;"><p>Log in here</p></div></a>
-    {% else %}
     <form action="/upload" enctype="multipart/form-data" method="post">
         {{ upload_form.hidden_tag() }}
         {{ upload_form.title.label(size=32) }}
@@ -24,5 +20,4 @@
         <br>
         {{ upload_form.submit }}
     </form>
-    {% endif %}
 {% endblock %}
