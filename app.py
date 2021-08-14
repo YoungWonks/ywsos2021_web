@@ -261,6 +261,12 @@ def api_signup():
     password = request.get_json().get('password')
     users = db['users']
     dt_now1 = datetime.utcnow()
+    if users.find_one({"username":user["username"]}) is not None:
+        return {"error": "1", "message": "Username already exists", "cause": "u"}
+    elif users.find_one({"email":user["email"]}) is not None:
+        return {"error": "1", "message": "Email already exists", "cause": "e"}
+    elif re.match(regex, user["email"]) is False:
+        return {"error": "1", "message": "Email is not an email", "cause": "e"}
     users.insert_one({
         "username": username,
         "email": email,
@@ -305,7 +311,7 @@ def api_find(userId):
     ]        
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
-    elif notposition[0]:
+    elif not position[0]:
         search = [search[1], {
             '$sort': {
                 'vote': -1,
@@ -345,7 +351,7 @@ def api_find_all():
     ]
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
-    elif notposition[0]:
+    elif not position[0]:
         search = [{
             '$sort': {
                 'vote': -1,
