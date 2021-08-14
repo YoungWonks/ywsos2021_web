@@ -188,6 +188,10 @@ def forum():
 def contact():
     return render_template('contact.html')
 
+@app.route("/gallery")
+def gallery():
+    return render_template('gallery.html')
+
 @app.route('/main',methods=['GET','POST'])
 @login_required
 def main(user_id):
