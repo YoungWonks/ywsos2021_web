@@ -154,7 +154,6 @@ def upload():
         lat = float(request.form.get('lat'))
         long = float(request.form.get('long'))
         filename = secure_filename(str(uuid4()))
-        print(f.mimetype)
         filename = filename + ".jpeg"
 
         title = request.form.get('title')
