@@ -343,7 +343,7 @@ def api_find(userId):
     ]        
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
-    elif notposition[0]:
+    elif not position[0]:
         search = [search[1], {
             '$sort': {
                 'vote': -1,
@@ -383,7 +383,7 @@ def api_find_all():
     ]
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
-    elif notposition[0]:
+    elif not position[0]:
         search = [{
             '$sort': {
                 'vote': -1,
