@@ -129,6 +129,7 @@ class UploadForm(FlaskForm):
     title = StringField("Scan Title", validators=[DataRequired()])
     des = TextAreaField("Scan Description", validators=[DataRequired()])
     image = FileField("Upload File", validators=[DataRequired()])
+    urgency = IntegerField("Urgency (Scale of 1 to 10)")
     submit = SubmitField("Submit")
 ########################################################################
 #########################Routes#########################################
@@ -148,6 +149,8 @@ def upload():
         scans = db['scans']
         f = request.files['image']
 
+        urgency = request.form.get('urgency', 0)
+        dt_now = datetime.utcnow()
         lat = float(request.form.get('lat'))
         long = float(request.form.get('long'))
         filename = secure_filename(str(uuid4()))
@@ -173,7 +176,9 @@ def upload():
             "upvote": 0,
             "date": datetime.utcnow(),
             "title": title,
-            "des": des
+            "des": des,
+            "urgency": urgency,
+            "vote_users": []
         })
     return render_template('upload.html',upload_form=upload_form)
 @app.route('/forum')

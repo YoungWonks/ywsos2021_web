@@ -16,7 +16,7 @@
 					in the neighborhood have reported falling over this crack. This portion of the sidewalk needs to be repaired!</p> -->
 					<p class="card-text"><i>Location: ([[scan.position.lat]], [[scan.position.long]])</i></p>
 					{% if session['logged_in'] %}
-						<button class="btn btn-primary" @click="vote(scan.filename)">Upvote</button>
+						<button class="btn btn-primary" @click="vote(scan.filename, scan.id)">Upvote</button>
 					{% else %}
 						<b><p>Log in to vote</p></b>
 					{% endif %}
@@ -44,17 +44,16 @@
 						"/api/scans/forum",
 
 						function(res){
-							console.log(res.repairs);
 							app.repairs = res.repairs;
 						}
 					);
 				},
-				vote: function(index) {
-					console.log("Posting");
+				vote: function(index, id) {
+					console.log(id);
 					$.ajax({
 							type: 'POST',
 							url: '/api/scans/vote',
-							data: JSON.stringify({"name": index}),
+							data: JSON.stringify({"name": index, "scan_id": id}),
 							contentType: "application/json",
 							dataType: "json"
 					});
