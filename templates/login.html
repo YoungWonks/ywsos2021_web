@@ -2,20 +2,42 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
+    <style type="text/css">
+        .background {
+            background-image: url("../static/images/formbg.png");
+            min-height: 969px !important;
+        }
+    </style>
     <main>
-        <form method="post" action="/login" novalidate>
-            {{login_form.hidden_tag()}}
+        <br>
+        <h1 class="navbar-brand sign-up-heading">Sign In</h1>
+        <p class="nav-item px-1" style="color:white !important; text-align:center">New to GeoRepair? <a href="/signup" style="color: #4e7e7e; text-decoration:none;">Create an account here!</a></p>
+        <div class="sign-up-wrapper" style="margin:auto; text-align:center; width:50%" >
+            <form method="post" action="/login" novalidate class="sign-up-grad">
+                <br>
+                {{login_form.hidden_tag()}}
 
-            {{login_form.username.label}}<br />
-            {{login_form.username(size=32)}}<br />
-            {{login_form.password.label}}<br />
-            {{login_form.password(size=32)}}<br /><br />
+                <img src="../static/images/person.svg" class="sign-up-icon">
+                <span class="text-wrapper">
+                    {{login_form.username(size=32, class = "text-input", placeholder = "Username")}}
+                    <span class="text-border"></span>
+                </span>
+                <br /><br />
 
-            {% if error %}
-                <p style="color:red;">Incorrect username or password</p>
-            {% endif %}
+                
+                <img src="../static/images/key.svg" class="sign-up-icon">
+                <span class="text-wrapper">
+                    {{login_form.password(size=32, class = "text-input", placeholder = "Password")}}
+                    <span class="text-border"></span>
+                </span>
+                <br /> <br />
 
-            {{login_form.submit(class_="btn nav-button flask-buttonrect")}}
-        </form>
+                {% if error %}
+                    <p style="color:red;">Incorrect username or password</p>
+                {% endif %}
+
+                {{login_form.submit(class="btn nav-button flask-buttonrect sign-up-btn", style="margin:auto !important;")}}<br />
+            </form>
+        </div>
     </main>
 {% endblock %}

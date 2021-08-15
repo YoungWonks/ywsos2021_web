@@ -17,9 +17,24 @@ import pytz
 from werkzeug.utils import secure_filename
 from uuid import uuid4
 from geopy.geocoders import Nominatim
+from flask_minify import minify
+import rcssmin
+import re
+
+regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 app = Flask(__name__)
+minify(app=app,html=True,js=True,cssless=True,static=True)
 app.config.from_object(Config)
+
+css_map = {"static/css/theme.css": "static/css/theme.min.css"}
+def minify_css(css_map):
+
+
+    for source, dest in css_map.items():
+        with open(source, "r") as infile:
+            with open(dest, "w") as outfile:
+                outfile.write(rcssmin.cssmin(infile.read()))
 
 mongo = PyMongo(app)
 
@@ -78,6 +93,21 @@ def login_required(something):
             return redirect('/')
     return wrap_login
 
+#########Scan representation############################################
+def create_rep(r):
+    reps =  {
+        "url":      '/static/images/scans/'+r['filename'],
+        "scandate": r['scandate'],
+        "position": r['position'],
+        "id":       str(r['_id']),
+        "upvote":   r['upvote'],
+        "title":    r['title'],
+        "urgency":  r["urgency"]
+    }
+    if r["des"]:
+        reps["description"] = r["des"]
+    return reps
+
 ########################################################################
 #########################Forms##########################################
 ########################################################################
@@ -92,7 +122,7 @@ class SignupForm(FlaskForm):
     password = PasswordField("Password :", validators = [DataRequired()])
     confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo('password')])
     city = StringField("City :")
-    submit = SubmitField("Sign Up")
+    submit = SubmitField("Register")
 ########################################################################
 #########################Routes#########################################
 ########################################################################
@@ -122,9 +152,9 @@ def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     if request.method == "POST":
-        if request.form.get("changepass"):
+        if request.get_json().get("changepass"):
             pass
-        if request.form.get("deleteacc"):
+        if request.get_json().get("deleteacc"):
             users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
             return redirect("/logout")
     return render_template("main.html", user=user)
@@ -138,7 +168,7 @@ def login():
         result = users.find_one({
             'username': login_form.username.data,
         })
-        if result != None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
+        if result is not None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
             session['logged_in'] = True
             session['logged_in_id'] = str(result['_id'])
             return redirect('/main')
@@ -148,32 +178,33 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    global regex
     signup_form = SignupForm()
     usererror = False
     emailerror = False
+    notallowed = False
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
-        geolocator = Nominatim(user_agent="Your_Name")
-        location = geolocator.geocode(signup_form.city.data)
         user = {
             "username": signup_form.username.data,
             "email": signup_form.email.data,
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
             "signup_date": dt_now,
-            "latitude": location.latitude,
-            "longitude": location.longitude
+            "vote_scans": [],
         }
         if users.find_one({"username":user["username"]}) is not None:
             usererror = True
-        elif users.find_one({"email":user["email"]}) is not None:
+        elif users.find_one({"email":user["email"]}) is not None or re.match(regex, user["email"]) is False:
             emailerror = True
         else:
             users.insert_one(user)
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
             return redirect('/main')
-    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror)
+    elif signup_form.is_submitted():
+        notallowed = True
+    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror,notallowed=notallowed)
 
 @app.route('/logout')
 @login_required
@@ -196,8 +227,8 @@ def api_index():
 @app.route('/api/auth/token', methods=['POST'])
 def api_login():
     # Get details from post request
-    username = request.form.get('username')
-    password = request.form.get('password')
+    username = request.get_json().get('username')
+    password = request.get_json().get('password')
     users = db['users']
     result = users.find_one({
         'username': username,
@@ -212,7 +243,7 @@ def api_login():
             "error": "0",
             "message": "Successful",
             "token": token,
-            "Elapse_time": f"{timeLimit}"
+            "Elapse_time": f"{timeLimit}",
         }
         return jsonify(return_data)
     # IF not correct credentials, give error reponse
@@ -225,16 +256,23 @@ def api_login():
 @app.route('/api/auth/signup', methods=['POST'])
 def api_signup():
     # Get details from post request
-    username = request.form.get('username')
-    email = request.form.get('email')
-    password = request.form.get('password')
+    username = request.get_json().get('username')
+    email = request.get_json().get('email')
+    password = request.get_json().get('password')
     users = db['users']
     dt_now1 = datetime.utcnow()
+    if users.find_one({"username":user["username"]}) is not None:
+        return {"error": "1", "message": "Username already exists", "cause": "u"}
+    elif users.find_one({"email":user["email"]}) is not None:
+        return {"error": "1", "message": "Email already exists", "cause": "e"}
+    elif re.match(regex, user["email"]) is False:
+        return {"error": "1", "message": "Email is not an email", "cause": "e"}
     users.insert_one({
         "username": username,
         "email": email,
         "password_hash": pbkdf2_sha256.hash(password),
-        "signup_date": dt_now1
+        "signup_date": dt_now1,
+        "vote_scans": [],
     })
     return_data = {
         "error": "0",
@@ -242,13 +280,14 @@ def api_signup():
     }
     return jsonify(return_data)
 
-@app.route('/api/scans', methods=["POST"])
+@app.route('/api/scans', methods=["GET","POST"])
 @token_required
 def api_find(userId):
     scans = db['scans']
-    lat = float(request.form.get('lat', 0))
-    long = float(request.form.get('long', 0))
-    radius = float(request.form.get('range', None))
+    position = request.get_json().get('position', [None, None])
+    lat = position[0] if position[0] else 0
+    long = position[1] if position[1] else 0
+    radius = float(request.get_json().get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
     search = [
@@ -269,18 +308,19 @@ def api_find(userId):
                 'dist': 1,
             }
         }
-    ]
+    ]        
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
+    elif not position[0]:
+        search = [search[1], {
+            '$sort': {
+                'vote': -1,
+            }
+        }]
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = {
-            "url": '/static/images/scans/'+r['filename'],
-            "scandate": r['scandate'],
-            "position": r['position'],
-            "filename": r['filename']
-        }
+        scan = create_rep(r)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -289,9 +329,10 @@ def api_find(userId):
 @app.route('/api/scans/all', methods=["POST"])
 def api_find_all():
     scans = db['scans']
-    lat = float(request.form.get('lat', 0))
-    long = float(request.form.get('long', 0))
-    radius = float(request.form.get('range', None))
+    position = request.get_json().get('position', [None, None])
+    lat = position[0] if position[0] else 0
+    long = position[1] if position[1] else 0
+    radius = float(request.get_json().get('range', None))
     scans.create_index([('loc', '2dsphere')])
     result = []
     search = [
@@ -310,15 +351,16 @@ def api_find_all():
     ]
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
+    elif not position[0]:
+        search = [{
+            '$sort': {
+                'vote': -1,
+            }
+        }]
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = {
-            "url": '/static/images/scans/'+r['filename'],
-            "scandate": r['scandate'],
-            "position": r['position'],
-            "filename": r['filename']
-        }
+        scan = create_rep(r)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -330,12 +372,7 @@ def api_find_forum():
     result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
-        scan = {
-            "url": '/static/images/scans/'+r['filename'],
-            "scandate": r['scandate'],
-            "position": r['position'],
-            "filename": r['filename']
-        }
+        scan = create_rep(r)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -344,22 +381,47 @@ def api_find_forum():
 @app.route('/api/scans/vote', methods=["POST"])
 @token_required
 def api_vote(userId):
-    name = request.form.get("name")
-    db.scans.update({'filename': name}, {'$inc': {'upvote': 1}})
+    user = db.users.find_one({'_id': bson.ObjectId(userId)})
+    id_scan = bson.ObjectId(request.get_json().get("scan_id"))
+    scan = db.scans.find_one({'_id': id_scan})
+    print(user, scan)
+    user_list = scan["vote_users"]
+    scan_list = user["vote_scans"]
+    user_name = user["username"]
+    if user_name in user_list:
+        user_list.remove(user_name)
+        scan_list.remove(id_scan)
+        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
+    else:
+        user_list.append(user_name)
+        scan_list.append(id_scan)
+        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
+    db.users.update({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}}) 
     return {
         "error": "0",
         "message": "Successful",
     }
 
+@app.route('/api/scans/upload', methods=["POST"])
+@token_required
+def api_upload(userId):
+    f = request.files['image']
+    filename = str(uuid4())
+    f.save(os.path.join('static/images/scans/', filename))
+    return {"error": "0", "filename":filename,}
+
+
 @app.route('/api/scans/add', methods=["POST"])
 @token_required
 def api_add(userId):
     scans = db['scans']
-    f = request.files['image']
-    lat = float(request.form.get('lat'))
-    long = float(request.form.get('long'))
-    filename = str(uuid4())
-    f.save(os.path.join('static/images/scans/', filename))
+    position = request.get_json().get('position')
+    lat = position[0]
+    long = position[1]
+    filename = request.get_json().get('filename')
+    title = request.get_json().get('title')
+    des = request.get_json().get('des', None)
+    urgency = request.get_json().get('urgency', 0)
     dt_now = datetime.utcnow()
     scans.insert_one({
         "u_id": userId,
@@ -375,6 +437,10 @@ def api_add(userId):
         },
         "upvote": 0,
         "date": datetime.utcnow(),
+        "title": title,
+        "des": des,
+        "urgency": urgency,
+        "vote_users": [],
     })
     return {"error": "0", "message": "Succesful",}
 
@@ -395,4 +461,5 @@ def api_welcome(userId):
     return jsonify(return_data)
 
 if __name__ == "__main__":
+    minify_css(css_map)
     app.run(debug = True)

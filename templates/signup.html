@@ -2,31 +2,55 @@
 {% block title %}Sign-up{% endblock %}
 
 {% block content %}
+    <style type="text/css">
+        .background {
+            background-image: url("../static/images/formbg.png");
+            min-height: 969px !important;
+        }
+    </style>
     <main>
         <br>
         <h1 class="navbar-brand sign-up-heading">Sign Up</h1>
-        <p class="nav-item px-1" style="color:white !important; text-align:center">Already have a GeoRepair account? <a href="/login" style="color: #4e7e7e; text-decoration:none">Log In here!</a></p>
-        <div class="sign-up-grad" style="margin:auto; text-align:center; width:50%" >
-            <form method="post" action="/signup" novalidate>
+        <p class="nav-item px-1" style="color:white !important; text-align:center">Already have a GeoRepair account? <a href="/login" style="color: #4e7e7e; text-decoration:none;">Log In here!</a></p>
+        <div class="sign-up-wrapper" style="margin:auto; text-align:center; width:50%" >
+            <form method="post" action="/signup" novalidate class="sign-up-grad">
                 <br>
                 {{signup_form.hidden_tag()}}
 
                 <img src="../static/images/person.svg" class="sign-up-icon">
-                {{signup_form.username(size=32, class = "text-input", placeholder = "Username")}}<br /><br />
+                <span class="text-wrapper">
+                    {{signup_form.username(size=32, class = "text-input", placeholder = "Username")}}
+                    <span class="text-border"></span>
+                </span>
+                <br /><br />
+
                 <img src="../static/images/email.svg" class="sign-up-icon">
-                {{signup_form.email(size=32, class = "text-input", placeholder = "Email")}}<br /><br />
+                <span class="text-wrapper">
+                    {{signup_form.email(size=32, class = "text-input", placeholder = "Email")}}
+                    <span class="text-border"></span>
+                </span>
+                <br /><br />
                 <img src="../static/images/key.svg" class="sign-up-icon">
-                {{signup_form.password(size=32, class = "text-input", placeholder = "Password")}}
+                <span class="text-wrapper">
+                    {{signup_form.password(size=32, class = "text-input", placeholder = "Password")}}
+                    <span class="text-border"></span>
+                </span>
                 <p class="nav-item px-1" style="color: #999999 !important; font-size:15px">(6 or more characters)</p>
                 <img src="../static/images/key.svg" class="sign-up-icon">
-                {{signup_form.confirm_password(size=32, class = "text-input", placeholder = "Confirm Password")}}<br /><br />
+                <span class="text-wrapper">
+                    {{signup_form.confirm_password(size=32, class = "text-input", placeholder = "Confirm Password")}}
+                    <span class="text-border"></span>
+                </span>
+                <br /><br />
 
                 {% if usererror %}
                     <p style="color:red;">Username already exists</p>
                 {% endif %}
                 {% if emailerror %}
                     <p style="color:red;">Email already in use</p>
-
+                {% endif %}
+                {% if notallowed %}
+                    <p style="color: red;">One or more of the fields is incorrect</p>
                 {% endif %}
                 {{signup_form.submit(class="btn nav-button flask-buttonrect sign-up-btn", style="margin:auto !important;")}}<br />
             </form>
