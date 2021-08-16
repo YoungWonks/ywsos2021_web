@@ -49,7 +49,6 @@
 					);
 				},
 				vote: function(index, id) {
-					console.log(id);
 					$.ajax({
 							type: 'POST',
 							url: '/api/scans/vote',
@@ -57,7 +56,6 @@
 							contentType: "application/json",
 							dataType: "json"
 					});
-					console.log("Posted");
 				}
 			}
 		});

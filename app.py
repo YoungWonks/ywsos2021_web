@@ -453,7 +453,7 @@ def api_vote(userId):
 def api_upload(userId):
     f = request.files['image']
     #for now it is saving as a jpeg but that will be changed
-    filename = str(uuid4())+".jpeg"
+    filename = secure_filename(str(uuid4())+".jpeg")
     f.save(os.path.join('static/images/scans/', filename))
     return {"error": "0", "filename":filename,}
 
@@ -462,9 +462,9 @@ def api_upload(userId):
 @token_required
 def api_add(userId):
     scans = db['scans']
-    # position = request.get_json().get('position')
-    # lat = position[0]
-    # long = position[1]
+    position = request.get_json().get('position')
+    lat = position[0]
+    long = position[1]
     filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)
@@ -474,14 +474,14 @@ def api_add(userId):
         "u_id": userId,
         "filename": filename,
         "scandate": dt_now,
-        # "position": {
-        #     "lat": lat,
-        #     "long": long
-        # },
-        # "loc": {
-        #     "type": "Point",
-        #     "coordinates": [lat, long]
-        # },
+        "position": {
+            "lat": lat,
+            "long": long
+        },
+        "loc": {
+            "type": "Point",
+            "coordinates": [lat, long]
+        },
         "upvote": 0,
         "date": datetime.utcnow(),
         "title": title,

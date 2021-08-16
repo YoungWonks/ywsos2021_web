@@ -3,12 +3,21 @@
 
 {% block content %}
 <div id="uploadForm">
-    <form action="/upload" enctype="multipart/form-data" method="post" @submit="formSubmit">
+    <form enctype="multipart/form-data" @submit="formSubmit">
         <label>Title</label>
         <input type="text" v-model="title">
         <br>
         <label>Description</label>
         <input type="text" v-model="des">
+        <br>
+        <label>Latitude</label>
+        <input type="number" v-model="lat">
+        <br>
+        <label>Longitude</label>
+        <input type="number" v-model="long">
+        <br>
+        <label>Urgency</label>
+        <input type="number" v-model="urgency">
         <br>
         <input type="file" id="file">
         <br>
@@ -25,11 +34,15 @@
 			data() {
                 return {
                     title: '',
-                    des: ''
+                    des: '',
+                    lat: '',
+                    long: '',
+                    urgency: ''
                 }
 			},
 			methods: {
-				formSubmit: function(e) {
+				formSubmit(e) {
+				    var datasubmit = {"title": this.title, "des": this.des, "filename": undefined, "position": [parseInt(this.lat, 10), parseInt(this.long, 10)], "urgency": parseInt(this.urgency,10)};
                     e.preventDefault();
 				    var formdata = new FormData();
 				    var imagefile = document.querySelector("#file");
@@ -44,17 +57,18 @@
                             success: callback
                         });
 					}
-                    function myCallback(result) {
+                    function postData(result) {
+                        datasubmit["filename"] = result.filename;
                         $.ajax({
                             type: 'POST',
                             url: '/api/scans/add',
-                            data: JSON.stringify({"title": this.title, "des": this.des, "filename": result.filename}),
+                            data: JSON.stringify(datasubmit),
                             contentType: "application/json",
                             dataType: "json"
                         });
                     }
-					let image = postImage(myCallback);
-
+					postImage(postData);
+                    $('form').html('<h1>Form submitted</h1>');
 
 				}
 			}
