@@ -2,25 +2,62 @@
 {% block title %}Upload{% endblock %}
 
 {% block content %}
-    <form action="/upload" enctype="multipart/form-data" method="post">
-        {{ upload_form.hidden_tag() }}
-        {{ upload_form.title.label(size=32) }}
-        {{ upload_form.title }}
+<div id="uploadForm">
+    <form action="/upload" enctype="multipart/form-data" method="post" @submit="formSubmit">
+        <label>Title</label>
+        <input type="text" v-model="title">
         <br>
-        {{ upload_form.des.label(size=32) }}
-        {{ upload_form.des }}
+        <label>Description</label>
+        <input type="text" v-model="des">
         <br>
-        {{ upload_form.lat.label(size=32) }}
-        {{ upload_form.lat }}
+        <input type="file" id="file">
         <br>
-        {{ upload_form.long.label(size=32) }}
-        {{ upload_form.long }}
-        <br>
-        {{ upload_form.urgency.label(size=32) }}
-        {{ upload_form.urgency }}
-        <br>
-        {{ upload_form.image(accept = "image/png, image/jpeg") }}
-        <br>
-        {{ upload_form.submit }}
+        <button>Submit</button>
     </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    var app = new Vue({
+			el: "#uploadForm",
+			delimiters: ['[[',']]'],
+			data() {
+                return {
+                    title: '',
+                    des: ''
+                }
+			},
+			methods: {
+				formSubmit: function(e) {
+                    e.preventDefault();
+				    var formdata = new FormData();
+				    var imagefile = document.querySelector("#file");
+				    formdata.append("image", imagefile.files[0]);
+                    function postImage(callback) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/api/scans/upload',
+                            data: formdata,
+                            contentType: false,
+                            processData: false,
+                            success: callback
+                        });
+					}
+                    function myCallback(result) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/api/scans/add',
+                            data: JSON.stringify({"title": this.title, "des": this.des, "filename": result.filename}),
+                            contentType: "application/json",
+                            dataType: "json"
+                        });
+                    }
+					let image = postImage(myCallback);
+
+
+				}
+			}
+		});
+</script>
 {% endblock %}
