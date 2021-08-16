@@ -24,7 +24,7 @@ import re
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 app = Flask(__name__)
-# minify(app=app,html=True,js=True,cssless=True,static=True)
+minify(app=app,html=True,js=True,cssless=True,static=True)
 app.config.from_object(Config)
 
 
@@ -122,15 +122,6 @@ class SignupForm(FlaskForm):
     confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo('password')])
     city = StringField("City :")
     submit = SubmitField("Register")
-
-class UploadForm(FlaskForm):
-    lat = IntegerField("Latitude", validators=[DataRequired()])
-    long = IntegerField("Longitude", validators=[DataRequired()])
-    title = StringField("Scan Title", validators=[DataRequired()])
-    des = TextAreaField("Scan Description", validators=[DataRequired()])
-    image = FileField("Upload File", validators=[DataRequired()])
-    urgency = IntegerField("Urgency (Scale of 1 to 10)")
-    submit = SubmitField("Submit")
 ########################################################################
 #########################Routes#########################################
 ########################################################################
@@ -139,47 +130,9 @@ def about():
     return render_template('index.html')
 
 
-@app.route('/upload', methods=["GET","POST"])
-# @login_required
+@app.route('/upload')
 def upload():
-    # if session["logged_in"] is not True:
-    #     return redirect("/login")
-    upload_form = UploadForm()
-    if request.method == "POST":
-        scans = db['scans']
-        f = request.files['image']
-
-        urgency = request.form.get('urgency', 0)
-        dt_now = datetime.utcnow()
-        lat = float(request.form.get('lat'))
-        long = float(request.form.get('long'))
-        filename = secure_filename(str(uuid4()))
-        filename = filename + ".jpeg"
-
-        title = request.form.get('title')
-        des = request.form.get('des', None)
-        f.save(os.path.join('static/images/scans/', filename))
-        dt_now = datetime.utcnow()
-        scans.insert_one({
-            "u_id": session['logged_in_id'],
-            "filename": filename,
-            "scandate": dt_now,
-            "position": {
-                "lat": lat,
-                "long": long
-            },
-            "loc": {
-                "type": "Point",
-                "coordinates": [lat, long]
-            },
-            "upvote": 0,
-            "date": datetime.utcnow(),
-            "title": title,
-            "des": des,
-            "urgency": urgency,
-            "vote_users": []
-        })
-    return render_template('upload.html',upload_form=upload_form)
+    return render_template('upload.html')
 @app.route('/forum')
 def forum():
     return render_template('forum.html')
