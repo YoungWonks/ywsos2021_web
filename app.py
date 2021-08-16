@@ -378,7 +378,7 @@ def api_find_forum():
         "repairs": repairs,
     }
 
-@app.route('/api/scans/vote', methods=["POST"])
+@app.route('/api/vote/voting', methods=["POST"])
 @token_required
 def api_vote(userId):
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
@@ -401,7 +401,7 @@ def api_vote(userId):
         "message": "Successful",
     }
 
-@app.route('/api/scans/voted', methods=["POST"])
+@app.route('/api/vote/voted', methods=["POST"])
 @token_required
 def api_voted(userId):
     user = db.users.find_one({'_id': bson.ObjectId(userId)})

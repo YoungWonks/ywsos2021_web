@@ -51,7 +51,7 @@ if res["error"] == "0":
     for repair in res['repairs']:
         real_url = 'http://127.0.0.1:5000' + repair['url']
         binary = requests.get(real_url).content
-        res2 = json.loads(requests.post('http://127.0.0.1:5000/api/scans/voted', headers=headers, json={"scan_id": str(repair['id'])}).content.decode())
+        res2 = json.loads(requests.post('http://127.0.0.1:5000/api/vote/voted', headers=headers, json={"scan_id": str(repair['id'])}).content.decode())
         with open('images/read.jfif', 'wb') as f:
             f.write(binary)
         image = cv2.imread('images/read.jfif')
