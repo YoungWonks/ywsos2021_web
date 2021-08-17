@@ -260,11 +260,11 @@ def api_signup():
     password = request.get_json().get('password')
     users = db['users']
     dt_now1 = datetime.utcnow()
-    if users.find_one({"username":user["username"]}) is not None:
+    if users.find_one({"username":username}) is not None:
         return {"error": "1", "message": "Username already exists", "cause": "u"}
-    elif users.find_one({"email":user["email"]}) is not None:
+    elif users.find_one({"email":email}) is not None:
         return {"error": "1", "message": "Email already exists", "cause": "e"}
-    elif re.match(regex, user["email"]) is False:
+    elif re.match(regex, email) is False:
         return {"error": "1", "message": "Email is not an email", "cause": "e"}
     users.insert_one({
         "username": username,
@@ -366,6 +366,21 @@ def api_find_all():
         "repairs": repairs,
     }
 
+@app.route('/api/upvote')
+@token_required
+def api_upvote():
+    scan_id = request.args.get('scan_id')
+    user = session['logged_in_id']
+    # print(user) was used in debugging
+    userStatus = db.scans.find_one( { 'deny': {'$in': [user] } } )
+    if userStatus == None:
+        db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": user}})
+        print({"error": "0", "message": "Succesful",}) 
+        return jsonify({"error": "0", "message": "Succesful",})
+    else:
+        print({"error": "1", "message": "Fail; username has already upvoted post in question"})
+        return jsonify({"error": "1", "message": "Fail; username has already upvoted post in question"})
+
 @app.route('/api/scans/forum', methods=["POST"])
 def api_find_forum():
     scans = db['scans']
@@ -378,12 +393,13 @@ def api_find_forum():
         "repairs": repairs,
     }
 
-@app.route('/api/vote/voting', methods=["POST"])
+@app.route('/api/scans/vote', methods=["POST"])
 @token_required
 def api_vote(userId):
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
     id_scan = bson.ObjectId(request.get_json().get("scan_id"))
     scan = db.scans.find_one({'_id': id_scan})
+    print(user, scan)
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = user["username"]
@@ -400,26 +416,6 @@ def api_vote(userId):
         "error": "0",
         "message": "Successful",
     }
-
-@app.route('/api/vote/voted', methods=["POST"])
-@token_required
-def api_voted(userId):
-    user = db.users.find_one({'_id': bson.ObjectId(userId)})
-    id_scan = bson.ObjectId(request.get_json().get("scan_id"))
-    scan = db.scans.find_one({'_id': id_scan})
-    user_list = scan["vote_users"]
-    scan_list = user["vote_scans"]
-    user_name = user["username"]
-    if user_name in user_list:
-        return {
-            "error": "0",
-            "voted": True
-        }
-    else:
-        return {
-            "error": "0",
-            "voted": False
-        }
 
 @app.route('/api/scans/upload', methods=["POST"])
 @token_required
