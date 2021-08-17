@@ -377,12 +377,13 @@ def api_find_forum():
         "repairs": repairs,
     }
 
-@app.route('/api/vote/voting', methods=["POST"])
+@app.route('/api/scans/vote', methods=["POST"])
 @token_required
 def api_vote(userId):
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
     id_scan = bson.ObjectId(request.get_json().get("scan_id"))
     scan = db.scans.find_one({'_id': id_scan})
+    print(user, scan)
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = user["username"]
@@ -399,26 +400,6 @@ def api_vote(userId):
         "error": "0",
         "message": "Successful",
     }
-
-@app.route('/api/vote/voted', methods=["POST"])
-@token_required
-def api_voted(userId):
-    user = db.users.find_one({'_id': bson.ObjectId(userId)})
-    id_scan = bson.ObjectId(request.get_json().get("scan_id"))
-    scan = db.scans.find_one({'_id': id_scan})
-    user_list = scan["vote_users"]
-    scan_list = user["vote_scans"]
-    user_name = user["username"]
-    if user_name in user_list:
-        return {
-            "error": "0",
-            "voted": True
-        }
-    else:
-        return {
-            "error": "0",
-            "voted": False
-        }
 
 @app.route('/api/scans/upload', methods=["POST"])
 @token_required
