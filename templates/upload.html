@@ -42,7 +42,7 @@
 			},
 			methods: {
 				formSubmit(e) {
-				    var datasubmit = {"title": this.title, "des": this.des, "filename": undefined, "position": [parseInt(this.lat, 10), parseInt(this.long, 10)], "urgency": parseInt(this.urgency,10)};
+				    var datasubmit = {"title": this.title, "des": this.des, "filename": undefined, "position": [parseInt(this.long, 10), parseInt(this.lat, 10)], "urgency": parseInt(this.urgency,10)};
                     e.preventDefault();
 				    var formdata = new FormData();
 				    var imagefile = document.querySelector("#file");

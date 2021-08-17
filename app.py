@@ -348,14 +348,15 @@ def api_find_all():
             }
         }
     ]
-    if radius:
-        search[0]['$geoNear']['maxDistance'] = radius
-    elif not position[0]:
-        search = [{
-            '$sort': {
-                'vote': -1,
-            }
-        }]
+    # if radius:
+    #     search[0]['$geoNear']['maxDistance'] = radius
+    search[0]['$geoNear']['maxDistance'] = radius
+    # elif not position[0]:
+    #     search = [{
+    #         '$sort': {
+    #             'vote': -1,
+    #         }
+    #     }]
     result = scans.aggregate(search)
     repairs = []
     for r in result:
@@ -435,8 +436,8 @@ def api_upload(userId):
 def api_add(userId):
     scans = db['scans']
     position = request.get_json().get('position')
-    lat = position[0]
-    long = position[1]
+    lat = position[1]
+    long = position[0]
     filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)
@@ -447,12 +448,12 @@ def api_add(userId):
         "filename": filename,
         "scandate": dt_now,
         "position": {
-            "lat": lat,
-            "long": long
+            "long": long,
+            "lat": lat
         },
         "loc": {
             "type": "Point",
-            "coordinates": [lat, long]
+            "coordinates": [long,lat]
         },
         "upvote": 0,
         "date": datetime.utcnow(),
