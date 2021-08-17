@@ -368,11 +368,10 @@ def api_find_all():
 
 @app.route('/upvote')
 @login_required
-#token required meaning that you must be logged in for upvote to work, currently working on an ip ban system
 def upvote():
     scan_id = request.args.get('scan_id')
     user = session['logged_in_id']
-    print(user)
+    # print(user) was used in debugging
     userStatus = db.scans.find_one( { 'deny': {'$in': [user] } } )
     if userStatus == None:
         db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": user}}) 
@@ -386,7 +385,7 @@ def upvote():
 def api_upvote():
     scan_id = request.args.get('scan_id')
     user = session['logged_in_id']
-    print(user)
+    # print(user) was used in debugging
     userStatus = db.scans.find_one( { 'deny': {'$in': [user] } } )
     if userStatus == None:
         db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": user}})
