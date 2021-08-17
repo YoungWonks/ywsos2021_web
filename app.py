@@ -365,6 +365,21 @@ def api_find_all():
         "repairs": repairs,
     }
 
+@app.route('/api/upvote')
+@token_required
+def api_upvote():
+    scan_id = request.args.get('scan_id')
+    user = session['logged_in_id']
+    # print(user) was used in debugging
+    userStatus = db.scans.find_one( { 'deny': {'$in': [user] } } )
+    if userStatus == None:
+        db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": user}})
+        print({"error": "0", "message": "Succesful",}) 
+        return jsonify({"error": "0", "message": "Succesful",})
+    else:
+        print({"error": "1", "message": "Fail; username has already upvoted post in question"})
+        return jsonify({"error": "1", "message": "Fail; username has already upvoted post in question"})
+
 @app.route('/api/scans/forum', methods=["POST"])
 def api_find_forum():
     scans = db['scans']
