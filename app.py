@@ -365,32 +365,6 @@ def api_find_all():
         "repairs": repairs,
     }
 
-@app.route('/api/upvote')
-@token_required
-def api_upvote(userId):
-    scan_id = request.args.get('scan_id')
-    userStatus = db.scans.find_one( { 'deny': {'$in': [userId] } } )
-    if userStatus == None:
-        db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": user}})
-        print({"error": "0", "message": "Succesful",}) 
-        return jsonify({"error": "0", "message": "Succesful",})
-    else:
-        print({"error": "1", "message": "Fail; username has already upvoted post in question"})
-        return jsonify({"error": "1", "message": "Fail; username has already upvoted post in question"})
-
-@app.route('/api/scans/forum', methods=["POST"])
-def api_find_forum():
-    scans = db['scans']
-    result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
-    repairs = []
-    for r in result:
-        scan = create_rep(r)
-        repairs.append(scan)
-    return {
-        "repairs": repairs,
-    }
-#Bases for Sid
-
 @app.route('/api/vote/voting', methods=["POST"])
 @token_required
 def api_vote(userId):
@@ -431,6 +405,18 @@ def api_voted(userId):
     return {
         "error": "0",
         "voted": False
+    }
+
+@app.route('/api/scans/forum', methods=["POST"])
+def api_find_forum():
+    scans = db['scans']
+    result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
+    repairs = []
+    for r in result:
+        scan = create_rep(r)
+        repairs.append(scan)
+    return {
+        "repairs": repairs,
     }
 
 @app.route('/api/scans/upload', methods=["POST"])
