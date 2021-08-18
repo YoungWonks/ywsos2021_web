@@ -365,16 +365,17 @@ def api_find_all():
         "repairs": repairs,
     }
 
-@app.route('/api/vote/voting', methods=["POST"])
+@app.route('/api/vote/voting')
 @token_required
-def api_vote(userId):
+def api_upvote(userId):
+    scan_id = request.args.get('scan_id')
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
-    id_scan = bson.ObjectId(request.get_json().get("scan_id"))
     scan = db.scans.find_one({'_id': id_scan})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = user["username"]
-    if user_name in user_list:
+    userStatus = user_name in user_list
+    if userStatus == None:
         user_list.remove(user_name)
         scan_list.remove(id_scan)
         db.scans.update({'_id': id_scan}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
@@ -387,7 +388,7 @@ def api_vote(userId):
         "error": "0",
         "message": "Successful",
     }
-
+    
 @app.route('/api/vote/voted', methods=["POST"])
 @token_required
 def api_voted(userId):
