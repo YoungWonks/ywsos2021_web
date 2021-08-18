@@ -329,52 +329,71 @@ def api_find(userId):
 def api_find_all():
     scans = db['scans']
     position = request.get_json().get('position', [None, None])
-    lat = position[0] if position[0] else 0
-    long = position[1] if position[1] else 0
+    lat = position[1] if position[1] else 0
+    long = position[0] if position[0] else 0
     radius = float(request.get_json().get('range', None))
-    scans.create_index([('loc', '2dsphere')])
-    result = []
-    search = [
+    result = scans.find(
         {
-            '$geoNear': {
-                'near': [ lat, long ],
-                'distanceField': 'dist',
-                'spherical': True,
-            }
-        },
-        {
-            '$sort': {
-                'dist': 1,
+            "loc": {
+                "$near": {
+                    "$geometry": {"type": "Point", "coordinates": [long, lat]},
+                    "$maxDistance": radius
+                }
             }
         }
-    ]
-    # if radius:
-    #     search[0]['$geoNear']['maxDistance'] = radius
-    search[0]['$geoNear']['maxDistance'] = radius
+    )
+    # scans.create_index([('loc', '2dsphere')])
+    # result = []
+    # search = [
+    #     {
+    #         '$geoNear': {
+    #             'near': [ lat, long ],
+    #             'distanceField': 'dist',
+    #             'spherical': True,
+    #         }
+    #     },
+    #     {
+    #         '$sort': {
+    #             'dist': 1,
+    #         }
+    #     }
+    # ]
+    # # if radius:
+    # #     search[0]['$geoNear']['maxDistance'] = radius
+    # search[0]['$geoNear']['maxDistance'] = radius
     # elif not position[0]:
     #     search = [{
     #         '$sort': {
     #             'vote': -1,
     #         }
     #     }]
-    result = scans.aggregate(search)
+    # result = scans.aggregate(search)
     repairs = []
     for r in result:
         scan = create_rep(r)
-        repairs.append(scan)
+        geo = Nominatim(user_agent="georepair")
+        locator = geo.reverse([scan['position']['lat'], scan['position']['long']])
+        address = locator.raw['address']
+        city = None
+        if 'city' in address:
+            city = address.get('city')
+        elif 'town' in address:
+            city = address.get('town')
+        elif 'village' in address:
+            city = address.get('village')
+        repairs.append([scan, city, address.get('state', '')])
     return {
         "repairs": repairs,
     }
 
-@app.route('/api/upvote')
+@app.route('/api/upvote', methods=['POST'])
 @token_required
-def api_upvote():
+def api_upvote(userId):
     scan_id = request.args.get('scan_id')
-    user = session['logged_in_id']
     # print(user) was used in debugging
-    userStatus = db.scans.find_one( { 'deny': {'$in': [user] } } )
+    userStatus = db.scans.find_one( { 'deny': {'$in': [userId] } } )
     if userStatus == None:
-        db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": user}})
+        db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": userId}})
         print({"error": "0", "message": "Succesful",}) 
         return jsonify({"error": "0", "message": "Succesful",})
     else:
@@ -432,8 +451,9 @@ def api_upload(userId):
 def api_add(userId):
     scans = db['scans']
     position = request.get_json().get('position')
-    lat = position[1]
-    long = position[0]
+    locator = Nominatim(user_agent="georepair").geocode(position)
+    lat = locator.latitude
+    long = locator.longitude
     filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)

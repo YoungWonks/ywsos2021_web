@@ -10,11 +10,8 @@
         <label>Description</label>
         <input type="text" v-model="des">
         <br>
-        <label>Latitude</label>
-        <input type="number" v-model="lat">
-        <br>
-        <label>Longitude</label>
-        <input type="number" v-model="long">
+        <label>Full Address</label>
+        <input type="text" v-model="address">
         <br>
         <label>Urgency</label>
         <input type="number" v-model="urgency">
@@ -35,14 +32,13 @@
                 return {
                     title: '',
                     des: '',
-                    lat: '',
-                    long: '',
+                    address: '',
                     urgency: ''
                 }
 			},
 			methods: {
 				formSubmit(e) {
-				    var datasubmit = {"title": this.title, "des": this.des, "filename": undefined, "position": [parseInt(this.long, 10), parseInt(this.lat, 10)], "urgency": parseInt(this.urgency,10)};
+				    var datasubmit = {"title": this.title, "des": this.des, "filename": undefined, "position": this.address, "urgency": parseInt(this.urgency,10)};
                     e.preventDefault();
 				    var formdata = new FormData();
 				    var imagefile = document.querySelector("#file");

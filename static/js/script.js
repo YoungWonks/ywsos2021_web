@@ -1,7 +1,7 @@
 jQuery(function($) {
     var path = window.location.href;
     $('ul li a').each(function() {
-        if (this.href === path && this.href != "/login" && this.href != "/signup") {
+        if (this.href === path && this.href != "login" && this.href != "signup") {
             $('ul li a').removeClass('active');
             $(this).addClass('active');
         }
