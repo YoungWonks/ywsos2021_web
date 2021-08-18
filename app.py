@@ -389,7 +389,7 @@ def api_find_all():
 @app.route('/api/upvote', methods=['POST'])
 @token_required
 def api_upvote(userId):
-    scan_id = request.args.get('scan_id')
+    scan_id = request.get_json().get('scan_id')
     # print(user) was used in debugging
     userStatus = db.scans.find_one( { 'deny': {'$in': [userId] } } )
     if userStatus == None:
