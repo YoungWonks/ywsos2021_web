@@ -292,7 +292,7 @@ def api_find(userId):
     search = [
         {
             '$geoNear': {
-                'near': [ lat, long ],
+                'near': [ long, lat ],
                 'distanceField': 'dist',
                 'spherical': True,
             }
@@ -337,7 +337,7 @@ def api_find_all():
     search = [
         {
             '$geoNear': {
-                'near': [ lat, long ],
+                'near': [ long, lat ],
                 'distanceField': 'dist',
                 'spherical': True,
             }
@@ -367,11 +367,9 @@ def api_find_all():
 
 @app.route('/api/upvote')
 @token_required
-def api_upvote():
+def api_upvote(userId):
     scan_id = request.args.get('scan_id')
-    user = session['logged_in_id']
-    # print(user) was used in debugging
-    userStatus = db.scans.find_one( { 'deny': {'$in': [user] } } )
+    userStatus = db.scans.find_one( { 'deny': {'$in': [userId] } } )
     if userStatus == None:
         db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": user}})
         print({"error": "0", "message": "Succesful",}) 
@@ -391,14 +389,14 @@ def api_find_forum():
     return {
         "repairs": repairs,
     }
+#Bases for Sid
 
-@app.route('/api/scans/vote', methods=["POST"])
+@app.route('/api/vote/voting', methods=["POST"])
 @token_required
 def api_vote(userId):
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
     id_scan = bson.ObjectId(request.get_json().get("scan_id"))
     scan = db.scans.find_one({'_id': id_scan})
-    print(user, scan)
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = user["username"]
@@ -414,6 +412,25 @@ def api_vote(userId):
     return {
         "error": "0",
         "message": "Successful",
+    }
+
+@app.route('/api/vote/voted', methods=["POST"])
+@token_required
+def api_voted(userId):
+    user = db.users.find_one({'_id': bson.ObjectId(userId)})
+    id_scan = bson.ObjectId(request.get_json().get("scan_id"))
+    scan = db.scans.find_one({'_id': id_scan})
+    user_list = scan["vote_users"]
+    scan_list = user["vote_scans"]
+    user_name = user["username"]
+    if user_name in user_list:
+         return {
+            "error": "0",
+            "voted": True
+        }
+    return {
+        "error": "0",
+        "voted": False
     }
 
 @app.route('/api/scans/upload', methods=["POST"])
@@ -448,7 +465,7 @@ def api_add(userId):
         },
         "loc": {
             "type": "Point",
-            "coordinates": [lat, long]
+            "coordinates": [long, lat]
         },
         "upvote": 0,
         "date": datetime.utcnow(),
