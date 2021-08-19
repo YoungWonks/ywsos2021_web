@@ -55,6 +55,8 @@ if res["error"] == "0":
             f.write(binary)
         image = cv2.imread('images/read.jfif')
         cv2.imshow("Scans", image)
+        res2 = json.loads(requests.post('http://127.0.0.1:5000/api/vote/voted', headers=headers, json={"scan_id": repair["id"]}).content.decode())
         print("Location is {}, {}".format(repair['position']['lat'], repair['position']['long']))
         print("Title is {}".format(repair['title']))
+        print("Unvote" if res2['voted'] else 'Vote')
         cv2.waitKey()
