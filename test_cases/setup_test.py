@@ -32,6 +32,6 @@ if res["error"] == "0":
     res = json.loads(requests.post('http://127.0.0.1:5000/api/scans', headers=headers,
         json={'position': [20.25, -80.98], 'range': 1}).content.decode())
     print("Welcome :", res)
-    res = json.loads(requests.post('http://127.0.0.1:5000/api/scans/vote', headers=headers, 
+    res = json.loads(requests.post('http://127.0.0.1:5000/api/vote/voting', headers=headers, 
         json={'scan_id': res['repairs'][1]['id']}).content.decode())
     print("Welcome :", res)
