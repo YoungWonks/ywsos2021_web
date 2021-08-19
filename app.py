@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request, redirect, session
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo
 import pymongo
 import os
@@ -27,10 +27,9 @@ app = Flask(__name__)
 minify(app=app,html=True,js=True,cssless=True,static=True)
 app.config.from_object(Config)
 
+
 css_map = {"static/css/theme.css": "static/css/theme.min.css"}
 def minify_css(css_map):
-
-
     for source, dest in css_map.items():
         with open(source, "r") as infile:
             with open(dest, "w") as outfile:
@@ -126,18 +125,14 @@ class SignupForm(FlaskForm):
 ########################################################################
 #########################Routes#########################################
 ########################################################################
-@app.route('/about')
+@app.route('/')
 def about():
     return render_template('index.html')
 
-@app.route('/')
-def home():
-    return redirect("/about")
 
 @app.route('/upload')
 def upload():
     return render_template('upload.html')
-
 @app.route('/forum')
 def forum():
     return render_template('forum.html')
@@ -145,6 +140,10 @@ def forum():
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@app.route("/gallery")
+def gallery():
+    return render_template('gallery.html')
 
 @app.route('/main',methods=['GET','POST'])
 @login_required
@@ -209,7 +208,7 @@ def signup():
 @app.route('/logout')
 @login_required
 def logout(u_is):
-    session['logged_in'] = False;
+    session['logged_in'] = False
     session['logged_in_id'] = ''
     return redirect('/')
 
@@ -261,11 +260,11 @@ def api_signup():
     password = request.get_json().get('password')
     users = db['users']
     dt_now1 = datetime.utcnow()
-    if users.find_one({"username":user["username"]}) is not None:
+    if users.find_one({"username":username}) is not None:
         return {"error": "1", "message": "Username already exists", "cause": "u"}
-    elif users.find_one({"email":user["email"]}) is not None:
+    elif users.find_one({"email":email}) is not None:
         return {"error": "1", "message": "Email already exists", "cause": "e"}
-    elif re.match(regex, user["email"]) is False:
+    elif re.match(regex, email) is False:
         return {"error": "1", "message": "Email is not an email", "cause": "e"}
     users.insert_one({
         "username": username,
@@ -366,6 +365,21 @@ def api_find_all():
         "repairs": repairs,
     }
 
+@app.route('/api/upvote')
+@token_required
+def api_upvote():
+    scan_id = request.args.get('scan_id')
+    user = session['logged_in_id']
+    # print(user) was used in debugging
+    userStatus = db.scans.find_one( { 'deny': {'$in': [user] } } )
+    if userStatus == None:
+        db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": user}})
+        print({"error": "0", "message": "Succesful",}) 
+        return jsonify({"error": "0", "message": "Succesful",})
+    else:
+        print({"error": "1", "message": "Fail; username has already upvoted post in question"})
+        return jsonify({"error": "1", "message": "Fail; username has already upvoted post in question"})
+
 @app.route('/api/scans/forum', methods=["POST"])
 def api_find_forum():
     scans = db['scans']
@@ -406,7 +420,8 @@ def api_vote(userId):
 @token_required
 def api_upload(userId):
     f = request.files['image']
-    filename = str(uuid4())
+    #for now it is saving as a jpeg but that will be changed
+    filename = secure_filename(str(uuid4())+".jpeg")
     f.save(os.path.join('static/images/scans/', filename))
     return {"error": "0", "filename":filename,}
 

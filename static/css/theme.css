@@ -16,6 +16,7 @@
     min-height: 2653px !important;
     margin: auto;
     letter-spacing: -0.017em;
+    padding: 0 !important;
 }
 
 .navbar-brand {
