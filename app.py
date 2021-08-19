@@ -105,18 +105,6 @@ def create_rep(r):
     }
     if r["des"]:
         reps["description"] = r["des"]
-    geo = Nominatim(user_agent="georepair")
-    locator = geo.reverse([r['position']['lat'], r['position']['long']])
-    address = locator.raw['address']
-    city = None
-    if 'city' in address:
-        city = address.get('city')
-    elif 'town' in address:
-        city = address.get('town')
-    elif 'village' in address:
-        city = address.get('village')
-    if city:
-        reps['city'] = city
     return reps
 
 ########################################################################
