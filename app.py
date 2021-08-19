@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request, redirect, session
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo
 import pymongo
 import os
@@ -105,6 +105,18 @@ def create_rep(r):
     }
     if r["des"]:
         reps["description"] = r["des"]
+    geo = Nominatim(user_agent="georepair")
+    locator = geo.reverse([r['position']['lat'], r['position']['long']])
+    address = locator.raw['address']
+    city = None
+    if 'city' in address:
+        city = address.get('city')
+    elif 'town' in address:
+        city = address.get('town')
+    elif 'village' in address:
+        city = address.get('village')
+    if city:
+        reps['city'] = city
     return reps
 
 ########################################################################
@@ -365,7 +377,7 @@ def api_find_all():
         "repairs": repairs,
     }
 
-@app.route('/api/vote/voting')
+@app.route('/api/vote/voting', methods=["POST"])
 @token_required
 def api_upvote(userId):
     scan_id = request.args.get('scan_id')
