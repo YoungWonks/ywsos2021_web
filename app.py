@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request, redirect, session
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField, IntegerField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo
 import pymongo
 import os
@@ -292,7 +292,7 @@ def api_find(userId):
     search = [
         {
             '$geoNear': {
-                'near': [ lat, long ],
+                'near': [ long, lat ],
                 'distanceField': 'dist',
                 'spherical': True,
             }
@@ -337,7 +337,7 @@ def api_find_all():
     search = [
         {
             '$geoNear': {
-                'near': [ lat, long ],
+                'near': [ long, lat ],
                 'distanceField': 'dist',
                 'spherical': True,
             }
@@ -365,44 +365,17 @@ def api_find_all():
         "repairs": repairs,
     }
 
-@app.route('/api/upvote')
+@app.route('/api/vote/voting', methods=["POST"])
 @token_required
-def api_upvote():
+def api_upvote(userId):
     scan_id = request.args.get('scan_id')
-    user = session['logged_in_id']
-    # print(user) was used in debugging
-    userStatus = db.scans.find_one( { 'deny': {'$in': [user] } } )
-    if userStatus == None:
-        db.scans.update_one({'_id': bson.ObjectId(scan_id)},  {'$inc': {"upvote": 1}, '$push': {"deny": user}})
-        print({"error": "0", "message": "Succesful",}) 
-        return jsonify({"error": "0", "message": "Succesful",})
-    else:
-        print({"error": "1", "message": "Fail; username has already upvoted post in question"})
-        return jsonify({"error": "1", "message": "Fail; username has already upvoted post in question"})
-
-@app.route('/api/scans/forum', methods=["POST"])
-def api_find_forum():
-    scans = db['scans']
-    result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
-    repairs = []
-    for r in result:
-        scan = create_rep(r)
-        repairs.append(scan)
-    return {
-        "repairs": repairs,
-    }
-
-@app.route('/api/scans/vote', methods=["POST"])
-@token_required
-def api_vote(userId):
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
-    id_scan = bson.ObjectId(request.get_json().get("scan_id"))
     scan = db.scans.find_one({'_id': id_scan})
-    print(user, scan)
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = user["username"]
-    if user_name in user_list:
+    userStatus = user_name in user_list
+    if userStatus == None:
         user_list.remove(user_name)
         scan_list.remove(id_scan)
         db.scans.update({'_id': id_scan}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
@@ -414,6 +387,37 @@ def api_vote(userId):
     return {
         "error": "0",
         "message": "Successful",
+    }
+    
+@app.route('/api/vote/voted', methods=["POST"])
+@token_required
+def api_voted(userId):
+    user = db.users.find_one({'_id': bson.ObjectId(userId)})
+    id_scan = bson.ObjectId(request.get_json().get("scan_id"))
+    scan = db.scans.find_one({'_id': id_scan})
+    user_list = scan["vote_users"]
+    scan_list = user["vote_scans"]
+    user_name = user["username"]
+    if user_name in user_list:
+         return {
+            "error": "0",
+            "voted": True
+        }
+    return {
+        "error": "0",
+        "voted": False
+    }
+
+@app.route('/api/scans/forum', methods=["POST"])
+def api_find_forum():
+    scans = db['scans']
+    result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
+    repairs = []
+    for r in result:
+        scan = create_rep(r)
+        repairs.append(scan)
+    return {
+        "repairs": repairs,
     }
 
 @app.route('/api/scans/upload', methods=["POST"])
@@ -448,7 +452,7 @@ def api_add(userId):
         },
         "loc": {
             "type": "Point",
-            "coordinates": [lat, long]
+            "coordinates": [long, lat]
         },
         "upvote": 0,
         "date": datetime.utcnow(),
