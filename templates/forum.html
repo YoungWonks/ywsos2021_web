@@ -10,9 +10,8 @@
 					<h3 class="card-title">[[ scan.title ]]</h3>
 					<p class="card-title">[[ scan.upvote ]] upvotes</p>
 					<hr>
-					<!-- <p class="card-text">field for describing the problem <b>example</b> Sixty-nine people
-					in the neighborhood have reported falling over this crack. This portion of the sidewalk needs to be repaired!</p> -->
-					<p class="card-text"><i>Location: [[ scan.position[0] ]], [[ scan.position[1] ]]</i></p>
+					<p class="card-text">[[ scan.description ]]</p>
+					<p class="card-text"><i>Location: [[ scan.position.lat ]], [[ scan.position.long ]]</i></p>
 					{% if session['logged_in'] %}
 						<button class="btn btn-primary" @click="vote(scan.filename, scan.id)">Upvote</button>
 					{% else %}
@@ -38,11 +37,10 @@
 			methods: {
 				getCurrent: function () {
 					navigator.geolocation.getCurrentPosition(function(pos) {
-
 						$.ajax({
 							type: 'POST',
 							url: '/api/scans/all',
-							data: JSON.stringify({"position": [pos.coords.longitude, pos.coords.latitude], "range": 1000*11100}),
+							data: JSON.stringify({"position": [pos.coords.latitude, pos.coords.longitude], "range": 100}),
 							contentType: "application/json",
 							dataType: "json",
 							success: function(data) {

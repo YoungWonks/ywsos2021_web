@@ -435,8 +435,9 @@ def api_upload(userId):
 def api_add(userId):
     scans = db['scans']
     position = request.get_json().get('position')
-    lat = position[0]
-    long = position[1]
+    locator = Nominatim(user_agent="georepair").geocode(position)
+    lat = locator.latitude
+    long = locator.longitude
     filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)
