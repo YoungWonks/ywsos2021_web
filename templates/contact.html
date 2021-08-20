@@ -14,18 +14,19 @@
             };
         },
         methods: {
-            submit() {
-                axios.post('/contact', {
-                    email: [[email]],
-                    issueHeader: [[issueHeader]],
-                    issueDescription: [[issueDescription]]
-                })
+            submit(email,issueHeader,issueDescription) {
+                $.ajax({
+					type: 'POST',
+					url: '/contact',
+					data: JSON.stringify({"email": this.email, "issueHeader:": this.issueHeader, "issueDescription": this.issueDescription}),
+
+					contentType: "application/json",
+					dataType: "json"
+				});
+
             }
         }
     });
-
-    app.getCurrent();
-    setInterval(app.getCurrent, 60000);
 </script>
 {% endblock %}
 
@@ -34,9 +35,8 @@
     <div style="text-align:center">
         <input type="email" placeholder="Contact Email" v-model="email"> <br> <br>
         <input type="text" placeholder="Issue Heading" v-model="issueHeader"> <br> <br>
-        <input type="text" placeholder="Type your issue here." v-model="issueDescription"> <br> <br>
-        <button @click="submit">Submit</button>
-        [[email]]
+        <textarea placeholder="Type your issue here." v-model="issueDescription"></textarea> <br> <br>
+        <button @click="submit(email,issueHeader,issueDescription)">Submit</button>
     </div>
 
 </div>
