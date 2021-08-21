@@ -94,14 +94,26 @@ def login_required(something):
 
 #########Scan representation############################################
 def create_rep(r):
+    locator = Nominatim(user_agent="georepair").reverse([r['position']['lat'], r['position']['long']])
+    address = locator.raw['address']
+    city = None
+    if 'city' in address:
+        city = address.get('city')
+    elif 'town' in address:
+        city = address.get('town')
+    elif 'village' in address:
+        city = address.get('village')
     reps =  {
         "url":      '/static/images/scans/'+r['filename'],
         "scandate": r['scandate'],
         "position": r['position'],
+        "city":     city,
+        "state":    address.get('state'),
         "id":       str(r['_id']),
         "upvote":   r['upvote'],
         "title":    r['title'],
-        "urgency":  r["urgency"]
+        "urgency":  r["urgency"],
+        "user_list":r['vote_users']
     }
     if r["des"]:
         reps["description"] = r["des"]
@@ -135,7 +147,7 @@ def upload():
     return render_template('upload.html')
 @app.route('/forum')
 def forum():
-    return render_template('forum.html')
+    return render_template('forum.html', db=db)
 
 @app.route('/contact')
 def contact():
@@ -370,20 +382,20 @@ def api_find_all():
 def api_upvote(userId):
     scan_id = request.get_json().get('scan_id')
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
-    scan = db.scans.find_one({'_id': scan_id})
+    scan = db.scans.find_one({'_id': bson.ObjectId(scan_id)})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = user["username"]
     userStatus = user_name in user_list
-    if userStatus == None:
+    if userStatus != False:
         user_list.remove(user_name)
         scan_list.remove(scan_id)
-        db.scans.update({'_id': scan_id}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
+        db.scans.update_one({'_id': bson.ObjectId(scan_id)}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
     else:
         user_list.append(user_name)
         scan_list.append(scan_id)
-        db.scans.update({'_id': scan_id}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
-    db.users.update({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}}) 
+        db.scans.update_one({'_id': bson.ObjectId(scan_id)}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
+    db.users.update_one({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}})
     return {
         "error": "0",
         "message": "Successful",

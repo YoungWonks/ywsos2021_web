@@ -4,22 +4,49 @@
 {% block content %}
     <div id="vue-app">
 		<div v-for="scan in repairs">
-			<div class="card" style="width: 30rem; margin: auto;">
-				<img class="card-img-top" :src="scan.url" alt="...">
+			<div class="card" class="col-12">
 				<div class="card-body">
-					<h3 class="card-title">[[ scan.title ]]</h3>
+					<!-- <h3 class="card-title">[[ scan.title ]]</h3>
 					<p class="card-title">[[ scan.upvote ]] upvotes</p>
 					<hr>
 					<p class="card-text">[[ scan.description ]]</p>
-					<p class="card-text"><i>Location: [[ scan.position.lat ]], [[ scan.position.long ]]</i></p>
-					{% if session['logged_in'] %}
-						<button class="btn btn-primary" @click="vote(scan.filename, scan.id)">Upvote</button>
-					{% else %}
-						<b><p>Log in to vote</p></b>
-					{% endif %}
+					<p class="card-text"><i>Location: [[ scan.city ]], [[ scan.state ]]</i></p> -->
+					<div class="row">
+						<div class="col">
+							<div>
+								<h1>[[ scan.title ]]</h1>
+								<div class="scan-details">
+									<div>
+										<img src="../static/images/scandate.svg">
+										<p>3 days ago</p>
+									</div>
+								</div>
+								<div class="scan-details">
+									<div>
+										<img src="../static/images/location.svg">
+										<p>[[ scan.city]], [[ scan.state ]]</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col">
+							<div>
+								<button @click="vote(scan.filename, scan.id)" v-if="'{{ session['logged_in'] }}' == 'True'">
+									<img src="../static/images/upvote.svg">
+								</button>
+								<a v-else href="/login">
+									<button>
+										<img src="../static/images/unvote.svg" style="transform: rotate(180deg);">
+									</button>
+								</a>
+								<p v-if="scan.upvote == 1">[[ scan.upvote ]] upvote</p>
+								<p v-else>[[ scan.upvote ]] upvotes</p>
+							</div>
+						</div>
+					</div>
+					
 				</div>
 			</div>
-			<br>
 		</div>
 	</div>
 {% endblock %}
@@ -52,10 +79,13 @@
 				vote: function(index, id) {
 					$.ajax({
 						type: 'POST',
-						url: '/api/upvote',
+						url: '/api/vote/voting',
 						data: JSON.stringify({"name": index, "scan_id": id}),
 						contentType: "application/json",
-						dataType: "json"
+						dataType: "json",
+						success: function(data) {
+							app.getCurrent();
+						}
 					});
 				}
 			}
