@@ -403,7 +403,7 @@ def api_voted(userId):
     scan = db.scans.find_one({'_id': id_scan})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
-    user_name = user["_id"]
+    user_name = str(user["_id"])
     if user_name in user_list:
          return {
             "error": "0",
