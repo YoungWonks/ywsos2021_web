@@ -6,16 +6,14 @@
 		<div v-for="scan in repairs">
 			<div class="card" class="col-12">
 				<div class="card-body">
-					<!-- <h3 class="card-title">[[ scan.title ]]</h3>
-					<p class="card-title">[[ scan.upvote ]] upvotes</p>
-					<hr>
-					<p class="card-text">[[ scan.description ]]</p>
-					<p class="card-text"><i>Location: [[ scan.city ]], [[ scan.state ]]</i></p> -->
 					<div class="row">
-						<div class="col">
+						<div class="col-sm-12 col-md-1 col-lg-1" style="display: block;">
+							<img src="../static/images/user.svg" style="display: block;">
+							<h2>[[ scan.post_user ]]</h2>
+						</div>
+						<div class="col-sm-12 col-md-5 col-lg-5">
 							<div>
 								<h1>[[ scan.title ]]</h1>
-								<h2>posted by [[ scan.post_user ]]</h2>
 								<div class="scan-details">
 									<div>
 										<img src="../static/images/scandate.svg">
@@ -30,20 +28,28 @@
 								</div>
 							</div>
 						</div>
-						<div class="col">
+						<div class="col-sm-12 col-md-4 col-lg-4">
 							<div>
 								<button @click="vote(scan.filename, scan.id)" v-if="'{{ session['logged_in'] }}' == 'True'">
 									<img src="../static/images/upvote.svg" v-if="scan.user_list.includes('{{ session['logged_in_id'] }}')">
-									<img src="../static/images/unvote.svg" style="transform: rotate(180deg)" v-else>
+									<img src="../static/images/unvote.svg" v-else>
 								</button>
 								<a v-else href="/login">
 									<button>
-										<img src="../static/images/unvote.svg" style="transform: rotate(180deg);">
+										<img src="../static/images/unvote.svg">
 									</button>
 								</a>
 								<p v-if="scan.upvote == 1">[[ scan.upvote ]] upvote</p>
 								<p v-else>[[ scan.upvote ]] upvotes</p>
 							</div>
+						</div>
+					</div>
+					<div class="row bottom-row">
+						<div class="col-sm-12 col-md-5 col-lg-5 offset-md-1 offset-lg-1">
+							<p>[[ scan.description ]]</p>
+						</div>
+						<div class="col-sm-12 col-md-4 col-lg-4">
+							<img :src="scan.url">
 						</div>
 					</div>
 					
