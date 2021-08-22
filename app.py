@@ -20,6 +20,7 @@ from geopy.geocoders import Nominatim
 from flask_minify import minify
 import rcssmin
 import re
+import timeago
 
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
@@ -94,27 +95,20 @@ def login_required(something):
 
 #########Scan representation############################################
 def create_rep(r):
-    locator = Nominatim(user_agent="georepair").reverse([r['position']['lat'], r['position']['long']])
-    address = locator.raw['address']
-    city = None
-    if 'city' in address:
-        city = address.get('city')
-    elif 'town' in address:
-        city = address.get('town')
-    elif 'village' in address:
-        city = address.get('village')
     reps =  {
         "url":      '/static/images/scans/'+r['filename'],
-        "scandate": r['scandate'],
+        "scandate": timeago.format(r['scandate'],datetime.utcnow()),
         "position": r['position'],
-        "city":     city,
-        "state":    address.get('state'),
+        "city":     r['city'],
+        "state":    r['state'],
         "id":       str(r['_id']),
         "upvote":   r['upvote'],
         "title":    r['title'],
         "urgency":  r["urgency"],
-        "user_list":r['vote_users']
+        "user_list":r['vote_users'],
+        "post_user": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username']
     }
+
     if r["des"]:
         reps["description"] = r["des"]
     return reps
@@ -147,7 +141,7 @@ def upload():
     return render_template('upload.html')
 @app.route('/forum')
 def forum():
-    return render_template('forum.html', db=db)
+    return render_template('forum.html')
 
 @app.route('/contact')
 def contact():
@@ -385,7 +379,7 @@ def api_upvote(userId):
     scan = db.scans.find_one({'_id': bson.ObjectId(scan_id)})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
-    user_name = user["username"]
+    user_name = str(user["_id"])
     userStatus = user_name in user_list
     if userStatus != False:
         user_list.remove(user_name)
@@ -409,7 +403,7 @@ def api_voted(userId):
     scan = db.scans.find_one({'_id': id_scan})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
-    user_name = user["username"]
+    user_name = user["_id"]
     if user_name in user_list:
          return {
             "error": "0",
@@ -450,6 +444,16 @@ def api_add(userId):
     locator = Nominatim(user_agent="georepair").geocode(position)
     lat = locator.latitude
     long = locator.longitude
+
+    address = Nominatim(user_agent="georepair").reverse([lat,long]).raw['address']
+    city = None
+    if 'city' in address:
+        city = address.get('city')
+    elif 'town' in address:
+        city = address.get('town')
+    elif 'village' in address:
+        city = address.get('village')
+    state = address.get('state')
     filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)
@@ -468,11 +472,12 @@ def api_add(userId):
             "coordinates": [long, lat]
         },
         "upvote": 0,
-        "date": datetime.utcnow(),
         "title": title,
         "des": des,
         "urgency": urgency,
         "vote_users": [],
+        "city": city,
+        "state": state
     })
     return {"error": "0", "message": "Succesful",}
 
