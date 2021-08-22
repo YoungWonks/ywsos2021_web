@@ -2,13 +2,34 @@
 {% block title %}Forum{% endblock %}
 
 {% block content %}
-    <div id="vue-app">
+    <div id="vue-app" class="container">
+    	<div class="forum-control row">
+    		<div class="col-3">
+    			<button></button>
+    		</div>
+    		<div class="col-9" style="display: inline-flex; justify-content: flex-end; align-items: center;">
+    			<div class="forum-search">
+    				<img src="../static/images/search.svg">
+    				<span class="text-wrapper">
+    					<input type="text" name="search" placeholder="Search Posts">
+    				</span>
+    			</div>
+    			<div class="forum-add">
+    				<a href="/upload">
+	    				<button>
+	    					<img src="../static/images/new.svg">
+	    					<p>New Post</p>
+	    				</button>
+	    			</a>
+    			</div>
+    		</div>
+    	</div>
 		<div v-for="scan in repairs">
 			<div class="card" class="col-12">
 				<div class="card-body">
 					<div class="row">
 						<div class="col-sm-12 col-md-1 col-lg-1" style="display: block;">
-							<img src="../static/images/user.svg" style="display: block;">
+							<img src="../static/images/user.svg" style="display: block; background: linear-gradient(93.12deg, #ACC9AF 0%, #709A9B 100%); border-radius: 50%; border: 3px solid;">
 							<h2>[[ scan.post_user ]]</h2>
 						</div>
 						<div class="col-sm-12 col-md-5 col-lg-5">
@@ -45,7 +66,7 @@
 						</div>
 					</div>
 					<div class="row bottom-row">
-						<div class="col-sm-12 col-md-5 col-lg-5 offset-md-1 offset-lg-1">
+						<div class="col-sm-12 col-md-5 col-lg-5 offset-md-1 offset-lg-1 row">
 							<p>[[ scan.description ]]</p>
 						</div>
 						<div class="col-sm-12 col-md-4 col-lg-4">
