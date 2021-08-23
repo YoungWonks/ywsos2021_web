@@ -101,7 +101,9 @@ def create_rep(r):
         "id":       str(r['_id']),
         "upvote":   r['upvote'],
         "title":    r['title'],
-        "urgency":  r["urgency"]
+        "urgency":  r["urgency"],
+        "address": r["address"],
+        "post_username": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username']
     }
     if r["des"]:
         reps["description"] = r["des"]
@@ -370,20 +372,20 @@ def api_find_all():
 def api_upvote(userId):
     id_scan = request.get_json().get('scan_id')
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
-    scan = db.scans.find_one({'_id': id_scan})
+    scan = db.scans.find_one({'_id': bson.ObjectId(id_scan)})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = user["username"]
     userStatus = user_name in user_list
-    if userStatus == None:
+    if userStatus:
         user_list.remove(user_name)
         scan_list.remove(id_scan)
-        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
+        db.scans.update_one({'_id': id_scan}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
     else:
         user_list.append(user_name)
         scan_list.append(id_scan)
-        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
-    db.users.update({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}}) 
+        db.scans.update_one({'_id': id_scan}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
+    db.users.update_one({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}}) 
     return {
         "error": "0",
         "message": "Successful",
@@ -437,6 +439,17 @@ def api_add(userId):
     position = request.get_json().get('position')
     lat = position[0]
     long = position[1]
+    print(lat)
+    print(long)
+    address = Nominatim(user_agent="georepair").reverse([lat, long]).raw['address']
+    city = None
+    if 'city' in address:
+        city = address.get('city')
+    elif 'town' in address:
+        city = address.get('town')
+    elif 'village' in address:
+        city = address.get('village')
+    state = address.get('state')
     filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)
@@ -460,6 +473,7 @@ def api_add(userId):
         "des": des,
         "urgency": urgency,
         "vote_users": [],
+        "address": [city, state]
     })
     return {"error": "0", "message": "Succesful",}
 
