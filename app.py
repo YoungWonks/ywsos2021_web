@@ -368,7 +368,7 @@ def api_find_all():
 @app.route('/api/vote/voting', methods=["POST"])
 @token_required
 def api_upvote(userId):
-    scan_id = request.args.get('scan_id')
+    id_scan = request.get_json().get('scan_id')
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
     scan = db.scans.find_one({'_id': id_scan})
     user_list = scan["vote_users"]
