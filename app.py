@@ -101,7 +101,9 @@ def create_rep(r):
         "id":       str(r['_id']),
         "upvote":   r['upvote'],
         "title":    r['title'],
-        "urgency":  r["urgency"]
+        "urgency":  r["urgency"],
+        "address": r["address"],
+        "post_username": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username']
     }
     if r["des"]:
         reps["description"] = r["des"]
@@ -435,8 +437,19 @@ def api_upload(userId):
 def api_add(userId):
     scans = db['scans']
     position = request.get_json().get('position')
+    locator = Nominatim(user_agent="georepair").geocode(position)
     lat = position[0]
     long = position[1]
+
+    address = Nominatim(user_agent="georepair").reverse([lat,long]).raw['address']
+    city = None
+    if 'city' in address:
+        city = address.get('city')
+    elif 'town' in address:
+        city = address.get('town')
+    elif 'village' in address:
+        city = address.get('village')
+    state = address.get('state')
     filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)
@@ -460,6 +473,7 @@ def api_add(userId):
         "des": des,
         "urgency": urgency,
         "vote_users": [],
+        "address": [city, state]
     })
     return {"error": "0", "message": "Succesful",}
 
