@@ -394,19 +394,19 @@ def api_find_all():
 def api_upvote(userId):
     id_scan = bson.ObjectId(request.get_json().get('scan_id'))
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
-    scan = db.scans.find_one({'_id': bson.ObjectId(scan_id)})
+    scan = db.scans.find_one({'_id': bson.ObjectId(id_scan)})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = str(user["_id"])
     userStatus = user_name in user_list
     if userStatus:
         user_list.remove(user_name)
-        scan_list.remove(scan_id)
-        db.scans.update_one({'_id': bson.ObjectId(scan_id)}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
+        scan_list.remove(id_scan)
+        db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
     else:
         user_list.append(user_name)
-        scan_list.append(scan_id)
-        db.scans.update_one({'_id': bson.ObjectId(scan_id)}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
+        scan_list.append(id_scan)
+        db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
     db.users.update_one({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}})
     return {
         "error": "0",
