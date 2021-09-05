@@ -1,3 +1,4 @@
+from types import MethodType
 from flask import Flask, render_template, jsonify, request, redirect, session
 from flask_session import Session
 from flask_pymongo import PyMongo
@@ -104,7 +105,8 @@ def create_rep(r):
         "id":       str(r['_id']),
         "upvote":   r['upvote'],
         "title":    r['title'],
-        "urgency":  r["urgency"]
+        "urgency":  r["urgency"],
+        "post_username": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username']
     }
 
     if r["des"]:
@@ -141,9 +143,27 @@ def upload():
 def forum():
     return render_template('forum.html')
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET','POST'])
 def contact():
-    return render_template('contact.html')
+    if request.method=='GET':
+        return render_template('contact.html')
+    if request.method=='POST':
+        userEmail = request.get_json()['email']
+        issueHeader = request.get_json()["issueHeader"]
+        issueDescription = request.get_json()["issueDescription"]
+        if userEmail != None and userEmail.strip() != "":
+            if issueHeader != None and issueHeader.strip() != "":
+                if issueDescription != None and issueDescription.strip() != "":
+                    db.issues.insert_one({"email": userEmail, "header": issueHeader, "description": issueDescription})
+                    return jsonify({"error": "0", "message": "Message sent to admin, we appreciate your continued patronage"})
+                elif issueDescription == None or issueDescription.strip() == "":
+                    return jsonify({"error": "1", "message": "Issue Description can't be empty"})
+            elif issueHeader == None or issueHeader.strip() == "":
+                return jsonify({"error": "1", "message": "Subject Line can't be empty"})
+        elif userEmail == None or userEmail.strip() == "":
+            return jsonify({"error": "1", "message": "Make sure you give a valid email"})
+        return jsonify('/contact')
+
 
 @app.route("/gallery")
 def gallery():
@@ -372,14 +392,14 @@ def api_find_all():
 @app.route('/api/vote/voting', methods=["POST"])
 @token_required
 def api_upvote(userId):
-    scan_id = request.args.get('scan_id')
+    id_scan = bson.ObjectId(request.get_json().get('scan_id'))
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
     scan = db.scans.find_one({'_id': bson.ObjectId(scan_id)})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = str(user["_id"])
     userStatus = user_name in user_list
-    if userStatus == None:
+    if userStatus:
         user_list.remove(user_name)
         scan_list.remove(scan_id)
         db.scans.update_one({'_id': bson.ObjectId(scan_id)}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
