@@ -1,27 +1,45 @@
-{% extends "base.html" %} {% block title %}Contact{% endblock %} {% block content %}
-<div id="contactQuery">
-    <input type="text" required placeholder="Email" name="email" id="email">
-    <input type="text" required placeholder="Subject for your Issue" name="issueHeader" id="issueHeader">
-    <input type="textarea" required placeholder="Describe your Issue" name="issueDescription" id="issueDescription">
-    <button type="submit" onclick="sendIssue()" name="submit" class="btn btn-primary">Submit</button>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-    function sendIssue() {
-        var email = document.getElementById("email").value;
-        var issueHeader = document.getElementById("issueHeader").value;
-        var issueDescription = document.getElementById("issueDescription").value;
-        axios.post('/contact', {
-                email: email,
-                issueHeader: issueHeader,
-                issueDescription: issueDescription
-            })
-            .then(function(response) {
-                console.log(response);
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
-    }
+
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    var app = new Vue({
+        el: "#vue-app",
+        delimiters: ['[[',']]'],
+        data() {
+            return {
+                email: "",
+                issueHeader: "",
+                issueDescription: "",
+            };
+        },
+        methods: {
+            submit(email,issueHeader,issueDescription) {
+                $.ajax({
+					type: 'POST',
+					url: '/contact',
+					data: JSON.stringify({"email": this.email, "issueHeader:": this.issueHeader, "issueDescription": this.issueDescription}),
+
+					contentType: "application/json",
+					dataType: "json"
+				});
+
+            }
+        }
+    });
 </script>
+{% endblock %}
+
+{% block content %}
+<div id = "vue-app">
+    <div style="text-align:center">
+        <input type="email" placeholder="Contact Email" v-model="email"> <br> <br>
+        <input type="text" placeholder="Issue Heading" v-model="issueHeader"> <br> <br>
+        <textarea placeholder="Type your issue here." v-model="issueDescription"></textarea> <br> <br>
+        <button @click="submit(email,issueHeader,issueDescription)">Submit</button>
+    </div>
+
+</div>
+
 {% endblock %}
