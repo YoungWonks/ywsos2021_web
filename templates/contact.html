@@ -33,11 +33,13 @@
 
 {% block content %}
 <div id = "vue-app">
-    <div style="text-align:center">
+    <div style="text-align:center; margin:auto; width:50%">
+        <h1 class="navbar-brand">Contact Support</h1>
+        <p style="color:white;">Contact our support team here if you come across any issues</p> <br>
         <input type="email" placeholder="Contact Email" v-model="email"> <br> <br>
         <input type="text" placeholder="Issue Heading" v-model="issueHeader"> <br> <br>
-        <textarea placeholder="Type your issue here." v-model="issueDescription"></textarea> <br> <br>
-        <button @click="submit(email,issueHeader,issueDescription)">Submit</button>
+        <textarea style="min-height:150px;" placeholder="Type your issue here." v-model="issueDescription"></textarea> <br> <br>
+        <button class="flask-buttonrect navbar-brand" style="border:0; display:inline !important;" @click="submit(email,issueHeader,issueDescription)">Submit</button>
     </div>
 
 </div>
