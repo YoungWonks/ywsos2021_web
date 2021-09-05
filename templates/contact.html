@@ -1,6 +1,27 @@
-{% extends "base.html" %}
-{% block title %}Contact{% endblock %}
-
-{% block content %}
-
+{% extends "base.html" %} {% block title %}Contact{% endblock %} {% block content %}
+<div id="contactQuery">
+    <input type="text" required placeholder="Email" name="email" id="email">
+    <input type="text" required placeholder="Subject for your Issue" name="issueHeader" id="issueHeader">
+    <input type="textarea" required placeholder="Describe your Issue" name="issueDescription" id="issueDescription">
+    <button type="submit" onclick="sendIssue()" name="submit" class="btn btn-primary">Submit</button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function sendIssue() {
+        var email = document.getElementById("email").value;
+        var issueHeader = document.getElementById("issueHeader").value;
+        var issueDescription = document.getElementById("issueDescription").value;
+        axios.post('/contact', {
+                email: email,
+                issueHeader: issueHeader,
+                issueDescription: issueDescription
+            })
+            .then(function(response) {
+                console.log(response);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }
+</script>
 {% endblock %}
