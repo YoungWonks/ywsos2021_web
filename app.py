@@ -1,3 +1,4 @@
+from types import MethodType
 from flask import Flask, render_template, jsonify, request, redirect, session
 from flask_session import Session
 from flask_pymongo import PyMongo
@@ -138,9 +139,27 @@ def upload():
 def forum():
     return render_template('forum.html')
 
-@app.route('/contact')
+@app.route('/contact', methods=['GET','POST'])
 def contact():
-    return render_template('contact.html')
+    if request.method=='GET':
+        return render_template('contact.html')
+    if request.method=='POST':
+        userEmail = request.get_json()['email']
+        issueHeader = request.get_json()["issueHeader"]
+        issueDescription = request.get_json()["issueDescription"]
+        if userEmail != None and userEmail.strip() != "":
+            if issueHeader != None and issueHeader.strip() != "":
+                if issueDescription != None and issueDescription.strip() != "":
+                    db.issues.insert_one({"email": userEmail, "header": issueHeader, "description": issueDescription})
+                    return jsonify({"error": "0", "message": "Message sent to admin, we appreciate your continued patronage"})
+                elif issueDescription == None or issueDescription.strip() == "":
+                    return jsonify({"error": "1", "message": "Issue Description can't be empty"})
+            elif issueHeader == None or issueHeader.strip() == "":
+                return jsonify({"error": "1", "message": "Subject Line can't be empty"})
+        elif userEmail == None or userEmail.strip() == "":
+            return jsonify({"error": "1", "message": "Make sure you give a valid email"})
+        return jsonify('/contact')
+
 
 @app.route("/gallery")
 def gallery():
