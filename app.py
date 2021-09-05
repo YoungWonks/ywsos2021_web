@@ -104,9 +104,7 @@ def create_rep(r):
         "id":       str(r['_id']),
         "upvote":   r['upvote'],
         "title":    r['title'],
-        "urgency":  r["urgency"],
-        "user_list":r['vote_users'],
-        "post_user": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username']
+        "urgency":  r["urgency"]
     }
 
     if r["des"]:
@@ -374,14 +372,14 @@ def api_find_all():
 @app.route('/api/vote/voting', methods=["POST"])
 @token_required
 def api_upvote(userId):
-    scan_id = request.get_json().get('scan_id')
+    scan_id = request.args.get('scan_id')
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
     scan = db.scans.find_one({'_id': bson.ObjectId(scan_id)})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
     user_name = str(user["_id"])
     userStatus = user_name in user_list
-    if userStatus != False:
+    if userStatus == None:
         user_list.remove(user_name)
         scan_list.remove(scan_id)
         db.scans.update_one({'_id': bson.ObjectId(scan_id)}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
