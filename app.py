@@ -172,7 +172,13 @@ def main(user_id):
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     if request.method == "POST":
         if request.get_json().get("changepass"):
-            pass
+            newpass = request.get_json().get("newpass")
+            confirmpass = request.get_json().get("confirmpass")
+            if newpass == confirmpass:
+                users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {'$set': {'password': newpass}})
+                return jsonify({"error": "0", "message": "Password changed successfully"})
+            else:
+                return jsonify({"error": "1", "message": "Password doesn't match"})
         if request.get_json().get("deleteacc"):
             users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
             return redirect("/logout")
