@@ -37,8 +37,6 @@ def minify_css(css_map):
                 outfile.write(rcssmin.cssmin(infile.read()))
 
 mongo = PyMongo(app)
-errorCode = ''
-errorMsg = ''
 Session(app)
 
 ################Token Decorator#########################
@@ -155,13 +153,13 @@ def contact():
                     return jsonify({"error": "0", "message": "Message sent to admin, we appreciate your continued patronage"})
                 elif issueDescription == None or issueDescription.strip() == "":
                     print('in elif')
-                    # return jsonify({"error": "1", "message": "Issue Description can't be empty"})
-                    errorCode = '400'
-                    errorMsg = 'Bad request. Make sure the Issue Description is not empty.'
-                    print('past vars')
-                    return redirect('/error')
-                    # return render_template('error.html', errorCode=errorCode, errorMsg=errorMsg)
-                    # print('past redirect')
+                    return jsonify({"error": "1", "message": "Issue Description can't be empty"})
+                    # errorCode = '400'
+                    # errorMsg = 'Bad request. Make sure the Issue Description is not empty.'
+                    # print('past vars')
+                    # return redirect('/error')
+                    # # return render_template('error.html', errorCode=errorCode, errorMsg=errorMsg)
+                    # # print('past redirect')
             elif issueHeader == None or issueHeader.strip() == "":
                 return jsonify({"error": "1", "message": "Subject Line can't be empty"})
         elif userEmail == None or userEmail.strip() == "":
