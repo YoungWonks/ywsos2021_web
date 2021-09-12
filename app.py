@@ -38,7 +38,6 @@ def minify_css(css_map):
                 outfile.write(rcssmin.cssmin(infile.read()))
 
 mongo = PyMongo(app)
-
 Session(app)
 
 ################Token Decorator#########################
@@ -134,8 +133,9 @@ class SignupForm(FlaskForm):
 @app.route('/')
 def about():
     return render_template('index.html')
-
-
+@app.route('/error')
+def error():
+    return render_template('error.html')
 @app.route('/upload')
 def upload():
     return render_template('upload.html')
@@ -157,7 +157,14 @@ def contact():
                     db.issues.insert_one({"email": userEmail, "header": issueHeader, "description": issueDescription})
                     return jsonify({"error": "0", "message": "Message sent to admin, we appreciate your continued patronage"})
                 elif issueDescription == None or issueDescription.strip() == "":
+                    print('in elif')
                     return jsonify({"error": "1", "message": "Issue Description can't be empty"})
+                    # errorCode = '400'
+                    # errorMsg = 'Bad request. Make sure the Issue Description is not empty.'
+                    # print('past vars')
+                    # return redirect('/error')
+                    # # return render_template('error.html', errorCode=errorCode, errorMsg=errorMsg)
+                    # # print('past redirect')
             elif issueHeader == None or issueHeader.strip() == "":
                 return jsonify({"error": "1", "message": "Subject Line can't be empty"})
         elif userEmail == None or userEmail.strip() == "":
@@ -176,7 +183,13 @@ def main(user_id):
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     if request.method == "POST":
         if request.get_json().get("changepass"):
-            pass
+            newpass = request.get_json().get("newpass")
+            confirmpass = request.get_json().get("confirmpass")
+            if newpass == confirmpass:
+                users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {'$set': {'password': newpass}})
+                return jsonify({"error": "0", "message": "Password changed successfully"})
+            else:
+                return jsonify({"error": "1", "message": "Password doesn't match"})
         if request.get_json().get("deleteacc"):
             users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
             return redirect("/logout")
