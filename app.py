@@ -37,7 +37,6 @@ def minify_css(css_map):
                 outfile.write(rcssmin.cssmin(infile.read()))
 
 mongo = PyMongo(app)
-
 Session(app)
 
 ################Token Decorator#########################
@@ -130,8 +129,9 @@ class SignupForm(FlaskForm):
 @app.route('/')
 def about():
     return render_template('index.html')
-
-
+@app.route('/error')
+def error():
+    return render_template('error.html')
 @app.route('/upload')
 def upload():
     return render_template('upload.html')
@@ -153,7 +153,14 @@ def contact():
                     db.issues.insert_one({"email": userEmail, "header": issueHeader, "description": issueDescription})
                     return jsonify({"error": "0", "message": "Message sent to admin, we appreciate your continued patronage"})
                 elif issueDescription == None or issueDescription.strip() == "":
+                    print('in elif')
                     return jsonify({"error": "1", "message": "Issue Description can't be empty"})
+                    # errorCode = '400'
+                    # errorMsg = 'Bad request. Make sure the Issue Description is not empty.'
+                    # print('past vars')
+                    # return redirect('/error')
+                    # # return render_template('error.html', errorCode=errorCode, errorMsg=errorMsg)
+                    # # print('past redirect')
             elif issueHeader == None or issueHeader.strip() == "":
                 return jsonify({"error": "1", "message": "Subject Line can't be empty"})
         elif userEmail == None or userEmail.strip() == "":
