@@ -120,7 +120,7 @@ class SignupForm(FlaskForm):
     username = StringField("Username :", validators = [DataRequired()])
     email = StringField("Email :", validators = [DataRequired(), Email()])
     password = PasswordField("Password :", validators = [DataRequired()])
-    confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo('password')])
+    confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo(password)])
     city = StringField("City :")
     submit = SubmitField("Register")
 ########################################################################
@@ -144,6 +144,7 @@ def contact():
     if request.method=='GET':
         return render_template('contact.html')
     if request.method=='POST':
+        print(request.get_json())
         userEmail = request.get_json()['email']
         issueHeader = request.get_json()["issueHeader"]
         issueDescription = request.get_json()["issueDescription"]
@@ -445,6 +446,21 @@ def api_voted(userId):
 def api_find_forum():
     scans = db['scans']
     result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
+    repairs = []
+    for r in result:
+        scan = create_rep(r)
+        repairs.append(scan)
+    return {
+        "repairs": repairs,
+    }
+
+@app.route('/api/scans/gallery', methods=["POST"])
+@token_required
+def api_find_gallery():
+    scans = db['scans']
+    result = scans.find({
+        'u_id': session['logged_in_id']
+    }).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
         scan = create_rep(r)

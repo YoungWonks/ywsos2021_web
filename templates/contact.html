@@ -1,12 +1,8 @@
-
-{% extends "base.html" %}
-{% block title %}Contact{% endblock %}
-
-{% block scripts %}
+ {% extends "base.html" %} {% block title %}Contact{% endblock %} {% block scripts %}
 <script type="text/javascript">
     var app = new Vue({
         el: "#vue-app",
-        delimiters: ['[[',']]'],
+        delimiters: ['[[', ']]'],
         data() {
             return {
                 email: "",
@@ -15,24 +11,31 @@
             };
         },
         methods: {
-            submit(email,issueHeader,issueDescription) {
+            submit(email, issueHeader, issueDescription) {
                 $.ajax({
-					type: 'POST',
-					url: '/contact',
-					data: JSON.stringify({"email": this.email, "issueHeader:": this.issueHeader, "issueDescription": this.issueDescription}),
+                    type: 'POST',
+                    url: '/contact',
+                    data: JSON.stringify({
+                        "email": this.email,
+                        "issueHeader": this.issueHeader,
+                        "issueDescription": this.issueDescription
+                    }),
 
-					contentType: "application/json",
-					dataType: "json"
-				});
+                    contentType: "application/json",
+                    dataType: "json"
+                }).done(function(response) {
+                    console.log(response)
+                    if (response["error"] == 1) {
+                        window.location.replace("/error?errorCode=400&errorMsg=Bad request. Make sure the Issue Description is not empty.")
+                    }
+                });
 
             }
         }
     });
 </script>
-{% endblock %}
-
-{% block content %}
-<div id = "vue-app">
+{% endblock %} {% block content %}
+<div id="vue-app">
     <div style="text-align:center; max-width:75%;" class="container ">
         <h1 class="navbar-brand">Contact Support</h1>
         <p style="color:white;">Contact our support team here if you come across any issues</p>
