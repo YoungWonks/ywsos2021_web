@@ -475,7 +475,6 @@ def api_add(userId):
     locator = Nominatim(user_agent="georepair").geocode(position)
     lat = locator.latitude
     long = locator.longitude
-
     address = Nominatim(user_agent="georepair").reverse([lat,long]).raw['address']
     city = None
     if 'city' in address:

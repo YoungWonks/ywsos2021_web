@@ -51,9 +51,8 @@
 						</div>
 						<div class="col-sm-12 col-md-4 col-lg-4">
 							<div>
-								<button @click="vote(scan.filename, scan.id)" v-if="'{{ session['logged_in'] }}' == 'True'">
-									<img src="../static/images/upvote.svg" v-if="scan.user_list.includes('{{ session['logged_in_id'] }}')">
-									<img src="../static/images/unvote.svg" v-else>
+								<button @click="vote($event,scan.filename, scan.id)" v-if="'{{ session['logged_in'] }}' == 'True'">
+									<img src="../static/images/upvote.svg" @click="voted($event, scan.id)">
 								</button>
 								<a v-else href="/login">
 									<button>
@@ -105,7 +104,7 @@
 						});
 					});
 				},
-				vote: function(index, id) {
+				vote: function(e,index, id) {
 					$.ajax({
 						type: 'POST',
 						url: '/api/vote/voting',
@@ -116,11 +115,27 @@
 							app.getCurrent();
 						}
 					});
+				},
+				voted: function(e,id) {
+					$.ajax({
+						type: 'POST',
+						url: '/api/vote/voted',
+						data: JSON.stringify({"scan_id": id}),
+						contentType: "application/json",
+						dataType: "json",
+						success: function(data) {
+							if (data.voted) {
+								e.target.setAttribute('src', '../static/images/unvote.svg');
+							} else {
+								e.target.setAttribute('src', '../static/images/upvote.svg');
+							}
+						}
+					})
 				}
 			}
 		});
 
 		app.getCurrent();
-		setInterval(app.getCurrent, 1000);
+		setInterval(app.getCurrent, 2000);
     </script>
 {% endblock %}
