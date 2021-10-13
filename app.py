@@ -94,7 +94,7 @@ def login_required(something):
     return wrap_login
 
 #########Scan representation############################################
-def create_rep(r):
+def create_rep(r,user):
     reps =  {
         "url":      '/static/images/scans/'+r['filename'],
         "scandate": timeago.format(r['scandate'],datetime.utcnow()),
@@ -105,7 +105,8 @@ def create_rep(r):
         "upvote":   r['upvote'],
         "title":    r['title'],
         "urgency":  r["urgency"],
-        "post_username": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username']
+        "post_username": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username'],
+        "scan_list": str(db.users.find_one({"_id": bson.ObjectId(user)})['vote_scans'])
     }
 
     if r["des"]:
@@ -148,7 +149,6 @@ def contact():
     if request.method=='GET':
         return render_template('contact.html')
     if request.method=='POST':
-        print(request.get_json())
         userEmail = request.get_json()['email']
         issueHeader = request.get_json()["issueHeader"]
         issueDescription = request.get_json()["issueDescription"]
@@ -158,7 +158,6 @@ def contact():
                     db.issues.insert_one({"email": userEmail, "header": issueHeader, "description": issueDescription})
                     return jsonify({"error": "0", "message": "Message sent to admin, we appreciate your continued patronage"})
                 elif issueDescription == None or issueDescription.strip() == "":
-                    print('in elif')
                     return jsonify({"error": "1", "message": "Issue Description can't be empty"})
                     # errorCode = '400'
                     # errorMsg = 'Bad request. Make sure the Issue Description is not empty.'
@@ -357,14 +356,15 @@ def api_find(userId):
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = create_rep(r)
+        scan = create_rep(r,session['logged_in_id'])
         repairs.append(scan)
     return {
         "repairs": repairs,
     }
 
 @app.route('/api/scans/all', methods=["POST"])
-def api_find_all():
+@token_required
+def api_find_all(userId):
     scans = db['scans']
     position = request.get_json().get('position', [None, None])
     lat = position[0] if position[0] else 0
@@ -397,7 +397,7 @@ def api_find_all():
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = create_rep(r)
+        scan = create_rep(r, session['logged_in_id'])
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -452,7 +452,7 @@ def api_find_forum():
     result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
-        scan = create_rep(r)
+        scan = create_rep(r, session['logged_in_id'])
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -460,14 +460,14 @@ def api_find_forum():
 
 @app.route('/api/scans/gallery', methods=["POST"])
 @token_required
-def api_find_gallery():
+def api_find_gallery(userId):
     scans = db['scans']
     result = scans.find({
         'u_id': session['logged_in_id']
     }).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
-        scan = create_rep(r)
+        scan = create_rep(r, session['logged_in_id'])
         repairs.append(scan)
     return {
         "repairs": repairs,

@@ -52,7 +52,8 @@
 						<div class="col-sm-12 col-md-4 col-lg-4">
 							<div>
 								<button @click="vote($event,scan.filename, scan.id)" v-if="'{{ session['logged_in'] }}' == 'True'">
-									<img src="../static/images/upvote.svg" @click="voted($event, scan.id)">
+									<img src="../static/images/upvote.svg" v-if="scan.scan_list.includes(scan.id)">
+									<img src="../static/images/unvote.svg" v-else>
 								</button>
 								<a v-else href="/login">
 									<button>
@@ -116,21 +117,16 @@
 						}
 					});
 				},
-				voted: function(e,id) {
-					$.ajax({
+				voted: async function(id) {
+					const result = await $.ajax({
 						type: 'POST',
 						url: '/api/vote/voted',
 						data: JSON.stringify({"scan_id": id}),
 						contentType: "application/json",
-						dataType: "json",
-						success: function(data) {
-							if (data.voted) {
-								e.target.setAttribute('src', '../static/images/unvote.svg');
-							} else {
-								e.target.setAttribute('src', '../static/images/upvote.svg');
-							}
-						}
+						dataType: "json"
 					})
+					console.log(result.voted);
+					return result.voted;
 				}
 			}
 		});
