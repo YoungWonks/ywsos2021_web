@@ -5,13 +5,12 @@
     <div id="vue-app" class="container">
     	<div class="forum-control row">
     		<div class="col-3">
-    			<button></button>
     		</div>
     		<div class="col-9" style="display: inline-flex; justify-content: flex-end; align-items: center;">
     			<div class="forum-search">
     				<img src="../static/images/search.svg">
     				<span class="text-wrapper">
-    					<input type="text" name="search" placeholder="Search Posts">
+    					<input type="text" name="search" placeholder="Search Posts" v-model="searchbox" v-on:input="search">
     				</span>
     			</div>
     			<div class="forum-add">
@@ -87,23 +86,26 @@
 			delimiters: ['[[',']]'],
 			data() {
 				return {
-					repairs: []
+					repairs: [],
+					searchbox: ''
 				};
 			},
 			methods: {
 				getCurrent: function () {
-					navigator.geolocation.getCurrentPosition(function(pos) {
-						$.ajax({
-							type: 'POST',
-							url: '/api/scans/all',
-							data: JSON.stringify({"position": [pos.coords.latitude, pos.coords.longitude], "range": 100}),
-							contentType: "application/json",
-							dataType: "json",
-							success: function(data) {
-								app.repairs = data.repairs;
-							}
+					if (app.searchbox == "") {
+						navigator.geolocation.getCurrentPosition(function(pos) {
+							$.ajax({
+								type: 'POST',
+								url: '/api/scans/all',
+								data: JSON.stringify({"position": [pos.coords.latitude, pos.coords.longitude], "range": 100}),
+								contentType: "application/json",
+								dataType: "json",
+								success: function(data) {
+									app.repairs = data.repairs;
+								}
+							});
 						});
-					});
+					}
 				},
 				vote: function(e,index, id) {
 					$.ajax({
@@ -117,16 +119,12 @@
 						}
 					});
 				},
-				voted: async function(id) {
-					const result = await $.ajax({
-						type: 'POST',
-						url: '/api/vote/voted',
-						data: JSON.stringify({"scan_id": id}),
-						contentType: "application/json",
-						dataType: "json"
-					})
-					console.log(result.voted);
-					return result.voted;
+				search: function() {
+					if (app.searchbox != "") {
+						app.repairs = app.repairs.filter(scan => scan.title.toLowerCase().includes(app.searchbox));
+					} else {
+						app.getCurrent();
+					}
 				}
 			}
 		});
