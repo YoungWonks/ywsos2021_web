@@ -72,8 +72,13 @@
 							<img :src="scan.url">
 						</div>
 					</div>
-					
+
 				</div>
+			</div>
+		</div>
+		<div v-if="repairs.length <= 0" class="forum-loader d-flex justify-content-center align-items-center">
+			<div class="spinner-border" role="status">
+				<span class="visually-hidden">Loading...</span>
 			</div>
 		</div>
 	</div>

@@ -307,7 +307,7 @@
     padding: 1rem;
 }
 
-#vue-app > div:not(.forum-control) {
+#vue-app > div:not(.forum-control):not(.forum-loader) {
     margin-right: 62px;
     margin-left: 62px;
     padding: 8px;
@@ -317,7 +317,9 @@
     margin-bottom: 10px;
 }
 
-
+.forum-loader {
+    height: calc(75vh);
+}
 
 
 .card-body h1 {
@@ -364,8 +366,8 @@
 }
 
 .bottom-row img {
-    width: 100%;
     border-radius: 2rem;
+    max-height: 12rem;
 }
 
 .bottom-row p {
