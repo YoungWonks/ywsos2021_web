@@ -21,6 +21,7 @@ from geopy.geocoders import Nominatim
 from flask_minify import minify
 import rcssmin
 import re
+import timeago
 
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
@@ -93,17 +94,21 @@ def login_required(something):
     return wrap_login
 
 #########Scan representation############################################
-def create_rep(r):
+def create_rep(r,user):
     reps =  {
         "url":      '/static/images/scans/'+r['filename'],
-        "scandate": r['scandate'],
+        "scandate": timeago.format(r['scandate'],datetime.utcnow()),
         "position": r['position'],
+        "city":     r['city'],
+        "state":    r['state'],
         "id":       str(r['_id']),
         "upvote":   r['upvote'],
         "title":    r['title'],
         "urgency":  r["urgency"],
-        "post_username": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username']
+        "post_username": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username'],
+        "scan_list": str(db.users.find_one({"_id": bson.ObjectId(user)})['vote_scans'])
     }
+
     if r["des"]:
         reps["description"] = r["des"]
     return reps
@@ -144,7 +149,6 @@ def contact():
     if request.method=='GET':
         return render_template('contact.html')
     if request.method=='POST':
-        print(request.get_json())
         userEmail = request.get_json()['email']
         issueHeader = request.get_json()["issueHeader"]
         issueDescription = request.get_json()["issueDescription"]
@@ -154,7 +158,6 @@ def contact():
                     db.issues.insert_one({"email": userEmail, "header": issueHeader, "description": issueDescription})
                     return jsonify({"error": "0", "message": "Message sent to admin, we appreciate your continued patronage"})
                 elif issueDescription == None or issueDescription.strip() == "":
-                    print('in elif')
                     return jsonify({"error": "1", "message": "Issue Description can't be empty"})
                     # errorCode = '400'
                     # errorMsg = 'Bad request. Make sure the Issue Description is not empty.'
@@ -353,14 +356,15 @@ def api_find(userId):
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = create_rep(r)
+        scan = create_rep(r,session['logged_in_id'])
         repairs.append(scan)
     return {
         "repairs": repairs,
     }
 
 @app.route('/api/scans/all', methods=["POST"])
-def api_find_all():
+@token_required
+def api_find_all(userId):
     scans = db['scans']
     position = request.get_json().get('position', [None, None])
     lat = position[0] if position[0] else 0
@@ -393,7 +397,7 @@ def api_find_all():
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = create_rep(r)
+        scan = create_rep(r, session['logged_in_id'])
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -404,20 +408,20 @@ def api_find_all():
 def api_upvote(userId):
     id_scan = bson.ObjectId(request.get_json().get('scan_id'))
     user = db.users.find_one({'_id': bson.ObjectId(userId)})
-    scan = db.scans.find_one({'_id': id_scan})
+    scan = db.scans.find_one({'_id': bson.ObjectId(id_scan)})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
-    user_name = user["username"]
+    user_name = str(user["_id"])
     userStatus = user_name in user_list
     if userStatus:
         user_list.remove(user_name)
         scan_list.remove(id_scan)
-        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
+        db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
     else:
         user_list.append(user_name)
         scan_list.append(id_scan)
-        db.scans.update({'_id': id_scan}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
-    db.users.update({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}}) 
+        db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
+    db.users.update_one({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}})
     return {
         "error": "0",
         "message": "Successful",
@@ -431,7 +435,7 @@ def api_voted(userId):
     scan = db.scans.find_one({'_id': id_scan})
     user_list = scan["vote_users"]
     scan_list = user["vote_scans"]
-    user_name = user["username"]
+    user_name = str(user["_id"])
     if user_name in user_list:
          return {
             "error": "0",
@@ -448,7 +452,7 @@ def api_find_forum():
     result = scans.find({}).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
-        scan = create_rep(r)
+        scan = create_rep(r, session['logged_in_id'])
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -456,14 +460,14 @@ def api_find_forum():
 
 @app.route('/api/scans/gallery', methods=["POST"])
 @token_required
-def api_find_gallery():
+def api_find_gallery(userId):
     scans = db['scans']
     result = scans.find({
         'u_id': session['logged_in_id']
     }).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
-        scan = create_rep(r)
+        scan = create_rep(r, session['logged_in_id'])
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -484,8 +488,18 @@ def api_upload(userId):
 def api_add(userId):
     scans = db['scans']
     position = request.get_json().get('position')
-    lat = position[0]
-    long = position[1]
+    locator = Nominatim(user_agent="georepair").geocode(position)
+    lat = locator.latitude
+    long = locator.longitude
+    address = Nominatim(user_agent="georepair").reverse([lat,long]).raw['address']
+    city = None
+    if 'city' in address:
+        city = address.get('city')
+    elif 'town' in address:
+        city = address.get('town')
+    elif 'village' in address:
+        city = address.get('village')
+    state = address.get('state')
     filename = request.get_json().get('filename')
     title = request.get_json().get('title')
     des = request.get_json().get('des', None)
@@ -504,11 +518,12 @@ def api_add(userId):
             "coordinates": [long, lat]
         },
         "upvote": 0,
-        "date": datetime.utcnow(),
         "title": title,
         "des": des,
         "urgency": urgency,
         "vote_users": [],
+        "city": city,
+        "state": state
     })
     return {"error": "0", "message": "Succesful",}
 

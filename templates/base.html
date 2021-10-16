@@ -29,14 +29,15 @@
             </button>
             <span class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item px-1"><a href="/forum" class="nav-link">Forum</a></li>
                     {% if session['logged_in'] %}
-                    <li class="nav-item px-1"><a href="/upload" class="nav-link">Upload</a></li>
+                        <li class="nav-item px-1"><a href="/forum" class="nav-link nav">Forum</a></li>
+                        <li class="nav-item px-1"><a href="/upload" class="nav-link nav">Upload</a></li>
                     {% else %}
-                    <li class="nav-item px-1"><a href="/login" class="nav-link">Upload</a></li>
+                        <li class="nav-item px-1"><a href="/login" class="nav-link">Forum</a></li>
+                        <li class="nav-item px-1"><a href="/login" class="nav-link">Upload</a></li>
                     {% endif %}
-                    <li class="nav-item px-1"><a href="/gallery" class="nav-link">Gallery</a></li>
-                    <li class="nav-item px-1"><a href="/contact" class="nav-link">Contact</a></li>
+                    <li class="nav-item px-1"><a href="/gallery" class="nav-link nav">Gallery</a></li>
+                    <li class="nav-item px-1"><a href="/contact" class="nav-link nav">Contact</a></li>
                 </ul>
                 {% block buttons %}
                 {% if session['logged_in'] %}

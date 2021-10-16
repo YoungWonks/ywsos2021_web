@@ -298,3 +298,137 @@
 }
 
 
+.card {
+    border-radius: 31px;
+    box-shadow: 0px 12px 55px 0px #00000040;
+    background: linear-gradient(95.55deg, #CAE4B6 0.87%, #D7DEDA 52.55%, #93B0B6 100%);
+    background-clip: padding-box;
+    border: none;
+    padding: 1rem;
+}
+
+#vue-app > div:not(.forum-control):not(.forum-loader) {
+    margin-right: 62px;
+    margin-left: 62px;
+    padding: 8px;
+    border-radius: 40px;
+    background-image: linear-gradient(95.91deg, #7D9983 2.11%, #AAC8AE 56.58%, #799FAB 100%);
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.forum-loader {
+    height: calc(75vh);
+}
+
+
+.card-body h1 {
+    font-weight: 700;
+    font-size: 33px;
+    text-align: right;
+    margin: 0;
+    display: inline-block;
+}
+
+.card-body h2 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0.5rem;
+    text-align: center;
+}
+
+.card-body button {
+    border: none !important; 
+    background-color: transparent; 
+    padding: 0; 
+    display: inline-block; 
+    margin: 0;
+}
+
+.card-body .col-sm-12 p {
+    display: inline-block; 
+    margin: 0; 
+    font-weight: 500; 
+    vertical-align: middle; 
+    font-size: 16px;
+}
+
+.scan-details {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 5px;
+}
+
+.scan-details p {
+    font-style: italic;
+    color: #79A193;
+    display: inline-block;
+}
+
+.bottom-row img {
+    border-radius: 2rem;
+    max-height: 12rem;
+}
+
+.bottom-row p {
+    font-weight: 500 !important;
+    font-size: 20px !important;
+    color: #979797;
+}
+
+.forum-add button {
+    background: linear-gradient(93.12deg, #ACC9AF 0%, #709A9B 100%);
+    box-shadow: 2px 2px 13px 0px #00000026;
+    border: none;
+    border-radius: 9px;
+    font-weight: 500;
+    font-size: 19px;
+    color: white;
+}
+
+.forum-add p {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0.5rem;
+    color: #E2E8E0;
+
+}
+
+.forum-add img {
+    padding: 0.5rem;
+    padding-right: 0;
+}
+
+.forum-search, .forum-add {
+    display: flex;
+    align-items: center;
+}
+
+.forum-search {
+    height: min-content;
+    border-bottom: 2px solid #E2E8E0;
+    padding-bottom: 2px;
+    margin-right: 10px;
+}
+
+.forum-search input {
+    background-color: transparent;
+    border: none;
+}
+
+.forum-search img {
+    width: 20px;
+    margin-right: 5px;
+}
+
+.forum-search ::placeholder, .forum-search input {
+    color: #E2E8E0;
+    font-weight: 500;
+    font-size: 20px;
+    opacity: 1;
+}
+
+.forum-control {
+    margin: 10px 20px;
+}
