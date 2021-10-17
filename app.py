@@ -14,7 +14,6 @@ import bson
 from functools import wraps
 from passlib.hash import pbkdf2_sha256
 from datetime import datetime, timezone, timedelta
-import pytz
 from werkzeug.utils import secure_filename
 from uuid import uuid4
 from geopy.geocoders import Nominatim
