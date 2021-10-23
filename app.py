@@ -86,7 +86,7 @@ def token_required(something):
 def login_required(something):
     @wraps(something)
     def wrap_login(*args, **kwargs):
-        if session['logged_in']:
+        if 'logged_in' in session:
             return something(session['logged_in_id'], *args, **kwargs)
         else:
             return redirect('/')
@@ -124,7 +124,7 @@ class SignupForm(FlaskForm):
     username = StringField("Username :", validators = [DataRequired()])
     email = StringField("Email :", validators = [DataRequired(), Email()])
     password = PasswordField("Password :", validators = [DataRequired()])
-    confirm_password = PasswordField("Confirm Password :", validators = [DataRequired(), EqualTo(password)])
+    confirm_password = PasswordField("Confirm Password :", validators = [DataRequired()])
     city = StringField("City :")
     submit = SubmitField("Register")
 ########################################################################
@@ -232,13 +232,13 @@ def signup():
             usererror = True
         elif users.find_one({"email":user["email"]}) is not None or re.match(regex, user["email"]) is False:
             emailerror = True
+        elif signup_form.password.data != signup_form.confirm_password.data:
+            notallowed = True
         else:
             users.insert_one(user)
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
             return redirect('/main')
-    elif signup_form.is_submitted():
-        notallowed = True
     return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror,notallowed=notallowed)
 
 @app.route('/logout')
