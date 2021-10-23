@@ -2,30 +2,86 @@
 {% block title %}Forum{% endblock %}
 
 {% block content %}
-    <!-- commented out text is for when the database is integrated -->
-    <!-- {#{% for (entries) in forum%}#} -->
-    <div id="vue-app">
+    <div id="vue-app" class="container">
+    	<div class="forum-control row">
+    		<div class="col-3">
+    		</div>
+    		<div class="col-9" style="display: inline-flex; justify-content: flex-end; align-items: center;">
+    			<div class="forum-search">
+    				<img src="../static/images/search.svg">
+    				<span class="text-wrapper">
+    					<input type="text" name="search" placeholder="Search Posts" v-model="searchbox" v-on:input="search">
+    				</span>
+    			</div>
+    			<div class="forum-add">
+    				<a href="/upload">
+	    				<button>
+	    					<img src="../static/images/new.svg">
+	    					<p>New Post</p>
+	    				</button>
+	    			</a>
+    			</div>
+    		</div>
+    	</div>
 		<div v-for="scan in repairs">
-			<div class="card" style="width: 30rem; margin: auto;">
-				<img class="card-img-top" :src="scan.url" alt="Crack in sidewalk (not there atm)">
+			<div class="card" class="col-12">
 				<div class="card-body">
-					<h3 class="card-title">[[ scan.title ]]</h3>
-					<p class="card-title">[[ scan.upvote ]] upvotes</p>
-					<hr>
-					<!-- <p class="card-text">field for describing the problem <b>example</b> Sixty-nine people
-					in the neighborhood have reported falling over this crack. This portion of the sidewalk needs to be repaired!</p> -->
-					<p class="card-text"><i>Location: ([[scan.position.lat]], [[scan.position.long]])</i></p>
-					{% if session['logged_in'] %}
-						<button class="btn btn-primary" @click="vote(scan.filename, scan.id)">Upvote</button>
-					{% else %}
-						<b><p>Log in to vote</p></b>
-					{% endif %}
+					<div class="row">
+						<div class="col-sm-12 col-md-1 col-lg-1" style="display: block;">
+							<img src="../static/images/user.svg" style="display: block; background: linear-gradient(93.12deg, #ACC9AF 0%, #709A9B 100%); border-radius: 50%; border: 3px solid;">
+							<h2>[[ scan.post_user ]]</h2>
+						</div>
+						<div class="col-sm-12 col-md-5 col-lg-5">
+							<div>
+								<h1>[[ scan.title ]]</h1>
+								<div class="scan-details">
+									<div>
+										<img src="../static/images/scandate.svg">
+										<p>[[ scan.scandate ]]</p>
+									</div>
+								</div>
+								<div class="scan-details">
+									<div>
+										<img src="../static/images/location.svg">
+										<p>[[ scan.city]], [[ scan.state ]]</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-4 col-lg-4">
+							<div>
+								<button @click="vote($event,scan.filename, scan.id)" v-if="'{{ session['logged_in'] }}' == 'True'">
+									<img src="../static/images/upvote.svg" v-if="scan.scan_list.includes(scan.id)">
+									<img src="../static/images/unvote.svg" v-else>
+								</button>
+								<a v-else href="/login">
+									<button>
+										<img src="../static/images/unvote.svg">
+									</button>
+								</a>
+								<p v-if="scan.upvote == 1">[[ scan.upvote ]] upvote</p>
+								<p v-else>[[ scan.upvote ]] upvotes</p>
+							</div>
+						</div>
+					</div>
+					<div class="row bottom-row">
+						<div class="col-sm-12 col-md-5 col-lg-5 offset-md-1 offset-lg-1 row">
+							<p>[[ scan.description ]]</p>
+						</div>
+						<div class="col-sm-12 col-md-4 col-lg-4">
+							<img :src="scan.url">
+						</div>
+					</div>
+
 				</div>
 			</div>
-			<br>
+		</div>
+		<div v-if="repairs.length <= 0" class="forum-loader d-flex justify-content-center align-items-center">
+			<div class="spinner-border" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
 		</div>
 	</div>
-    <!-- {#{%endfor%}#} -->
 {% endblock %}
 
 {% block scripts %}
@@ -36,31 +92,49 @@
 			data() {
 				return {
 					repairs: [],
+					searchbox: ''
 				};
 			},
 			methods: {
 				getCurrent: function () {
-					$.post(
-						"/api/scans/forum",
-
-						function(res){
-							app.repairs = res.repairs;
-						}
-					);
+					if (app.searchbox == "") {
+						navigator.geolocation.getCurrentPosition(function(pos) {
+							$.ajax({
+								type: 'POST',
+								url: '/api/scans/all',
+								data: JSON.stringify({"position": [pos.coords.latitude, pos.coords.longitude], "range": 100}),
+								contentType: "application/json",
+								dataType: "json",
+								success: function(data) {
+									app.repairs = data.repairs;
+								}
+							});
+						});
+					}
 				},
-				vote: function(index, id) {
+				vote: function(e,index, id) {
 					$.ajax({
-							type: 'POST',
-							url: '/api/scans/vote',
-							data: JSON.stringify({"name": index, "scan_id": id}),
-							contentType: "application/json",
-							dataType: "json"
+						type: 'POST',
+						url: '/api/vote/voting',
+						data: JSON.stringify({"name": index, "scan_id": id}),
+						contentType: "application/json",
+						dataType: "json",
+						success: function(data) {
+							app.getCurrent();
+						}
 					});
+				},
+				search: function() {
+					if (app.searchbox != "") {
+						app.repairs = app.repairs.filter(scan => scan.title.toLowerCase().includes(app.searchbox));
+					} else {
+						app.getCurrent();
+					}
 				}
 			}
 		});
 
 		app.getCurrent();
-		setInterval(app.getCurrent, 60000);
+		setInterval(app.getCurrent, 2000);
     </script>
 {% endblock %}
