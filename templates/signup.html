@@ -50,7 +50,7 @@
                     <p style="color:red;">Email already in use</p>
                 {% endif %}
                 {% if notallowed %}
-                    <p style="color: red;">One or more of the fields is incorrect</p>
+                    <p style="color: red;">Passwords must match</p>
                 {% endif %}
                 {{signup_form.submit(class="btn nav-button flask-buttonrect sign-up-btn", style="margin:auto !important;")}}<br />
             </form>

@@ -6,4 +6,7 @@ jQuery(function($) {
             $(this).addClass('active');
         }
     });
+    if (path.includes("/login")) {
+        $("#login").addClass("active");
+    }
 });
