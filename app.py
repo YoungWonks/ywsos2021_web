@@ -1,5 +1,5 @@
 from types import MethodType
-from flask import Flask, render_template, jsonify, request, redirect, session
+from flask import Flask, render_template, jsonify, request, redirect, session, abort
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
@@ -135,7 +135,7 @@ def about():
     return render_template('index.html')
 @app.route('/error')
 def error():
-    return render_template('error.html')
+    abort(404)
 @app.route('/upload')
 def upload():
     return render_template('upload.html')
@@ -158,12 +158,6 @@ def contact():
                     return jsonify({"error": "0", "message": "Message sent to admin, we appreciate your continued patronage"})
                 elif issueDescription == None or issueDescription.strip() == "":
                     return jsonify({"error": "1", "message": "Issue Description can't be empty"})
-                    # errorCode = '400'
-                    # errorMsg = 'Bad request. Make sure the Issue Description is not empty.'
-                    # print('past vars')
-                    # return redirect('/error')
-                    # # return render_template('error.html', errorCode=errorCode, errorMsg=errorMsg)
-                    # # print('past redirect')
             elif issueHeader == None or issueHeader.strip() == "":
                 return jsonify({"error": "1", "message": "Subject Line can't be empty"})
         elif userEmail == None or userEmail.strip() == "":
@@ -181,15 +175,15 @@ def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     if request.method == "POST":
-        if request.get_json().get("changepass"):
-            newpass = request.get_json().get("newpass")
-            confirmpass = request.get_json().get("confirmpass")
-            if newpass == confirmpass:
-                users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {'$set': {'password': newpass}})
+        if request.form.get("changepass"):
+            newpass = request.form.get("newpass")
+            confirmpass = request.form.get("confirmpass")
+            if newpass == confirmpass and newpass is not None:
+                users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {'$set': {'password': pbkdf2_sha256.hash(newpass)}})
                 return jsonify({"error": "0", "message": "Password changed successfully"})
             else:
                 return jsonify({"error": "1", "message": "Password doesn't match"})
-        if request.get_json().get("deleteacc"):
+        if request.form.get("deleteacc"):
             users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
             return redirect("/logout")
     return render_template("main.html", user=user)
@@ -218,6 +212,7 @@ def signup():
     usererror = False
     emailerror = False
     notallowed = False
+    passlength = False
     if signup_form.validate_on_submit():
         users = db['users']
         dt_now = datetime.now(tz=timezone.utc)
@@ -234,12 +229,14 @@ def signup():
             emailerror = True
         elif signup_form.password.data != signup_form.confirm_password.data:
             notallowed = True
+        elif len(signup_form.password.data) < 6:
+            passlength = True
         else:
             users.insert_one(user)
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
             return redirect('/main')
-    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror,notallowed=notallowed)
+    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror,notallowed=notallowed, passlength=passlength)
 
 @app.route('/logout')
 @login_required
@@ -248,6 +245,9 @@ def logout(u_is):
     session['logged_in_id'] = ''
     return redirect('/')
 
+@app.errorhandler(404)
+def pagenotfound(errorcode):
+    return render_template("error.html", errorCode=404, errorMsg="Page not found"),404
 ########################################################################
 #########################API############################################
 ########################################################################

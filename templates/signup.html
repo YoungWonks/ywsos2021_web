@@ -52,6 +52,9 @@
                 {% if notallowed %}
                     <p style="color: red;">Passwords must match</p>
                 {% endif %}
+                {% if passlength %}
+                    <p style="color: red;">Password length must be greater than 6</p>
+                {% endif %}
                 {{signup_form.submit(class="btn nav-button flask-buttonrect sign-up-btn", style="margin:auto !important;")}}<br />
             </form>
         </div>
