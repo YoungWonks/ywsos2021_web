@@ -197,7 +197,7 @@
 .text-border {
     width: var(--width);
     display: block;
-    height: 3px;
+    height: 2px;
     background: linear-gradient(90deg, #97B88D 0%, #ACC9AE 44.66%, #649197 100%);
 }
 
