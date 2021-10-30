@@ -1,4 +1,4 @@
-jQuery(function($) {
+$(function() {
     var path = window.location.href;
     $('.nav').each(function() {
         if (this.href === path) {

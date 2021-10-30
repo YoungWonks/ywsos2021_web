@@ -23,7 +23,7 @@
     			</div>
     		</div>
     	</div>
-		<div v-for="scan in repairs">
+		<div v-for="scan in repairs" class="fordiv" v-cloak>
 			<div class="card" class="col-12">
 				<div class="card-body">
 					<div class="row">
@@ -69,7 +69,7 @@
 							<p>[[ scan.description ]]</p>
 						</div>
 						<div class="col-sm-12 col-md-4 col-lg-4">
-							<img :src="scan.url">
+							<img :src="scan.url" :alt="scan.description">
 						</div>
 					</div>
 
@@ -97,7 +97,7 @@
 			},
 			methods: {
 				getCurrent: function () {
-					if (app.searchbox == "") {
+					if (this.searchbox == "") {
 						navigator.geolocation.getCurrentPosition(function(pos) {
 							$.ajax({
 								type: 'POST',
@@ -106,7 +106,10 @@
 								contentType: "application/json",
 								dataType: "json",
 								success: function(data) {
-									app.repairs = data.repairs;
+									this.repairs = data.repairs;
+									if (app) {
+										app.repairs = data.repairs;
+									}
 								}
 							});
 						});
@@ -120,21 +123,23 @@
 						contentType: "application/json",
 						dataType: "json",
 						success: function(data) {
-							app.getCurrent();
+							this.getCurrent();
 						}
 					});
 				},
 				search: function() {
-					if (app.searchbox != "") {
-						app.repairs = app.repairs.filter(scan => scan.title.toLowerCase().includes(app.searchbox));
+					if (this.searchbox != "") {
+						this.repairs = this.repairs.filter(scan => scan.title.toLowerCase().includes(app.searchbox));
 					} else {
-						app.getCurrent();
+						this.getCurrent();
 					}
 				}
+			},
+			created: function() {
+				this.getCurrent()
+				setInterval(this.getCurrent, 2000);
 			}
 		});
 
-		app.getCurrent();
-		setInterval(app.getCurrent, 2000);
     </script>
 {% endblock %}

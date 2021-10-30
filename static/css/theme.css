@@ -51,8 +51,6 @@
     text-align: center;
     padding: 0;
     margin-right: 0.5em !important;
-
-
 }
 
 .buttonrect p {
@@ -431,4 +429,12 @@
 
 .forum-control {
     margin: 10px 20px;
+}
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+[v-cloak] {
+    display: none;
 }
