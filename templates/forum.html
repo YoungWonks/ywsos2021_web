@@ -8,7 +8,7 @@
     		</div>
     		<div class="col-9" style="display: inline-flex; justify-content: flex-end; align-items: center;">
     			<div class="forum-search">
-    				<img src="../static/images/search.svg">
+    				<img src="{{ url_for('static', filename='images/search.svg') }}">
     				<span class="text-wrapper">
     					<input type="text" name="search" placeholder="Search Posts" v-model="searchbox" v-on:input="search">
     				</span>
@@ -16,19 +16,19 @@
     			<div class="forum-add">
     				<a href="/upload">
 	    				<button>
-	    					<img src="../static/images/new.svg">
+	    					<img src="{{ url_for('static', filename='images/new.svg') }}">
 	    					<p>New Post</p>
 	    				</button>
 	    			</a>
     			</div>
     		</div>
     	</div>
-		<div v-for="scan in repairs">
+		<div v-for="scan in repairs" class="fordiv" v-cloak>
 			<div class="card" class="col-12">
 				<div class="card-body">
 					<div class="row">
 						<div class="col-sm-12 col-md-1 col-lg-1" style="display: block;">
-							<img src="../static/images/user.svg" style="display: block; background: linear-gradient(93.12deg, #ACC9AF 0%, #709A9B 100%); border-radius: 50%; border: 3px solid;">
+							<img src="{{ url_for('static', filename='images/user.svg') }}" style="display: block; background: linear-gradient(93.12deg, #ACC9AF 0%, #709A9B 100%); border-radius: 50%; border: 3px solid;">
 							<h2>[[ scan.post_user ]]</h2>
 						</div>
 						<div class="col-sm-12 col-md-5 col-lg-5">
@@ -36,13 +36,13 @@
 								<h1>[[ scan.title ]]</h1>
 								<div class="scan-details">
 									<div>
-										<img src="../static/images/scandate.svg">
+										<img src="{{ url_for('static', filename='images/scandate.svg') }}">
 										<p>[[ scan.scandate ]]</p>
 									</div>
 								</div>
 								<div class="scan-details">
 									<div>
-										<img src="../static/images/location.svg">
+										<img src="{{ url_for('static', filename='images/location.svg') }}">
 										<p>[[ scan.city]], [[ scan.state ]]</p>
 									</div>
 								</div>
@@ -51,12 +51,12 @@
 						<div class="col-sm-12 col-md-4 col-lg-4">
 							<div>
 								<button @click="vote($event,scan.filename, scan.id)" v-if="'{{ session['logged_in'] }}' == 'True'">
-									<img src="../static/images/upvote.svg" v-if="scan.scan_list.includes(scan.id)">
-									<img src="../static/images/unvote.svg" v-else>
+									<img src="{{ url_for('static', filename='images/upvote.svg') }}" v-if="scan.scan_list.includes(scan.id)">
+									<img src="{{ url_for('static', filename='images/unvote.svg') }}" v-else>
 								</button>
 								<a v-else href="/login">
 									<button>
-										<img src="../static/images/unvote.svg">
+										<img src="{{ url_for('static', filename='images/unvote.svg') }}">
 									</button>
 								</a>
 								<p v-if="scan.upvote == 1">[[ scan.upvote ]] upvote</p>
@@ -69,7 +69,7 @@
 							<p>[[ scan.description ]]</p>
 						</div>
 						<div class="col-sm-12 col-md-4 col-lg-4">
-							<img :src="scan.url">
+							<img :src="scan.url" :alt="scan.description">
 						</div>
 					</div>
 
@@ -85,6 +85,7 @@
 {% endblock %}
 
 {% block scripts %}
+	<script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 	<script type="text/javascript">
 		var app = new Vue({
 			el: "#vue-app",
@@ -97,7 +98,7 @@
 			},
 			methods: {
 				getCurrent: function () {
-					if (app.searchbox == "") {
+					if (this.searchbox == "") {
 						navigator.geolocation.getCurrentPosition(function(pos) {
 							$.ajax({
 								type: 'POST',
@@ -106,7 +107,10 @@
 								contentType: "application/json",
 								dataType: "json",
 								success: function(data) {
-									app.repairs = data.repairs;
+									this.repairs = data.repairs;
+									if (app) {
+										app.repairs = data.repairs;
+									}
 								}
 							});
 						});
@@ -120,21 +124,23 @@
 						contentType: "application/json",
 						dataType: "json",
 						success: function(data) {
-							app.getCurrent();
+							this.getCurrent();
 						}
 					});
 				},
 				search: function() {
-					if (app.searchbox != "") {
-						app.repairs = app.repairs.filter(scan => scan.title.toLowerCase().includes(app.searchbox));
+					if (this.searchbox != "") {
+						this.repairs = this.repairs.filter(scan => scan.title.toLowerCase().includes(app.searchbox));
 					} else {
-						app.getCurrent();
+						this.getCurrent();
 					}
 				}
+			},
+			created: function() {
+				this.getCurrent()
+				setInterval(this.getCurrent, 2000);
 			}
 		});
 
-		app.getCurrent();
-		setInterval(app.getCurrent, 2000);
     </script>
 {% endblock %}

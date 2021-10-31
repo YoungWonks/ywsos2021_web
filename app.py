@@ -21,20 +21,53 @@ from flask_minify import minify
 import rcssmin
 import re
 import timeago
+from flask.helpers import safe_join
+import hashlib
+import contextlib
 
 regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
-app = Flask(__name__)
-minify(app=app,html=True,js=True,cssless=True,static=True)
+
+class AddStaticFileHashFlask(Flask):
+    def __init__(self, *args, **kwargs):
+        super(AddStaticFileHashFlask, self).__init__(*args, **kwargs)
+        self._file_hash_cache = {}
+
+    def inject_url_defaults(self, endpoint, values):
+        super(AddStaticFileHashFlask, self).inject_url_defaults(endpoint, values)
+        if endpoint == "static" and "filename" in values:
+            filepath = safe_join(self.static_folder, values["filename"])
+            if os.path.isfile(filepath):
+                cache = self._file_hash_cache.get(filepath)
+                mtime = os.path.getmtime(filepath)
+                if cache != None:
+                    cached_mtime, cached_hash = cache
+                    if cached_mtime == mtime:
+                        values["h"] = cached_hash
+                        return
+                h = hashlib.md5()
+                with contextlib.closing(open(filepath, "rb")) as f:
+                    h.update(f.read())
+                h = h.hexdigest()
+                self._file_hash_cache[filepath] = (mtime, h)
+                values["h"] = h
+
+
+app = AddStaticFileHashFlask(__name__)
+
+minify(app=app, html=True, js=True, cssless=True, static=True)
 app.config.from_object(Config)
 
 
 css_map = {"static/css/theme.css": "static/css/theme.min.css"}
+
+
 def minify_css(css_map):
     for source, dest in css_map.items():
         with open(source, "r") as infile:
             with open(dest, "w") as outfile:
                 outfile.write(rcssmin.cssmin(infile.read()))
+
 
 mongo = PyMongo(app)
 Session(app)
@@ -42,6 +75,7 @@ Session(app)
 ################Token Decorator#########################
 
 SECRET_KEY = app.config['SECRET_KEY']
+
 
 def token_required(something):
     @wraps(something)
@@ -53,13 +87,14 @@ def token_required(something):
             token_passed = request.headers['TOKEN']
             if request.headers['TOKEN'] != '' and request.headers['TOKEN'] != None:
                 try:
-                    data = jwt.decode(token_passed, SECRET_KEY, algorithms=['HS256'])
+                    data = jwt.decode(token_passed, SECRET_KEY,
+                                      algorithms=['HS256'])
                     return something(data['user_id'], *args, **kwargs)
                 except jwt.exceptions.ExpiredSignatureError:
                     return_data = {
                         "error": "1",
                         "message": "Token has expired"
-                        }
+                    }
                     return jsonify(return_data)
                 '''except Exception as e:
                     return_data = {
@@ -69,20 +104,22 @@ def token_required(something):
                     return jsonify(return_data)'''
             else:
                 return_data = {
-                    "error" : "2",
-                    "message" : "Token required",
+                    "error": "2",
+                    "message": "Token required",
                 }
                 return jsonify(return_data)
         except Exception as e:
             print(e)
             return_data = {
-                "error" : "3",
-                "message" : "An error occured",
-                "d_message" : str(e)
-                }
+                "error": "3",
+                "message": "An error occured",
+                "d_message": str(e)
+            }
             return jsonify(return_data)
     return wrap_token
 #########Require Login#################################################
+
+
 def login_required(something):
     @wraps(something)
     def wrap_login(*args, **kwargs):
@@ -93,10 +130,12 @@ def login_required(something):
     return wrap_login
 
 #########Scan representation############################################
-def create_rep(r,user):
-    reps =  {
+
+
+def create_rep(r, user):
+    reps = {
         "url":      '/static/images/scans/'+r['filename'],
-        "scandate": timeago.format(r['scandate'],datetime.utcnow()),
+        "scandate": timeago.format(r['scandate'], datetime.utcnow()),
         "position": r['position'],
         "city":     r['city'],
         "state":    r['state'],
@@ -115,46 +154,60 @@ def create_rep(r,user):
 ########################################################################
 #########################Forms##########################################
 ########################################################################
+
+
 class LoginForm(FlaskForm):
-    username = StringField("Username :", validators = [DataRequired()])
-    password = PasswordField("Password :", validators = [DataRequired()])
+    username = StringField("Username :", validators=[DataRequired()])
+    password = PasswordField("Password :", validators=[DataRequired()])
     submit = SubmitField("Log In")
 
+
 class SignupForm(FlaskForm):
-    username = StringField("Username :", validators = [DataRequired()])
-    email = StringField("Email :", validators = [DataRequired(), Email()])
-    password = PasswordField("Password :", validators = [DataRequired()])
-    confirm_password = PasswordField("Confirm Password :", validators = [DataRequired()])
+    username = StringField("Username :", validators=[DataRequired()])
+    email = StringField("Email :", validators=[DataRequired(), Email()])
+    password = PasswordField("Password :", validators=[DataRequired()])
+    confirm_password = PasswordField(
+        "Confirm Password :", validators=[DataRequired()])
     city = StringField("City :")
     submit = SubmitField("Register")
 ########################################################################
 #########################Routes#########################################
 ########################################################################
+
+
 @app.route('/')
 def about():
     return render_template('index.html')
+
+
 @app.route('/error')
 def error():
     abort(404)
+
+
 @app.route('/upload')
 def upload():
     return render_template('upload.html')
+
+
 @app.route('/forum')
 def forum():
     return render_template('forum.html')
 
-@app.route('/contact', methods=['GET','POST'])
+
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    if request.method=='GET':
+    if request.method == 'GET':
         return render_template('contact.html')
-    if request.method=='POST':
+    if request.method == 'POST':
         userEmail = request.get_json()['email']
         issueHeader = request.get_json()["issueHeader"]
         issueDescription = request.get_json()["issueDescription"]
         if userEmail != None and userEmail.strip() != "":
             if issueHeader != None and issueHeader.strip() != "":
                 if issueDescription != None and issueDescription.strip() != "":
-                    db.issues.insert_one({"email": userEmail, "header": issueHeader, "description": issueDescription})
+                    db.issues.insert_one(
+                        {"email": userEmail, "header": issueHeader, "description": issueDescription})
                     return jsonify({"error": "0", "message": "Message sent to admin, we appreciate your continued patronage"})
                 elif issueDescription == None or issueDescription.strip() == "":
                     return jsonify({"error": "1", "message": "Issue Description can't be empty"})
@@ -169,7 +222,8 @@ def contact():
 def gallery():
     return render_template('gallery.html')
 
-@app.route('/main',methods=['GET','POST'])
+
+@app.route('/main', methods=['GET', 'POST'])
 @login_required
 def main(user_id):
     users = db['users']
@@ -179,7 +233,8 @@ def main(user_id):
             newpass = request.form.get("newpass")
             confirmpass = request.form.get("confirmpass")
             if newpass == confirmpass and newpass is not None:
-                users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {'$set': {'password': pbkdf2_sha256.hash(newpass)}})
+                users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {
+                                 '$set': {'password': pbkdf2_sha256.hash(newpass)}})
                 return jsonify({"error": "0", "message": "Password changed successfully"})
             else:
                 return jsonify({"error": "1", "message": "Password doesn't match"})
@@ -187,6 +242,7 @@ def main(user_id):
             users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
             return redirect("/logout")
     return render_template("main.html", user=user)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -204,6 +260,7 @@ def login():
         else:
             error = True
     return render_template("login.html", login_form=login_form, error=error)
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -223,9 +280,9 @@ def signup():
             "signup_date": dt_now,
             "vote_scans": [],
         }
-        if users.find_one({"username":user["username"]}) is not None:
+        if users.find_one({"username": user["username"]}) is not None:
             usererror = True
-        elif users.find_one({"email":user["email"]}) is not None or re.match(regex, user["email"]) is False:
+        elif users.find_one({"email": user["email"]}) is not None or re.match(regex, user["email"]) is False:
             emailerror = True
         elif signup_form.password.data != signup_form.confirm_password.data:
             notallowed = True
@@ -236,7 +293,8 @@ def signup():
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
             return redirect('/main')
-    return render_template("signup.html", signup_form=signup_form,usererror=usererror,emailerror=emailerror,notallowed=notallowed, passlength=passlength)
+    return render_template("signup.html", signup_form=signup_form, usererror=usererror, emailerror=emailerror, notallowed=notallowed, passlength=passlength)
+
 
 @app.route('/logout')
 @login_required
@@ -245,19 +303,23 @@ def logout(u_is):
     session['logged_in_id'] = ''
     return redirect('/')
 
+
 @app.errorhandler(404)
 def pagenotfound(errorcode):
-    return render_template("error.html", errorCode=404, errorMsg="Page not found"),404
+    return render_template("error.html", errorCode=404, errorMsg="Page not found"), 404
 ########################################################################
 #########################API############################################
 ########################################################################
+
+
 @app.route('/api')
 def api_index():
     # Very simple
     return_data = {
-        'title' : 'API test'
+        'title': 'API test'
     }
     return jsonify(return_data)
+
 
 @app.route('/api/auth/token', methods=['POST'])
 def api_login():
@@ -270,8 +332,8 @@ def api_login():
     })
     if result != None and pbkdf2_sha256.verify(password, result['password_hash']):
         # Generate exp time and token and return them
-        timeLimit= datetime.utcnow() + timedelta(minutes=24*60)
-        payload = {"user_id": str(result['_id']),"exp":timeLimit}
+        timeLimit = datetime.utcnow() + timedelta(minutes=24*60)
+        payload = {"user_id": str(result['_id']), "exp": timeLimit}
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
         data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
         return_data = {
@@ -288,6 +350,7 @@ def api_login():
     }
     return jsonify(return_data)
 
+
 @app.route('/api/auth/signup', methods=['POST'])
 def api_signup():
     # Get details from post request
@@ -296,9 +359,9 @@ def api_signup():
     password = request.get_json().get('password')
     users = db['users']
     dt_now1 = datetime.utcnow()
-    if users.find_one({"username":username}) is not None:
+    if users.find_one({"username": username}) is not None:
         return {"error": "1", "message": "Username already exists", "cause": "u"}
-    elif users.find_one({"email":email}) is not None:
+    elif users.find_one({"email": email}) is not None:
         return {"error": "1", "message": "Email already exists", "cause": "e"}
     elif re.match(regex, email) is False:
         return {"error": "1", "message": "Email is not an email", "cause": "e"}
@@ -315,7 +378,8 @@ def api_signup():
     }
     return jsonify(return_data)
 
-@app.route('/api/scans', methods=["GET","POST"])
+
+@app.route('/api/scans', methods=["GET", "POST"])
 @token_required
 def api_find(userId):
     scans = db['scans']
@@ -328,7 +392,7 @@ def api_find(userId):
     search = [
         {
             '$geoNear': {
-                'near': [ long, lat ],
+                'near': [long, lat],
                 'distanceField': 'dist',
                 'spherical': True,
             }
@@ -343,7 +407,7 @@ def api_find(userId):
                 'dist': 1,
             }
         }
-    ]        
+    ]
     if radius:
         search[0]['$geoNear']['maxDistance'] = radius
     elif not position[0]:
@@ -355,11 +419,12 @@ def api_find(userId):
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = create_rep(r,session['logged_in_id'])
+        scan = create_rep(r, session['logged_in_id'])
         repairs.append(scan)
     return {
         "repairs": repairs,
     }
+
 
 @app.route('/api/scans/all', methods=["POST"])
 @token_required
@@ -374,7 +439,7 @@ def api_find_all(userId):
     search = [
         {
             '$geoNear': {
-                'near': [ long, lat ],
+                'near': [long, lat],
                 'distanceField': 'dist',
                 'spherical': True,
             }
@@ -402,6 +467,7 @@ def api_find_all(userId):
         "repairs": repairs,
     }
 
+
 @app.route('/api/vote/voting', methods=["POST"])
 @token_required
 def api_upvote(userId):
@@ -415,17 +481,21 @@ def api_upvote(userId):
     if userStatus:
         user_list.remove(user_name)
         scan_list.remove(id_scan)
-        db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {'$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
+        db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {
+                            '$inc': {'upvote': -1}, '$set': {'vote_users': user_list}})
     else:
         user_list.append(user_name)
         scan_list.append(id_scan)
-        db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {'$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
-    db.users.update_one({'_id': user["_id"]}, {'$set': {'vote_scans': scan_list}})
+        db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {
+                            '$inc': {'upvote': 1}, '$set': {'vote_users': user_list}})
+    db.users.update_one({'_id': user["_id"]}, {
+                        '$set': {'vote_scans': scan_list}})
     return {
         "error": "0",
         "message": "Successful",
     }
-    
+
+
 @app.route('/api/vote/voted', methods=["POST"])
 @token_required
 def api_voted(userId):
@@ -436,7 +506,7 @@ def api_voted(userId):
     scan_list = user["vote_scans"]
     user_name = str(user["_id"])
     if user_name in user_list:
-         return {
+        return {
             "error": "0",
             "voted": True
         }
@@ -444,6 +514,7 @@ def api_voted(userId):
         "error": "0",
         "voted": False
     }
+
 
 @app.route('/api/scans/forum', methods=["POST"])
 def api_find_forum():
@@ -456,6 +527,7 @@ def api_find_forum():
     return {
         "repairs": repairs,
     }
+
 
 @app.route('/api/scans/gallery', methods=["POST"])
 @token_required
@@ -472,14 +544,15 @@ def api_find_gallery(userId):
         "repairs": repairs,
     }
 
+
 @app.route('/api/scans/upload', methods=["POST"])
 @token_required
 def api_upload(userId):
     f = request.files['image']
-    #for now it is saving as a jpeg but that will be changed
+    # for now it is saving as a jpeg but that will be changed
     filename = secure_filename(str(uuid4())+".jpeg")
     f.save(os.path.join('static/images/scans/', filename))
-    return {"error": "0", "filename":filename,}
+    return {"error": "0", "filename": filename, }
 
 
 @app.route('/api/scans/add', methods=["POST"])
@@ -490,7 +563,8 @@ def api_add(userId):
     locator = Nominatim(user_agent="georepair").geocode(position)
     lat = locator.latitude
     long = locator.longitude
-    address = Nominatim(user_agent="georepair").reverse([lat,long]).raw['address']
+    address = Nominatim(user_agent="georepair").reverse(
+        [lat, long]).raw['address']
     city = None
     if 'city' in address:
         city = address.get('city')
@@ -524,14 +598,15 @@ def api_add(userId):
         "city": city,
         "state": state
     })
-    return {"error": "0", "message": "Succesful",}
+    return {"error": "0", "message": "Succesful", }
 
-@app.route('/api/wel',methods=['POST'])
+
+@app.route('/api/wel', methods=['POST'])
 @token_required
 def api_welcome(userId):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(userId)})
-    #Code explains itself (note the new paraameter from the decorator)
+    # Code explains itself (note the new paraameter from the decorator)
     return_data = {
         "error": "0",
         "user": {
@@ -542,6 +617,7 @@ def api_welcome(userId):
     }
     return jsonify(return_data)
 
+
 if __name__ == "__main__":
     minify_css(css_map)
-    app.run(debug = True)
+    app.run(debug=True)

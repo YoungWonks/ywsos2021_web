@@ -6,17 +6,16 @@
 .background {
     font-family: Inter !important;
     letter-spacing: -0.017em;
-    overflow: hidden;
     background-image: url("../images/background.png");
     z-index: 1;
     background-repeat: no-repeat !important;
     background-position: center;
     background-size: cover;
-    height: 100%;
-    min-height: 2653px !important;
     margin: auto;
     letter-spacing: -0.017em;
     padding: 0 !important;
+    height: 100%;
+    min-height: 100vh;
 }
 
 .navbar-brand {
@@ -51,8 +50,6 @@
     text-align: center;
     padding: 0;
     margin-right: 0.5em !important;
-
-
 }
 
 .buttonrect p {
@@ -431,4 +428,21 @@
 
 .forum-control {
     margin: 10px 20px;
+}
+
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+.navbar-toggler-icon {
+    background: none!important;
+}
+
+.navbar-toggler {
+    border: 0 !important;
+    box-shadow: none !important;
 }

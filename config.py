@@ -28,3 +28,4 @@ class Config:
     SESSION_TYPE = os.environ.get('SESSION_TYPE')
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=int(os.environ.get('SESSION_TIME')))
     SESSION_MONGODB = mongodb_sess
+    SEND_FILE_MAX_AGE_DEFAULT = 60
