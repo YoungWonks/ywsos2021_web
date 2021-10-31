@@ -15,7 +15,7 @@
             </a>
         </div>
         <div class="col-sm-auto">
-            <img src="../static/images/homepage.svg" id="headerimage" style="max-width: 633px; position: relative; top: -1.5em;">
+            <img src="{{ url_for('static', filename='images/homepage.svg') }}" id="headerimage" style="max-width: 633px; position: relative; top: -1.5em;">
         </div>
     </header>
     <section class="row" style="margin:0 8em;" id="aboutsection">
@@ -28,24 +28,24 @@
             </p>
         </div>
         <div class="col-lg-4">
-            <img src="../static/images/column1.png" width="75%" class="column-image">
+            <img src="{{ url_for('static', filename='images/column1.png') }}" width="75%" class="column-image">
             <h1 class="column-header" style="max-width:138px;">Scan on our Mobile App</h1>
             <p class="column-desc">The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
         </div>
         <div class="col-lg-4 justify-content-center">
-            <img src="../static/images/column2.png" width="75%" class="column-image">
+            <img src="{{ url_for('static', filename='images/column2.png') }}" width="75%" class="column-image">
             <h1 class="column-header" style="max-width:222px;">Determine if an Object needs Repair</h1>
             <p class="column-desc">The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
         </div>
         <div class="col-lg-4">
-            <img src="../static/images/column3.png" width="75%" class="column-image">
+            <img src="{{ url_for('static', filename='images/column3.png') }}" width="75%" class="column-image">
             <h1 class="column-header" style="max-width:172px;">Upload on your Computer</h1>
             <p class="column-desc">The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
         </div>
     </section>
     <section class="row" style="margin: 0 1rem;">
         <div class="col-sm-12 col-md-12 col-lg-6">
-            <img src="../static/images/download.png" id="appimage" width="100%">
+            <img src="{{ url_for('static', filename='images/download.png') }}" id="appimage" width="100%">
         </div>
         <div class="col-sm-12 col-md-12 col-lg-6" id="apptext" style="margin-top: 3rem;">
             <h1 style="font-family: Inter; font-size: 3em; font-style: normal; font-weight: 700; line-height: 66px; letter-spacing: -0.017em; color: #000;">
@@ -55,10 +55,10 @@
             Our app is available on both Android and Apple phones. Get it now to make the most of all our features!
             </p>
             <a class="btn nav-button" href="https://appstore.com" target="_blank">
-                <img src="../static/images/appstore.svg">
+                <img src="{{ url_for('static', filename='images/appstore.svg') }}">
             </a>
             <a class="btn nav-button" href="https://play.google.com" target="_blank">
-                <img src="../static/images/playstore.svg">
+                <img src="{{ url_for('static', filename='images/playstore.svg') }}">
             </a>
         </div>
         
