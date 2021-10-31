@@ -6,7 +6,6 @@
 .background {
     font-family: Inter !important;
     letter-spacing: -0.017em;
-    overflow: hidden;
     background-image: url("../images/background.png");
     z-index: 1;
     background-repeat: no-repeat !important;
@@ -437,4 +436,13 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
 
 [v-cloak] {
     display: none;
+}
+
+.navbar-toggler-icon {
+    background: none!important;
+}
+
+.navbar-toggler {
+    border: 0 !important;
+    box-shadow: none !important;
 }
