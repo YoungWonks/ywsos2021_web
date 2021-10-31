@@ -1,3 +1,37 @@
+
+### Tasks to be done until completion
+
+Design:
+- Any remaining mobile designs
+- Frontend pages need designs (upload, contact, forum, account, scans)
+
+Frontend:
+- Stretch bg to fill page size
+- Navbar
+    - Functional
+    - Flash if not logged in (upload)
+- Signup password line small
+- Login/signup functionality
+- Error Page?
+- Account management page?
+    - functionality
+    - change password
+    - change account
+    - delete account
+Create skeleton pages that don't have design yet
+- Make page better looking on smaller devices
+- add upvote feature in forum
+- Add more account information in main.html like forum posts or something
+
+Backend:
+- Connect to mobile app?
+- add forum?
+- add functionality for changing password and username
+
+Mobile:
+- ???
+
+
 ### What is already done
 
 
@@ -18,23 +52,3 @@ Backend:
 Mobile:
 - ???
 
-
-### Tasks to be done until completion
-
-Design:
-- Any remaining mobile designs
-- Frontend pages need designs (upload, contact, forum, account, scans)
-
-Frontend:
-- Create skeleton pages that don't have design yet
-- Make page better looking on smaller devices
-- add upvote feature in forum
-- Add more account information in main.html like forum posts or something
-
-Backend:
-- Connect to mobile app?
-- add forum?
-- add functionality for changing password and username
-
-Mobile:
-- ???
