@@ -7,7 +7,7 @@ import ssl
 APP_ROOT = os.path.join(os.path.dirname(__file__),'.') 
 dotenv_path = os.path.join(APP_ROOT, '.env')
 load_dotenv(dotenv_path)
-mongodb_sess = pymongo.MongoClient(os.environ.get('MONGO_URI'),ssl=True,ssl_cert_reqs=ssl.CERT_NONE)
+mongodb_sess = pymongo.MongoClient(os.environ.get('MONGO_URI'))
 db = mongodb_sess['georepair']
 
 class Config:
