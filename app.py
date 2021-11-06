@@ -21,7 +21,7 @@ from flask_minify import minify
 import rcssmin
 import re
 import timeago
-from flask.helpers import safe_join
+from werkzeug.utils import safe_join
 import hashlib
 import contextlib
 
