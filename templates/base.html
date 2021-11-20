@@ -69,13 +69,8 @@
             </button>
             <span class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mb-2 mb-lg-0">
-                    {% if session['logged_in'] %}
-                        <li class="nav-item px-1"><a href="/forum" class="nav-link nav">Forum</a></li>
-                        <li class="nav-item px-1"><a href="/upload" class="nav-link nav">Upload</a></li>
-                    {% else %}
-                        <li class="nav-item px-1"><a href="/login" class="nav-link">Forum</a></li>
-                        <li class="nav-item px-1"><a href="/login" class="nav-link">Upload</a></li>
-                    {% endif %}
+                    <li class="nav-item px-1"><a href="/forum" class="nav-link nav">Forum</a></li>
+                    <li class="nav-item px-1"><a href="/upload" class="nav-link nav">Upload</a></li>
                     <li class="nav-item px-1"><a href="/gallery" class="nav-link nav">Gallery</a></li>
                     <li class="nav-item px-1"><a href="/contact" class="nav-link nav">Contact</a></li>
                 </ul>
@@ -94,9 +89,18 @@
                 {% endblock %}
 
             </span>
-
         </div>
     </nav>
+    {% if get_flashed_messages() %}
+        <div class="container w-50">
+        {% for msg in get_flashed_messages() %}
+            <div class="alert alert-danger" style="height: 60px;"role="alert">
+                <p style="float: left;">{{msg}}</p>
+                <button type="button" class="btn btn-danger close" style="height: 25px; float: right;  padding-top: 0px; padding-bottom: 0px;" data-dismiss="alert" onClick="closeFlash()">x</button>
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
     {% block content %}
 
     {% endblock %}

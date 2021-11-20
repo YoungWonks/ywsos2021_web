@@ -1,5 +1,5 @@
 from types import MethodType
-from flask import Flask, render_template, jsonify, request, redirect, session, abort
+from flask import Flask, render_template, jsonify, request, redirect, session, abort, flash
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
@@ -21,7 +21,7 @@ from flask_minify import minify
 import rcssmin
 import re
 import timeago
-from flask.helpers import safe_join
+from werkzeug.utils import safe_join
 import hashlib
 import contextlib
 
@@ -126,6 +126,7 @@ def login_required(something):
         if 'logged_in' in session:
             return something(session['logged_in_id'], *args, **kwargs)
         else:
+            flash("Please Sign In First")
             return redirect('/')
     return wrap_login
 
@@ -186,11 +187,13 @@ def error():
 
 
 @app.route('/upload')
+@login_required
 def upload():
     return render_template('upload.html')
 
 
 @app.route('/forum')
+@login_required
 def forum():
     return render_template('forum.html')
 
@@ -219,6 +222,7 @@ def contact():
 
 
 @app.route("/gallery")
+@login_required
 def gallery():
     return render_template('gallery.html')
 

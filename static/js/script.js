@@ -10,3 +10,7 @@ $(function() {
         $("#login").addClass("active");
     }
 });
+function closeFlash() {
+    console.log("H");
+    $('.alert').alert('close');
+}
