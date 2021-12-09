@@ -42,4 +42,4 @@ Mobile:
 ### Deployment
 1. Setup basic heroku account
 2. Create a new project and choose the github option
-3. Deploy!
+3. Head to project settings and copy over the environment variables into the config var section
