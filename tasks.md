@@ -39,3 +39,7 @@ Backend:
 Mobile:
 - ???
 
+### Deployment
+1. Setup basic heroku account
+2. Create a new project and choose the github option
+3. Deploy!

@@ -72,10 +72,10 @@ SECURITY_PASSWORD_SALT=<<Add your password salt here>>
 TODO: (venv) ywsos2021_web/ $>  python seed_db.py
 
 ## Make the api documentation
-(venv) ywsos2021_web/ $> cd documentation <br />
-(venv) ywsos2021_web/documentation/ $> make html <br />
-(venv) ywsos2021_web/documentation/ $> cd .. <br />
-(venv) ywsos2021_web/ $> 
+```
+(venv) ywsos2021_web/ $> cd documentation
+(venv) ywsos2021_web/documentation/ $> make html
+```
 
 ## Start the Flask development web server
 (venv) ywsos2021_web/ $> python app.py
