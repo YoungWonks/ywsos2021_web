@@ -188,13 +188,13 @@ def error():
 
 @app.route('/upload')
 @login_required
-def upload():
+def upload(user_id):
     return render_template('upload.html')
 
 
 @app.route('/forum')
 @login_required
-def forum():
+def forum(user_id):
     return render_template('forum.html')
 
 
@@ -223,7 +223,7 @@ def contact():
 
 @app.route("/gallery")
 @login_required
-def gallery():
+def gallery(user_id):
     return render_template('gallery.html')
 
 

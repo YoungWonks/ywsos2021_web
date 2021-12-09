@@ -94,9 +94,14 @@
     {% if get_flashed_messages() %}
         <div class="container w-50">
         {% for msg in get_flashed_messages() %}
-            <div class="alert alert-danger" style="height: 60px;"role="alert">
-                <p style="float: left;">{{msg}}</p>
-                <button type="button" class="btn btn-danger close" style="height: 25px; float: right;  padding-top: 0px; padding-bottom: 0px;" data-dismiss="alert" onClick="closeFlash()">x</button>
+            <div class="alert alert-danger d-flex justify-content-between" style="height: 60px;" role="alert">
+                <p>{{msg}}</p>
+                <button type="button" style="padding: 0 0.5rem;" class="btn btn-danger close" data-dismiss="alert" onClick="closeFlash()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
+                        <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
+                    </svg>
+                </button>
             </div>
         {% endfor %}
         </div>

@@ -11,6 +11,5 @@ $(function() {
     }
 });
 function closeFlash() {
-    console.log("H");
     $('.alert').alert('close');
 }
