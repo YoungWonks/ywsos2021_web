@@ -76,10 +76,13 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="repairs.length <= 0" class="forum-loader d-flex justify-content-center align-items-center">
+		<div v-if="repairs == null" class="forum-loader d-flex justify-content-center align-items-center">
 			<div class="spinner-border" role="status">
 				<span class="visually-hidden">Loading...</span>
 			</div>
+		</div>
+		<div v-if="repairs == false" class="forum-loader d-flex justify-content-center align-items-center">
+			<h1>No posts yet!</h1>
 		</div>
 	</div>
 {% endblock %}
@@ -92,7 +95,7 @@
 			delimiters: ['[[',']]'],
 			data() {
 				return {
-					repairs: [],
+					repairs: null,
 					searchbox: ''
 				};
 			},
@@ -107,9 +110,16 @@
 								contentType: "application/json",
 								dataType: "json",
 								success: function(data) {
-									this.repairs = data.repairs;
-									if (app) {
-										app.repairs = data.repairs;
+									if (data.repairs.length <= 0) {
+										this.repairs = false;
+										if (app) {
+											app.repairs = false;
+										}
+									} else {
+										this.repairs = data.repairs;
+										if (app) {
+											app.repairs = data.repairs;
+										}
 									}
 								}
 							});

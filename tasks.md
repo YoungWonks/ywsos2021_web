@@ -6,27 +6,14 @@ Design:
 - Frontend pages need designs (upload, contact, forum, account, scans)
 
 Frontend:
-- Stretch bg to fill page size
-- Navbar
-    - Functional
-    - Flash if not logged in (upload)
-- Signup password line small
-- Login/signup functionality
-- Error Page?
 - Account management page?
     - functionality
     - change password
     - change account
-    - delete account
 Create skeleton pages that don't have design yet
 - Make page better looking on smaller devices
-- add upvote feature in forum
 - Add more account information in main.html like forum posts or something
 
-Backend:
-- Connect to mobile app?
-- add forum?
-- add functionality for changing password and username
 
 Mobile:
 - ???
@@ -52,3 +39,7 @@ Backend:
 Mobile:
 - ???
 
+### Deployment
+1. Setup basic heroku account
+2. Create a new project and choose the github option
+3. Head to project settings and copy over the environment variables into the config var section
