@@ -538,7 +538,7 @@ def api_find_forum():
 def api_find_gallery(userId):
     scans = db['scans']
     result = scans.find({
-        'u_id': session['logged_in_id']
+        'u_id': userId
     }).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
