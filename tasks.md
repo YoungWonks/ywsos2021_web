@@ -10,9 +10,10 @@ Frontend:
     - functionality
     - change password
     - change account
-Create skeleton pages that don't have design yet
+- Create skeleton pages that don't have design yet
 - Make page better looking on smaller devices
 - Add more account information in main.html like forum posts or something
+- switch to long/lat instead of address for adding scan
 
 
 Mobile:

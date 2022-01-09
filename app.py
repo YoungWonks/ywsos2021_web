@@ -1,10 +1,9 @@
-from types import MethodType
 from flask import Flask, render_template, jsonify, request, redirect, session, abort, flash
 from flask_session import Session
 from flask_pymongo import PyMongo
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo
+from wtforms.validators import DataRequired
 import pymongo
 import os
 from config import Config, db
@@ -19,13 +18,10 @@ from uuid import uuid4
 from geopy.geocoders import Nominatim
 from flask_minify import minify
 import rcssmin
-import re
 import timeago
 from werkzeug.utils import safe_join
 import hashlib
 import contextlib
-
-regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
 
 class AddStaticFileHashFlask(Flask):
@@ -75,6 +71,7 @@ Session(app)
 ################Token Decorator#########################
 
 SECRET_KEY = app.config['SECRET_KEY']
+app.secret_key = SECRET_KEY
 
 
 def token_required(something):
@@ -96,12 +93,6 @@ def token_required(something):
                         "message": "Token has expired"
                     }
                     return jsonify(return_data)
-                '''except Exception as e:
-                    return_data = {
-                        "error": "1",
-                        "message": "Invalid Token"
-                    }
-                    return jsonify(return_data)'''
             else:
                 return_data = {
                     "error": "2",
@@ -123,7 +114,7 @@ def token_required(something):
 def login_required(something):
     @wraps(something)
     def wrap_login(*args, **kwargs):
-        if 'logged_in' in session:
+        if 'logged_in' in session and session["logged_in"]:
             return something(session['logged_in_id'], *args, **kwargs)
         else:
             flash("Please Sign In First")
@@ -165,7 +156,6 @@ class LoginForm(FlaskForm):
 
 class SignupForm(FlaskForm):
     username = StringField("Username :", validators=[DataRequired()])
-    email = StringField("Email :", validators=[DataRequired(), Email()])
     password = PasswordField("Password :", validators=[DataRequired()])
     confirm_password = PasswordField(
         "Confirm Password :", validators=[DataRequired()])
@@ -268,10 +258,8 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    global regex
     signup_form = SignupForm()
     usererror = False
-    emailerror = False
     notallowed = False
     passlength = False
     if signup_form.validate_on_submit():
@@ -279,15 +267,12 @@ def signup():
         dt_now = datetime.now(tz=timezone.utc)
         user = {
             "username": signup_form.username.data,
-            "email": signup_form.email.data,
             "password_hash": pbkdf2_sha256.hash(signup_form.password.data),
             "signup_date": dt_now,
             "vote_scans": [],
         }
         if users.find_one({"username": user["username"]}) is not None:
             usererror = True
-        elif users.find_one({"email": user["email"]}) is not None or re.match(regex, user["email"]) is False:
-            emailerror = True
         elif signup_form.password.data != signup_form.confirm_password.data:
             notallowed = True
         elif len(signup_form.password.data) < 6:
@@ -297,7 +282,7 @@ def signup():
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
             return redirect('/main')
-    return render_template("signup.html", signup_form=signup_form, usererror=usererror, emailerror=emailerror, notallowed=notallowed, passlength=passlength)
+    return render_template("signup.html", signup_form=signup_form, usererror=usererror, notallowed=notallowed, passlength=passlength)
 
 
 @app.route('/logout')
@@ -359,19 +344,14 @@ def api_login():
 def api_signup():
     # Get details from post request
     username = request.get_json().get('username')
-    email = request.get_json().get('email')
+    # email = request.get_json().get('email')
     password = request.get_json().get('password')
     users = db['users']
     dt_now1 = datetime.utcnow()
     if users.find_one({"username": username}) is not None:
         return {"error": "1", "message": "Username already exists", "cause": "u"}
-    elif users.find_one({"email": email}) is not None:
-        return {"error": "1", "message": "Email already exists", "cause": "e"}
-    elif re.match(regex, email) is False:
-        return {"error": "1", "message": "Email is not an email", "cause": "e"}
     users.insert_one({
         "username": username,
-        "email": email,
         "password_hash": pbkdf2_sha256.hash(password),
         "signup_date": dt_now1,
         "vote_scans": [],
@@ -564,9 +544,8 @@ def api_upload(userId):
 def api_add(userId):
     scans = db['scans']
     position = request.get_json().get('position')
-    locator = Nominatim(user_agent="georepair").geocode(position)
-    lat = locator.latitude
-    long = locator.longitude
+    lat = int(position[0])
+    long = int(position[1])
     address = Nominatim(user_agent="georepair").reverse(
         [lat, long]).raw['address']
     city = None
@@ -614,8 +593,7 @@ def api_welcome(userId):
     return_data = {
         "error": "0",
         "user": {
-            "username": user['username'],
-            "email": user['email']
+            "username": user['username']
         },
         "message": "You Are verified"
     }

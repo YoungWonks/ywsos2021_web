@@ -10,8 +10,10 @@
         <label>Description</label>
         <input type="text" v-model="des">
         <br>
-        <label>Full Address</label>
-        <input type="text" v-model="address">
+        <label>Latitude</label>
+        <input type="number" v-model="lat">
+        <label>Longitude</label>
+        <input type="number" v-model="long">
         <br>
         <label>Urgency</label>
         <input type="number" v-model="urgency">
@@ -28,48 +30,49 @@
 
 <script type="text/javascript">
     var app = new Vue({
-			el: "#uploadForm",
-			delimiters: ['[[',']]'],
-			data() {
-                return {
-                    title: '',
-                    des: '',
-                    address: '',
-                    urgency: ''
+        el: "#uploadForm",
+        delimiters: ['[[', ']]'],
+        data() {
+            return {
+                title: '',
+                des: '',
+                long: '',
+                lat: '',
+                urgency: ''
+            }
+        },
+        methods: {
+            formSubmit(e) {
+                var datasubmit = { "title": this.title, "des": this.des, "filename": undefined, "position": [this.lat, this.long], "urgency": parseInt(this.urgency, 10) };
+                e.preventDefault();
+                var formdata = new FormData();
+                var imagefile = document.querySelector("#file");
+                formdata.append("image", imagefile.files[0]);
+                function postImage(callback) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/scans/upload',
+                        data: formdata,
+                        contentType: false,
+                        processData: false,
+                        success: callback
+                    });
                 }
-			},
-			methods: {
-				formSubmit(e) {
-				    var datasubmit = {"title": this.title, "des": this.des, "filename": undefined, "position": this.address, "urgency": parseInt(this.urgency,10)};
-                    e.preventDefault();
-				    var formdata = new FormData();
-				    var imagefile = document.querySelector("#file");
-				    formdata.append("image", imagefile.files[0]);
-                    function postImage(callback) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '/api/scans/upload',
-                            data: formdata,
-                            contentType: false,
-                            processData: false,
-                            success: callback
-                        });
-					}
-                    function postData(result) {
-                        datasubmit["filename"] = result.filename;
-                        $.ajax({
-                            type: 'POST',
-                            url: '/api/scans/add',
-                            data: JSON.stringify(datasubmit),
-                            contentType: "application/json",
-                            dataType: "json"
-                        });
-                    }
-					postImage(postData);
-                    $('form').html('<h1>Form submitted</h1>');
+                function postData(result) {
+                    datasubmit["filename"] = result.filename;
+                    $.ajax({
+                        type: 'POST',
+                        url: '/api/scans/add',
+                        data: JSON.stringify(datasubmit),
+                        contentType: "application/json",
+                        dataType: "json"
+                    });
+                }
+                postImage(postData);
+                $('form').html('<h1>Form submitted</h1>');
 
-				}
-			}
-		});
+            }
+        }
+    });
 </script>
 {% endblock %}
