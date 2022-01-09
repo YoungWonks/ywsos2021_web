@@ -93,12 +93,6 @@ def token_required(something):
                         "message": "Token has expired"
                     }
                     return jsonify(return_data)
-                '''except Exception as e:
-                    return_data = {
-                        "error": "1",
-                        "message": "Invalid Token"
-                    }
-                    return jsonify(return_data)'''
             else:
                 return_data = {
                     "error": "2",
@@ -550,9 +544,8 @@ def api_upload(userId):
 def api_add(userId):
     scans = db['scans']
     position = request.get_json().get('position')
-    locator = Nominatim(user_agent="georepair").geocode(position)
-    lat = locator.latitude
-    long = locator.longitude
+    lat = int(position[0])
+    long = int(position[1])
     address = Nominatim(user_agent="georepair").reverse(
         [lat, long]).raw['address']
     city = None
