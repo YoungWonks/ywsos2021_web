@@ -216,7 +216,6 @@ def contact():
 def gallery(user_id):
     return render_template('gallery.html')
 
-
 @app.route('/main', methods=['GET', 'POST'])
 @login_required
 def main(user_id):

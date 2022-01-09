@@ -23,6 +23,16 @@
 {% endblock %}
 
 {% block content %}
+<style type="text/css">
+    .circle {
+        width:50%;
+        height:50%;
+        padding-bottom: 50%;
+        background: #c4c4c4;
+        border-radius: 50%;
+    }
+</style>
+
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -49,10 +59,24 @@
     </div>
 
     <main>
-        <div class="row">
+        <!-- <div class="row">
             <div class="column">
                 <h1>Hello, {{user['username']}}!</h1>
             </div>
+        </div> -->
+        <div class="mt-3">
+            <div style="height:85vh;" class="row text-center">
+                <div style="background-color:aqua; width:25%; margin-right:20px; margin-left:20px; border-radius:25px;">
+                    <div > 
+                        <div style="margin:auto; margin-top:20px;" class="circle"></div>
+                        <h1>{{user['username']}}</h1>
+                    </div>
+                </div>
+                <div style="background-color:green; width:65%; border-radius:25px;">
+    
+                </div>
+            </div>
         </div>
+
     </main>
 {% endblock %}
