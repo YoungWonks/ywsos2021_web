@@ -71,6 +71,7 @@ Session(app)
 ################Token Decorator#########################
 
 SECRET_KEY = app.config['SECRET_KEY']
+app.secret_key = SECRET_KEY
 
 
 def token_required(something):
