@@ -1,6 +1,7 @@
 import unittest
 import HtmlTestRunner
 from test_suite import HomeTest
+from test_suite import LoginTest
 import sys
 import os
 from dotenv import load_dotenv
@@ -15,9 +16,10 @@ sys.path.insert(1, './test_cases')
 
 # get all tests from SearchText and HomePageTest class
 home_test = unittest.TestLoader().loadTestsFromTestCase(HomeTest)
+login_test = unittest.TestLoader().loadTestsFromTestCase(LoginTest)
 test_suite = unittest.TestSuite(
     [
-        home_test,
+        home_test, login_test
     ]
 )
 
