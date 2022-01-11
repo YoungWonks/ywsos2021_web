@@ -84,6 +84,13 @@ TODO: (venv) ywsos2021_web/ $>  python seed_db.py
 Point your web browser to http://localhost:5000/
 
 ## Running the automated tests
+Add two environment variables to your .env file as shown below
+```
+###################### .env ######################
+TESTUSER=<<Add the test username as according to your MongoDB database here>>
+TESTPW=<<Add the test password as according to your MongoDB database here>>
+###################### .env ######################
+```
 (venv) ywsos2021_web/ $> python test_cases/run_tests.py
 
 
