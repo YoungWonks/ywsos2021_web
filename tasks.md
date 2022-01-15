@@ -6,12 +6,21 @@ Design:
 - Frontend pages need designs (upload, contact, forum, account, scans)
 
 Frontend:
-- Account management page
-    - functionality
-    - change password
-    - change account
-- Upload CSS
-- 
+- Dashboard
+    - Account settings
+    - Stats
+- Contact
+    - Add border
+    - Center
+- Upload
+    - CSS
+- Forum
+    - Upvote Function Load Speed
+    - Location in language
+- Gallery
+    - Delete Function
+    - Location in language
+    
 - Create skeleton pages that don't have design yet
 - Make page better looking on smaller devices
 - Add more account information in main.html like forum posts or something
