@@ -403,7 +403,7 @@ def api_find(userId):
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = create_rep(r, session['logged_in_id'])
+        scan = create_rep(r, userId)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -445,7 +445,7 @@ def api_find_all(userId):
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = create_rep(r, session['logged_in_id'])
+        scan = create_rep(r, userId)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -522,7 +522,7 @@ def api_find_gallery(userId):
     }).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
-        scan = create_rep(r, session['logged_in_id'])
+        scan = create_rep(r, userId)
         repairs.append(scan)
     return {
         "repairs": repairs,
