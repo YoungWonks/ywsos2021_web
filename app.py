@@ -414,10 +414,11 @@ def api_find(userId):
 @token_required
 def api_find_all(userId):
     scans = db['scans']
-    position = request.get_json().get('position', [None, None])
-    lat = position[0] if position[0] else 0
-    long = position[1] if position[1] else 0
-    radius = float(request.get_json().get('range', None))
+
+    position = request.get_json().get('position', [0, 0])
+    lat = position[0]
+    long = position[1]
+    radius = float(request.get_json().get('range', 100))
     scans.create_index([('loc', '2dsphere')])
     result = []
     search = [
