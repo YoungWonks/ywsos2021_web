@@ -402,7 +402,7 @@ def api_find(userId):
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = create_rep(r, session['logged_in_id'])
+        scan = create_rep(r, userId)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -413,10 +413,11 @@ def api_find(userId):
 @token_required
 def api_find_all(userId):
     scans = db['scans']
-    position = request.get_json().get('position', [None, None])
-    lat = position[0] if position[0] else 0
-    long = position[1] if position[1] else 0
-    radius = float(request.get_json().get('range', None))
+
+    position = request.get_json().get('position', [0, 0])
+    lat = position[0]
+    long = position[1]
+    radius = float(request.get_json().get('range', 100))
     scans.create_index([('loc', '2dsphere')])
     result = []
     search = [
@@ -444,7 +445,7 @@ def api_find_all(userId):
     result = scans.aggregate(search)
     repairs = []
     for r in result:
-        scan = create_rep(r, session['logged_in_id'])
+        scan = create_rep(r, userId)
         repairs.append(scan)
     return {
         "repairs": repairs,
@@ -521,7 +522,7 @@ def api_find_gallery(userId):
     }).sort([('upvote', pymongo.DESCENDING)])
     repairs = []
     for r in result:
-        scan = create_rep(r, session['logged_in_id'])
+        scan = create_rep(r, userId)
         repairs.append(scan)
     return {
         "repairs": repairs,
