@@ -5,7 +5,7 @@ Design:
 - Any remaining mobile designs
 - Frontend pages need designs (upload, contact, forum, account, scans)
 
-Frontend:
+Frontend/Backend:
 - Dashboard
     - Account settings
     - Stats
