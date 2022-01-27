@@ -10,8 +10,7 @@ Frontend/Backend:
     - Account settings
     - Stats
 - Contact
-    - Add border
-    - Center
+    - alert when sent
 - Upload
     - CSS
 - Forum

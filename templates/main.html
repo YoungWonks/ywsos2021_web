@@ -21,46 +21,46 @@
 {% endblock %}
 
 {% block content %}
-<style type="text/css">
-    .circle {
-        border: 3px solid;
-        border-color:#C5DCC2;
-        padding-bottom: 50%;
-        border-radius: 50%;
-        overflow: hidden;
-        max-width: 10vw;
-        max-height: 10vw;
-        /* background: #c4c4c4; */
-        /* background-image: url("/static/images/column1.png");
-        object-fit: cover; */
+    <style type="text/css">
+        .circle {
+            border: 3px solid;
+            border-color:#C5DCC2;
+            padding-bottom: 50%;
+            border-radius: 50%;
+            overflow: hidden;
+            max-width: 10vw;
+            max-height: 10vw;
+            /* background: #c4c4c4; */
+            /* background-image: url("/static/images/column1.png");
+            object-fit: cover; */
 
-    }
+        }
 
-    .blur:hover {
-        /* background: rgba(194, 194, 194, 0.9); */
-        backdrop-filter: blur(8px);
-    }
+        .blur:hover {
+            /* background: rgba(194, 194, 194, 0.9); */
+            backdrop-filter: blur(8px);
+        }
 
-    .btn-dash {
-        box-shadow: 0px 1px 9px rgba(0, 0, 0, 0.25);
-    }
+        .btn-dash {
+            box-shadow: 0px 1px 9px rgba(0, 0, 0, 0.25);
+        }
 
-    .dashboard-border {
-        border: 3px solid;
-        border-color: #C5DCC2;
-        border-radius:25px;
-    }
+        .dashboard-border {
+            border: 3px solid;
+            border-color: #C5DCC2;
+            border-radius:25px;
+        }
 
-    .dashboard-grad {
-        background-image: linear-gradient(#A2C08B -5%,#B2D5DF 100%);
-    }
+        .dashboard-grad {
+            background-image: linear-gradient(#A2C08B -5%,#B2D5DF 100%);
+        }
 
-    #pic {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-    }
-</style>
+        #pic {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -127,15 +127,78 @@
                 </ul>
             </div>
             <div class="col dashboard-border dashboard-grad tab-content" id="tabContent">
-                <div class="tab-pane fade" id="stats" role="tabpanel">hello</div>
-                <div class="tab-pane fade" id="profile" role="tabpanel">goodbye</div>
+                <div class="tab-pane fade" id="stats" role="tabpanel">
+                    hello
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel">
+                    <h1 class="text-center">Change Your Account Info</h1>
+                    <div id="vue-app">
+                        <label for="username-input">Change Username</label>
+                        <input type="text" value="{{user['username']}}" v-model="username" id="username-input"><br><br>
+                        <label for="oldPass-input">Current Password</label>
+                        <input type="text" v-model="oldPass" id="oldPass-input"><br><br>
+                        <label for="newPass-input">New Password</label>
+                        <input type="text" v-model="newPass" id="newPass-input"><br>
+                        <label for="confirmPass-input">Confirm New Password</label>
+                        <input type="text" v-model="confirmPass" id="confirmPass-input"><br><br>
+                        <button @click="submit(username, oldPass, newPass, confirmPass)">Submit</button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 {% endblock %}
 
 {% block scripts %}
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 <script type="text/javascript">
+    var app = new Vue({
+        el: "#vue-app",
+        delimiters: ['[[', ']]'],
+        data() {
+            return {
+                username: "",
+                oldPass: "",
+                newPass: "",
+                confirmPass: "",
+            };
+        },
+        methods: {
+            submit(username, oldPass, newPass, confirmPass) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/main',
+                    data: JSON.stringify({
+                        "username": this.username,
+                        "oldPass": this.oldPass,
+                        "newPass": this.newPass,
+                        "confirmPass": this.confirmPass,
+                    }),
+
+                    contentType: "application/json",
+                    dataType: "json"
+                }).done(function(response) {
+                    console.log(response)
+                    if (response["error"] == 1) {
+                        window.location.replace("/error?errorCode=400&errorMsg=Bad request. Make sure the Issue Description is not empty.")
+                    }
+                });
+
+            }
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    
+    // $(".nav-pills .nav-item .nav-link:not(.nav-pills .nav-item.dropdown .nav-link), .dropdown-item").click(function()
+    // {
+    //     $(".dropdown-item.active").removeClass('active');
+    // });
+    // function change(){
+    //     document.getElementById(stats);
+    //     document.getElementBy
+    // }
     document.addEventListener("click", function(){
         console.log("stats", document.getElementById("stats").classList);
         console.log("profile", document.getElementById("profile").classList);
