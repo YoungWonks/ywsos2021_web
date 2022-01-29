@@ -547,7 +547,10 @@ def api_add(userId):
     lat = int(position[0])
     long = int(position[1])
     address = Nominatim(user_agent="georepair").reverse(
-        [lat, long]).raw['address']
+        [lat, long])
+    if address is None:
+        raise Exception()
+    address = address.raw["address"]
     city = None
     if 'city' in address:
         city = address.get('city')
@@ -581,7 +584,7 @@ def api_add(userId):
         "city": city,
         "state": state
     })
-    return {"error": "0", "message": "Succesful", }
+    return jsonify({"error": "0", "message": "Succesful", })
 
 
 @app.route('/api/wel', methods=['POST'])
