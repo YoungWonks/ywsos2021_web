@@ -414,7 +414,6 @@ def api_find(userId):
 @token_required
 def api_find_all(userId):
     scans = db['scans']
-
     position = request.get_json().get('position', [0, 0])
     lat = position[0]
     long = position[1]
