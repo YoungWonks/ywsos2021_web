@@ -205,10 +205,9 @@ def contact():
                 elif issueDescription == None or issueDescription.strip() == "":
                     return jsonify({"error": "1", "message": "Issue Description can't be empty"})
             elif issueHeader == None or issueHeader.strip() == "":
-                return jsonify({"error": "1", "message": "Subject Line can't be empty"})
+                return jsonify({"error": "2", "message": "Subject Line can't be empty"})
         elif userEmail == None or userEmail.strip() == "":
-            return jsonify({"error": "1", "message": "Make sure you give a valid email"})
-        return jsonify('/contact')
+            return jsonify({"error": "3", "message": "Make sure you give a valid email"})
 
 
 @app.route("/gallery")

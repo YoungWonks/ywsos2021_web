@@ -97,7 +97,7 @@
                     <h1 class="mt-2 mb-3">{{user['username']}}</h1>
                 </div>
 
-                <ul style="color:#677E70;" class="nav nav-tabs flex-column" id="dashboard-tab" role="tablist">
+                <!-- <ul style="color:#677E70;" class="nav nav-tabs flex-column" id="dashboard-tab" role="tablist">
                     <span style="display:inline;">
                         <li class="nav-item" role="presentation">
                             <button style="background-color:#C6DCC4;" class="btn btn-dash nav-link" id="gallery-tab" onclick="location.href='/gallery'">
@@ -124,27 +124,75 @@
                             <label for="profile-tab">Edit Profile</label>
                         </li>
                     </span>
+                </ul> -->
+                <!-- Nav tabs -->
+                <ul class="nav flex-column nav-pills d-flex align-items-center bg-info" id="dashboard-tab" role="tablist">
+                    <li class="nav-item bg-primary d-grid" role="presentation" style="width:80%;">
+                    <button class="nav-link btn btn-dash" id="gallery-btn" type="button" style="background-color:#C6DCC4; color:black;" onclick="location.href='/gallery'">
+                        Home
+                        <img src="{{ url_for('static', filename='images/gallery.svg') }}" class="sign-up-icon">
+                    </button>
+                    </li>
+                    <li class="nav-item d-grid" role="presentation" style="width:80%;">
+                    <button class="nav-link btn btn-dash" id="upload-btn" type="button"  style="background-color:#C6DBCB; color:black;" onclick="location.href='/upload'">
+                        Profile
+                        <img src="{{ url_for('static', filename='images/upload.svg') }}" class="sign-up-icon">
+                    </button>
+                    </li>
+                    <li class="nav-item d-grid" role="presentation" style="width:80%;">
+                    <button class="nav-link btn btn-dash" id="stats-tab" style="background-color:#C9DBDA; color:black;" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab">
+                        Stats
+                        <img src="{{ url_for('static', filename='images/share.svg') }}" class="sign-up-icon">
+                    </button>
+                    </li>
+                    <li class="nav-item d-grid" role="presentation" style="width:80%;">
+                    <button class="nav-link btn btn-dash" id="profile-tab" style="background-color:#C9DBDF; color:black;" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
+                        Edit Profile
+                        <img src="{{ url_for('static', filename='images/person_2.svg') }}" class="sign-up-icon">
+                    </button>
+                    </li>
                 </ul>
             </div>
-            <div class="col dashboard-border dashboard-grad tab-content" id="tabContent">
-                <div class="tab-pane fade" id="stats" role="tabpanel">
-                    hello
+            
+            <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
+                <div class="tab-pane fade active show" id="stats" role="tabpanel">
+                    <h1 class="text-center">Stats</h1>
                 </div>
                 <div class="tab-pane fade" id="profile" role="tabpanel">
                     <h1 class="text-center">Change Your Account Info</h1>
                     <div id="vue-app">
-                        <label for="username-input">Change Username</label>
-                        <input type="text" value="{{user['username']}}" v-model="username" id="username-input"><br><br>
-                        <label for="oldPass-input">Current Password</label>
-                        <input type="text" v-model="oldPass" id="oldPass-input"><br><br>
-                        <label for="newPass-input">New Password</label>
-                        <input type="text" v-model="newPass" id="newPass-input"><br>
-                        <label for="confirmPass-input">Confirm New Password</label>
-                        <input type="text" v-model="confirmPass" id="confirmPass-input"><br><br>
+                        <label for="username-input">Change Username</label><br>
+                        <input id="username-input" type="text" value="{{user['username']}}" v-model="username"><br><br>
+                        <label for="oldPass-input">Current Password</label><br>
+                        <input id="oldPass-input" type="text" v-model="oldPass"><br><br>
+                        <label for="newPass-input">New Password</label><br>
+                        <input id="newPass-input"type="text" v-model="newPass"><br>
+                        <label for="confirmPass-input">Confirm New Password</label><br>
+                        <input id="confirmPass-input"type="text" v-model="confirmPass">
+                        <div id="confirmPass-input-Msg"></div><br><br>
                         <button @click="submit(username, oldPass, newPass, confirmPass)">Submit</button>
                     </div>
                 </div>
             </div>
+            <!-- <div class="col dashboard-border dashboard-grad tab-content" id="tabContent">
+                <div class="tab-pane fade active show" id="stats" role="tabpanel">
+                </div>
+                <div class="tab-pane fade mt-2" id="profile" role="tabpanel">
+                    <h1 class="text-center">Change Your Account Info</h1>
+                    <div id="vue-app">
+                        <label for="username-input">Change Username</label><br>
+                        <input id="username-input" type="text" value="{{user['username']}}" v-model="username"><br><br>
+                        <label for="oldPass-input">Current Password</label><br>
+                        <input id="oldPass-input" type="text" v-model="oldPass"><br><br>
+                        <label for="newPass-input">New Password</label><br>
+                        <input id="newPass-input"type="text" v-model="newPass"><br>
+                        <label for="confirmPass-input">Confirm New Password</label><br>
+                        <input id="confirmPass-input"type="text" v-model="confirmPass">
+                        <div id="confirmPass-input-Msg"></div><br><br>
+                        <button @click="submit(username, oldPass, newPass, confirmPass)">Submit</button>
+                    </div>
+                </div>
+            </div> -->
         </div>
     </main>
 {% endblock %}
@@ -165,6 +213,11 @@
         },
         methods: {
             submit(username, oldPass, newPass, confirmPass) {
+                if (newPass != confirmPass){
+
+                    return;
+                }
+                console.log("Request Submitted");
                 $.ajax({
                     type: 'POST',
                     url: '/main',

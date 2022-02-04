@@ -26,8 +26,8 @@
                     dataType: "json"
                 }).done(function(response) {
                     console.log(response)
-                    if (response["error"] == 1) {
-                        window.location.replace("/error?errorCode=400&errorMsg=Bad request. Make sure the Issue Description is not empty.")
+                    if (response.error != 0){
+                        
                     }
                 });
 
@@ -62,7 +62,7 @@
     <div style="text-align:center; max-width:75%; margin:auto;" class="container card" id="box">
         <h1 style="color:black !important;" class="navbar-brand">Contact Support</h1>
         <p>Contact our support team here if you come across any issues</p>
-        <input type="email" style="margin-bottom:25px;" class="form-control" placeholder="Contact Email" v-model="email">
+        <input type="email" style="margin-bottom:25px;" class="form-control" placeholder="Contact Email" v-model="email" >
         <input type="text" style="margin-bottom:25px;" class="form-control" placeholder="Issue Heading" v-model="issueHeader">
         <textarea style="min-height:300px; margin-bottom:25px;" class="form-control" placeholder="Type your issue here." v-model="issueDescription"></textarea>
         <button class="submitBtn" style="border:0; text-align:center !important;" @click="submit(email,issueHeader,issueDescription)">Submit</button>

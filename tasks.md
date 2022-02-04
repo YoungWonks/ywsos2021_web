@@ -9,6 +9,9 @@ Frontend/Backend:
 - Dashboard
     - Account settings
     - Stats
+    - Reports
+    - Styling
+        - Center Nav Buttons
 - Contact
     - alert when sent
 - Upload
@@ -19,6 +22,11 @@ Frontend/Backend:
 - Gallery
     - Delete Function
     - Location in language
+    - Change status of scans
+- Admin feature
+    - Reports on Dashboard
+    - Status of scans
+    - Functionality
     
 - Create skeleton pages that don't have design yet
 - Make page better looking on smaller devices
