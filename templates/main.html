@@ -2,21 +2,6 @@
 {% block title %}Account{% endblock %}
 
 {% block buttons %}
-    <div style="display: inline-block;" class="dropdown">
-        <a class="btn nav-button dropdown-toggle" type="button" id="account" data-bs-toggle="dropdown" href="#">Account Settings</a>
-        <ul class="dropdown-menu" aria-labelledby="account">
-            <form method="post">
-                <button class="dropdown-item" value="changepass" name="changepass">Change Password</button>
-            </form>
-            <form method="post">
-                <button class="dropdown-item" value="changeuser" name="changeuser">Change Username</button>
-            </form>
-            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Account</button>
-
-        </ul>
-    </div>
-    <div style="display: inline-block; width: 1em;"></div>
-
     <a class="btn nav-button buttonrect" type="button" id="logout" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><p id="logouttext">Logout</p></a>
 {% endblock %}
 
@@ -73,19 +58,6 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
-                    <form method="post" action="/main">
-                        <button class="btn btn-danger" value="deleteacc" name="deleteacc">Delete Account</button>
-                    </form>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <main>
         <div style="height:85vh;" class="row text-center mt-3  mx-0 px-0">
@@ -97,60 +69,35 @@
                     <h1 class="mt-2 mb-3">{{user['username']}}</h1>
                 </div>
 
-                <!-- <ul style="color:#677E70;" class="nav nav-tabs flex-column" id="dashboard-tab" role="tablist">
-                    <span style="display:inline;">
-                        <li class="nav-item" role="presentation">
-                            <button style="background-color:#C6DCC4;" class="btn btn-dash nav-link" id="gallery-tab" onclick="location.href='/gallery'">
-                                <img src="{{ url_for('static', filename='images/gallery.svg') }}" class="sign-up-icon">
-                            </button>
-                            <label for="gallery-tab">View Gallery</label>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button style="background-color:#C6DBCB;" class="btn btn-dash nav-link" id="upload-tab" onclick="location.href='/upload'">
-                                <img src="{{ url_for('static', filename='images/upload.svg') }}" class="sign-up-icon">
-                            </button>
-                            <label for="upload-tab">Upload</label>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button style="background-color:#C9DBDA;" class="btn btn-dash nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" role="tab">
-                                <img src="{{ url_for('static', filename='images/share.svg') }}" class="sign-up-icon">
-                            </button>
-                            <label for="stats-tab">Stats</label>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button style="background-color:#C9DBDF;" class="btn btn-dash nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" role="tab">
-                                <img src="{{ url_for('static', filename='images/person_2.svg') }}" class="sign-up-icon">
-                            </button>
-                            <label for="profile-tab">Edit Profile</label>
-                        </li>
-                    </span>
-                </ul> -->
-                <!-- Nav tabs -->
-                <ul class="nav flex-column nav-pills d-flex align-items-center bg-info" id="dashboard-tab" role="tablist">
-                    <li class="nav-item bg-primary d-grid" role="presentation" style="width:80%;">
+                <ul class="nav flex-column nav-pills d-flex align-items-center" id="dashboard-tab" role="tablist">
+                    <li class="nav-item d-grid my-3" role="presentation" style="width:80%;">
                     <button class="nav-link btn btn-dash" id="gallery-btn" type="button" style="background-color:#C6DCC4; color:black;" onclick="location.href='/gallery'">
                         Home
                         <img src="{{ url_for('static', filename='images/gallery.svg') }}" class="sign-up-icon">
                     </button>
                     </li>
-                    <li class="nav-item d-grid" role="presentation" style="width:80%;">
+                    <br>
+                    <li class="nav-item d-grid my-3" role="presentation" style="width:80%;">
                     <button class="nav-link btn btn-dash" id="upload-btn" type="button"  style="background-color:#C6DBCB; color:black;" onclick="location.href='/upload'">
                         Profile
                         <img src="{{ url_for('static', filename='images/upload.svg') }}" class="sign-up-icon">
                     </button>
                     </li>
-                    <li class="nav-item d-grid" role="presentation" style="width:80%;">
+                    <br>
+                    <li class="nav-item d-grid my-3" role="presentation" style="width:80%;">
                     <button class="nav-link btn btn-dash" id="stats-tab" style="background-color:#C9DBDA; color:black;" data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab">
                         Stats
                         <img src="{{ url_for('static', filename='images/share.svg') }}" class="sign-up-icon">
                     </button>
                     </li>
-                    <li class="nav-item d-grid" role="presentation" style="width:80%;">
+                    <br>
+                    <li class="nav-item d-grid my-3" role="presentation" style="width:80%;">
                     <button class="nav-link btn btn-dash" id="profile-tab" style="background-color:#C9DBDF; color:black;" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
                         Edit Profile
                         <img src="{{ url_for('static', filename='images/person_2.svg') }}" class="sign-up-icon">
                     </button>
                     </li>
+                    <br>
                 </ul>
             </div>
             
@@ -162,37 +109,32 @@
                     <h1 class="text-center">Change Your Account Info</h1>
                     <div id="vue-app">
                         <label for="username-input">Change Username</label><br>
-                        <input id="username-input" type="text" value="{{user['username']}}" v-model="username"><br><br>
-                        <label for="oldPass-input">Current Password</label><br>
-                        <input id="oldPass-input" type="text" v-model="oldPass"><br><br>
-                        <label for="newPass-input">New Password</label><br>
-                        <input id="newPass-input"type="text" v-model="newPass"><br>
-                        <label for="confirmPass-input">Confirm New Password</label><br>
-                        <input id="confirmPass-input"type="text" v-model="confirmPass">
-                        <div id="confirmPass-input-Msg"></div><br><br>
+                        <input id="username-input" type="text" v-model="username">
+                        <p id="username-input-Msg" style="color:red;"></p>
+                        <br><br>
+
                         <button @click="submit(username, oldPass, newPass, confirmPass)">Submit</button>
+                        <br>
+
+                        <label for="oldPass-input">Current Password</label><br>
+                        <input id="oldPass-input" type="text" v-model="oldPass">
+                        <p id="oldPass-input-Msg" style="color:red;"></p>
+                        <br><br>
+
+                        <label for="newPass-input">New Password</label><br>
+                        <input id="newPass-input" type="text" v-model="newPass">
+                        <p id="newPass-input-Msg" style="color:red;"></p>
+                        <br>
+
+                        <label for="confirmPass-input">Confirm New Password</label><br>
+                        <input id="confirmPass-input" type="text" v-model="confirmPass">
+                        <p id="confirmPass-input-Msg" style="color:red;"></p>
+                        <br>
+
+                        <button @click="changePass()">Submit</button>
                     </div>
                 </div>
             </div>
-            <!-- <div class="col dashboard-border dashboard-grad tab-content" id="tabContent">
-                <div class="tab-pane fade active show" id="stats" role="tabpanel">
-                </div>
-                <div class="tab-pane fade mt-2" id="profile" role="tabpanel">
-                    <h1 class="text-center">Change Your Account Info</h1>
-                    <div id="vue-app">
-                        <label for="username-input">Change Username</label><br>
-                        <input id="username-input" type="text" value="{{user['username']}}" v-model="username"><br><br>
-                        <label for="oldPass-input">Current Password</label><br>
-                        <input id="oldPass-input" type="text" v-model="oldPass"><br><br>
-                        <label for="newPass-input">New Password</label><br>
-                        <input id="newPass-input"type="text" v-model="newPass"><br>
-                        <label for="confirmPass-input">Confirm New Password</label><br>
-                        <input id="confirmPass-input"type="text" v-model="confirmPass">
-                        <div id="confirmPass-input-Msg"></div><br><br>
-                        <button @click="submit(username, oldPass, newPass, confirmPass)">Submit</button>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </main>
 {% endblock %}
@@ -212,31 +154,40 @@
             };
         },
         methods: {
-            submit(username, oldPass, newPass, confirmPass) {
-                if (newPass != confirmPass){
+            changePass() {
+                var oldpass = document.getElementById("oldPass-input");
+                var newPass = document.getElementById("newPass-input");
+                var confirmPass = document.getElementById("confirmPass-input");
+                var oldPassMsg = document.getElementById("oldPass-input-Msg");
+                var newPassMsg = document.getElementById("newPass-input-Msg");
+                var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
+                var messages = [oldPassMsg, newPassMsg, confirmPassMsg];
+                
+                messages.forEach((element) => {
+                    element.textContent="";
+                })
 
-                    return;
+                if (newPass.value != confirmPass.value){
+                    newPassMsg.textContent = "Password Does Not Match";
+                    confirmPassMsg.textContent = "Password Does Not Match";
                 }
-                console.log("Request Submitted");
-                $.ajax({
-                    type: 'POST',
-                    url: '/main',
-                    data: JSON.stringify({
-                        "username": this.username,
-                        "oldPass": this.oldPass,
-                        "newPass": this.newPass,
-                        "confirmPass": this.confirmPass,
-                    }),
+                else{
+                    console.log("Request Submitted");
+                    $.ajax({
+                        type: 'POST',
+                        url: '/main',
+                        data: JSON.stringify({
+                            "oldPass": this.oldPass.value,
+                            "newPass": this.newPass.value,
+                        }),
 
-                    contentType: "application/json",
-                    dataType: "json"
-                }).done(function(response) {
-                    console.log(response)
-                    if (response["error"] == 1) {
-                        window.location.replace("/error?errorCode=400&errorMsg=Bad request. Make sure the Issue Description is not empty.")
-                    }
-                });
-
+                        contentType: "application/json",
+                        dataType: "json"
+                    }).done((response) => {
+                        console.log(response)
+                        
+                    });
+                }
             }
         }
     });
