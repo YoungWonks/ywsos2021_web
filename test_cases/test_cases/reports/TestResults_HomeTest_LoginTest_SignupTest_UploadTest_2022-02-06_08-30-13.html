@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Report</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 class="text-capitalize">Test Report</h2>
+                <p class='attribute'><strong>Start Time: </strong>2022-02-06 08:30:13</p>
+                <p class='attribute'><strong>Duration: </strong>51.92 s</p>
+                <p class='attribute'><strong>Summary: </strong>Total: 9, Pass: 8, Fail: 1</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-10 col-md-10">
+                <table class='table table-hover table-responsive'>
+                    <thead>
+                        <tr>
+                            <th>test_suite.HomeTest</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class='success'>
+                            <td class="col-xs-10">test_home</td>
+                            <td class="col-xs-1">
+                                <span class="label label-success" style="display:block;width:40px;">Pass</span>
+                            </td>
+                            <td class="col-xs-1">
+                            </td>
+                        </tr>
+                        <tr class='success'>
+                            <td class="col-xs-10">test_login</td>
+                            <td class="col-xs-1">
+                                <span class="label label-success" style="display:block;width:40px;">Pass</span>
+                            </td>
+                            <td class="col-xs-1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Total: 2, Pass: 2 -- Duration: 10.78 s
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-10 col-md-10">
+                <table class='table table-hover table-responsive'>
+                    <thead>
+                        <tr>
+                            <th>test_suite.LoginTest</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class='success'>
+                            <td class="col-xs-10">test_blanksubmission</td>
+                            <td class="col-xs-1">
+                                <span class="label label-success" style="display:block;width:40px;">Pass</span>
+                            </td>
+                            <td class="col-xs-1">
+                            </td>
+                        </tr>
+                        <tr class='success'>
+                            <td class="col-xs-10">test_correctcredentials</td>
+                            <td class="col-xs-1">
+                                <span class="label label-success" style="display:block;width:40px;">Pass</span>
+                            </td>
+                            <td class="col-xs-1">
+                            </td>
+                        </tr>
+                        <tr class='success'>
+                            <td class="col-xs-10">test_passwordonly</td>
+                            <td class="col-xs-1">
+                                <span class="label label-success" style="display:block;width:40px;">Pass</span>
+                            </td>
+                            <td class="col-xs-1">
+                            </td>
+                        </tr>
+                        <tr class='success'>
+                            <td class="col-xs-10">test_usernameonly</td>
+                            <td class="col-xs-1">
+                                <span class="label label-success" style="display:block;width:40px;">Pass</span>
+                            </td>
+                            <td class="col-xs-1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Total: 4, Pass: 4 -- Duration: 21.53 s
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-10 col-md-10">
+                <table class='table table-hover table-responsive'>
+                    <thead>
+                        <tr>
+                            <th>test_suite.SignupTest</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class='success'>
+                            <td class="col-xs-10">test_signingup</td>
+                            <td class="col-xs-1">
+                                <span class="label label-success" style="display:block;width:40px;">Pass</span>
+                            </td>
+                            <td class="col-xs-1">
+                            </td>
+                        </tr>
+                        <tr class='danger'>
+                            <td class="col-xs-10">test_signupduplicate</td>
+                            <td class="col-xs-1">
+                                <span class="label label-danger" style="display:block;width:40px;">Fail</span>
+                            </td>
+                            <td class="col-xs-1">
+                                <button class="btn btn-default btn-xs">View</button>
+                            </td>
+                        </tr>
+                        <tr style="display:none;">
+                            <td class="col-xs-9" colspan="3"><p style="color:maroon;">AssertionError: 'Username already exists' not found in '<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"><link rel="stylesheet" type="text/css" href="/static/css/theme.min.css?h=8ae02e1a610405bd5053bfe00d056cdf"><link rel="shortcut icon" type="image/svg" href="/static/images/hammer.svg?h=38339e0aa8ac15ff02bf2f534713e790"><script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script><title>GeoRepair - Account</title></head> <body class="background"> <div class="container"> <nav class="navbar navbar-expand-lg navbar-light"> <div class="container-fluid"> <a href="/" class="navbar-brand"> GeoRepair <img src="/static/images/hammer.svg?h=38339e0aa8ac15ff02bf2f534713e790" id="hammer" class="d-inline-block align-text-middle"> </a> <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"> <svg width="36" height="27" viewBox="0 0 36 27" fill="none" xmlns="http://www.w3.org/2000/svg"> <g filter="url(#filter0_d_0:1)"> <line x1="5" y1="3" x2="20" y2="3" stroke="#DFF7D8" stroke-opacity="0.78" stroke-width="2" stroke-linecap="round"></line> </g> <g filter="url(#filter1_d_0:1)"> <line x1="5" y1="11" x2="31" y2="11" stroke="#DFF7D8" stroke-opacity="0.78" stroke-width="2" stroke-linecap="round"></line> </g> <g filter="url(#filter2_d_0:1)"> <line x1="16" y1="20" x2="31" y2="20" stroke="#DFF7D8" stroke-opacity="0.78" stroke-width="2" stroke-linecap="round"></line> </g> <defs> <filter id="filter0_d_0:1" x="0" y="0" width="25" height="10" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix> <feOffset dy="2"></feOffset> <feGaussianBlur stdDeviation="2"></feGaussianBlur> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0:1"></feBlend> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0:1" result="shape"></feBlend> </filter> <filter id="filter1_d_0:1" x="0" y="8" width="36" height="10" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix> <feOffset dy="2"></feOffset> <feGaussianBlur stdDeviation="2"></feGaussianBlur> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0:1"></feBlend> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0:1" result="shape"></feBlend> </filter> <filter id="filter2_d_0:1" x="11" y="17" width="25" height="10" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix> <feOffset dy="2"></feOffset> <feGaussianBlur stdDeviation="2"></feGaussianBlur> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0:1"></feBlend> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0:1" result="shape"></feBlend> </filter> </defs> </svg> </span> </button> <span class="collapse navbar-collapse" id="navbarSupportedContent"> <ul class="navbar-nav mb-2 mb-lg-0"> <li class="nav-item px-1"><a href="/forum" class="nav-link nav">Forum</a></li> <li class="nav-item px-1"><a href="/upload" class="nav-link nav">Upload</a></li> <li class="nav-item px-1"><a href="/gallery" class="nav-link nav">Gallery</a></li> <li class="nav-item px-1"><a href="/contact" class="nav-link nav">Contact</a></li> </ul> <div style="display: inline-block;" class="dropdown"> <a class="btn nav-button dropdown-toggle" type="button" id="account" data-bs-toggle="dropdown" href="#">Account Settings</a> <ul class="dropdown-menu" aria-labelledby="account"> <form method="post"> <button class="dropdown-item" value="changepass" name="changepass">Change Password</button> </form> <form method="post"> <button class="dropdown-item" value="changeuser" name="changeuser">Change Username</button> </form> <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Account</button> </ul> </div> <div style="display: inline-block; width: 1em;"></div> <a class="btn nav-button buttonrect" type="button" id="logout" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><p id="logouttext">Logout</p></a> </span> </div> </nav> <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true"> <div class="modal-dialog"> <div class="modal-content"> <div class="modal-body"> <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5> <a href="logout"><button type="button" id="confirmLogout" class="btn btn-primary">Log Out</button></a> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> </div> </div> </div> </div> <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"> <div class="modal-dialog"> <div class="modal-content"> <div class="modal-body"> <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5> <form method="post" action="/main"> <button class="btn btn-primary" value="deleteacc" name="deleteacc">Delete Account</button> </form> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> </div> </div> </div> </div> <main> <div class="row"> <div class="column"> <h1>Hello, wholely!</h1> </div> </div> </main> <footer> </footer> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> <script src="/static/js/script.js?h=97d7b35ebe0cf7fe005a9df8bad1524e"></script> </div>  </body></html>'</p><p style="color:maroon;">Traceback (most recent call last):
+  File "/Volumes/contents/ywsos2021_web/test_cases/test_suite.py", line 198, in test_signupduplicate
+    self.assertIn("Username already exists", self.driver.page_source)
+AssertionError: 'Username already exists' not found in '<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"><link rel="stylesheet" type="text/css" href="/static/css/theme.min.css?h=8ae02e1a610405bd5053bfe00d056cdf"><link rel="shortcut icon" type="image/svg" href="/static/images/hammer.svg?h=38339e0aa8ac15ff02bf2f534713e790"><script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script><title>GeoRepair - Account</title></head> <body class="background"> <div class="container"> <nav class="navbar navbar-expand-lg navbar-light"> <div class="container-fluid"> <a href="/" class="navbar-brand"> GeoRepair <img src="/static/images/hammer.svg?h=38339e0aa8ac15ff02bf2f534713e790" id="hammer" class="d-inline-block align-text-middle"> </a> <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"> <svg width="36" height="27" viewBox="0 0 36 27" fill="none" xmlns="http://www.w3.org/2000/svg"> <g filter="url(#filter0_d_0:1)"> <line x1="5" y1="3" x2="20" y2="3" stroke="#DFF7D8" stroke-opacity="0.78" stroke-width="2" stroke-linecap="round"></line> </g> <g filter="url(#filter1_d_0:1)"> <line x1="5" y1="11" x2="31" y2="11" stroke="#DFF7D8" stroke-opacity="0.78" stroke-width="2" stroke-linecap="round"></line> </g> <g filter="url(#filter2_d_0:1)"> <line x1="16" y1="20" x2="31" y2="20" stroke="#DFF7D8" stroke-opacity="0.78" stroke-width="2" stroke-linecap="round"></line> </g> <defs> <filter id="filter0_d_0:1" x="0" y="0" width="25" height="10" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix> <feOffset dy="2"></feOffset> <feGaussianBlur stdDeviation="2"></feGaussianBlur> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0:1"></feBlend> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0:1" result="shape"></feBlend> </filter> <filter id="filter1_d_0:1" x="0" y="8" width="36" height="10" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix> <feOffset dy="2"></feOffset> <feGaussianBlur stdDeviation="2"></feGaussianBlur> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0:1"></feBlend> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0:1" result="shape"></feBlend> </filter> <filter id="filter2_d_0:1" x="11" y="17" width="25" height="10" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"> <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood> <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix> <feOffset dy="2"></feOffset> <feGaussianBlur stdDeviation="2"></feGaussianBlur> <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix> <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0:1"></feBlend> <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0:1" result="shape"></feBlend> </filter> </defs> </svg> </span> </button> <span class="collapse navbar-collapse" id="navbarSupportedContent"> <ul class="navbar-nav mb-2 mb-lg-0"> <li class="nav-item px-1"><a href="/forum" class="nav-link nav">Forum</a></li> <li class="nav-item px-1"><a href="/upload" class="nav-link nav">Upload</a></li> <li class="nav-item px-1"><a href="/gallery" class="nav-link nav">Gallery</a></li> <li class="nav-item px-1"><a href="/contact" class="nav-link nav">Contact</a></li> </ul> <div style="display: inline-block;" class="dropdown"> <a class="btn nav-button dropdown-toggle" type="button" id="account" data-bs-toggle="dropdown" href="#">Account Settings</a> <ul class="dropdown-menu" aria-labelledby="account"> <form method="post"> <button class="dropdown-item" value="changepass" name="changepass">Change Password</button> </form> <form method="post"> <button class="dropdown-item" value="changeuser" name="changeuser">Change Username</button> </form> <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Account</button> </ul> </div> <div style="display: inline-block; width: 1em;"></div> <a class="btn nav-button buttonrect" type="button" id="logout" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><p id="logouttext">Logout</p></a> </span> </div> </nav> <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true"> <div class="modal-dialog"> <div class="modal-content"> <div class="modal-body"> <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5> <a href="logout"><button type="button" id="confirmLogout" class="btn btn-primary">Log Out</button></a> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> </div> </div> </div> </div> <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"> <div class="modal-dialog"> <div class="modal-content"> <div class="modal-body"> <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5> <form method="post" action="/main"> <button class="btn btn-primary" value="deleteacc" name="deleteacc">Delete Account</button> </form> <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button> </div> </div> </div> </div> <main> <div class="row"> <div class="column"> <h1>Hello, wholely!</h1> </div> </div> </main> <footer> </footer> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> <script src="/static/js/script.js?h=97d7b35ebe0cf7fe005a9df8bad1524e"></script> </div>  </body></html>'
+
+
+====== WebDriver manager ======
+Current google-chrome version is 98.0.4758
+Get LATEST chromedriver version for 98.0.4758 google-chrome
+Driver [/Users/sid/.wdm/drivers/chromedriver/mac64/98.0.4758.80/chromedriver] found in cache
+</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Total: 2, Pass: 1, Fail: 1 -- Duration: 12.49 s
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-10 col-md-10">
+                <table class='table table-hover table-responsive'>
+                    <thead>
+                        <tr>
+                            <th>test_suite.UploadTest</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class='success'>
+                            <td class="col-xs-10">test_uploadCheck</td>
+                            <td class="col-xs-1">
+                                <span class="label label-success" style="display:block;width:40px;">Pass</span>
+                            </td>
+                            <td class="col-xs-1">
+                                <button class="btn btn-default btn-xs">View</button>
+                            </td>
+                        </tr>
+                        <tr style="display:none;">
+                            <td class="col-xs-9" colspan="3"><p>/Volumes/contents/ywsos2021_web/test_casestest_image.jpeg
+</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Total: 1, Pass: 1 -- Duration: 7.11 s
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('td').on('click', '.btn', function(e){
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var $this = $(this);
+                var $nextRow = $this.closest('tr').next('tr');
+                $nextRow.slideToggle("fast");
+                $this.text(function(i, text){
+                    if (text === 'View') {
+                        return 'Hide';
+                    } else {
+                        return 'View';
+                    };
+                });
+            });
+        });
+    </script>
+</body>
+</html

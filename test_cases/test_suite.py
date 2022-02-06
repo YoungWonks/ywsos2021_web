@@ -1,5 +1,4 @@
 import unittest
-from random_word import *
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
@@ -10,6 +9,11 @@ import os
 from dotenv import load_dotenv
 import random
 from webdriver_manager.chrome import ChromeDriverManager
+from random_word import RandomWords
+
+r = RandomWords()
+username_testchoice = r.get_random_word()
+password_testchoice = r.get_random_word()
 
 # HW ADD ENV VARIABLES
 APP_ROOT = os.path.join(os.path.dirname(__file__), '..')  # refers to application_top
@@ -49,7 +53,7 @@ class LoginTest(unittest.TestCase):
         options.add_argument("start-maximized")
         # options.add_argument('headless')
         cls.driver = webdriver.Chrome(ChromeDriverManager().install(),options=options)
-        cls.base_url = "http://127.0.0.1:5000/login"
+        cls.base_url = (os.getenv("DOMAIN")+"/login")
         cls.driver.get(cls.base_url)
 
     def test_blanksubmission(self):
@@ -86,6 +90,15 @@ class LoginTest(unittest.TestCase):
         submitButton = self.driver.find_element_by_id("submit")
         submitButton.click()
         WebDriverWait(self.driver, 15).until(expected_conditions.title_is('GeoRepair - Account'))
+        self.driver.get(os.getenv("DOMAIN") + "/main")
+        logoutButton = self.driver.find_element_by_id("logout")
+        logoutButton.click()
+        self.assertTrue(expected_conditions.alert_is_present())
+        self.driver.switch_to.active_element
+        logoutButton1 = self.driver.find_element_by_id("confirmLogout")
+        self.driver.execute_script("arguments[0].click();",logoutButton1)
+        # logoutButton1.click()
+        WebDriverWait(self.driver, 15).until(expected_conditions.title_is('GeoRepair - About'))
 
     @classmethod
     def tearDown(cls):
@@ -98,8 +111,8 @@ class UploadTest(unittest.TestCase):
         options.add_argument("start-maximized")
         # options.add_argument('headless')
         cls.driver = webdriver.Chrome(ChromeDriverManager().install(),options=options)
-        cls.base_url = "http://127.0.0.1:5000/upload"
-        cls.driver.get("http://127.0.0.1:5000/login")
+        cls.base_url = (os.getenv("DOMAIN")+"/upload")
+        cls.driver.get(os.getenv("DOMAIN")+"/login")
         userInput = cls.driver.find_element_by_id("username")
         userInput.send_keys(os.getenv("TESTUSER"))
         pwInput = cls.driver.find_element_by_id("password")
@@ -160,20 +173,29 @@ class SignupTest(unittest.TestCase):
         # options.add_argument('headless')
         cls.driver = webdriver.Chrome(ChromeDriverManager().install(),options=options)
         cls.driver.get(os.getenv("DOMAIN") + "/signup")
-        WebDriverWait(cls.driver, 15).until(expected_conditions.title_is('GeoRepair - Signup'))
+        WebDriverWait(cls.driver, 15).until(expected_conditions.title_is('GeoRepair - Sign-up'))
     
     def test_signingup(self):
         usernameInput = self.driver.find_element_by_id("username")
-        usernameInput.send_keys(random_word())
+        usernameInput.send_keys(username_testchoice)
         passwordInput = self.driver.find_element_by_id("password1")
-        password_testchoice = random_word()
         passwordInput.send_keys(password_testchoice)
         password2Input = self.driver.find_element_by_id("password2")
         password2Input.send_keys(password_testchoice)
         submitkey = self.driver.find_element_by_id("submit")
         submitkey.click()
 
-    # not further finished, internal error with change password/username functionality
+    def test_signupduplicate(self):
+        self.driver.get(os.getenv("DOMAIN") + "/signup")
+        usernameInput = self.driver.find_element_by_id("username")
+        usernameInput.send_keys(username_testchoice)
+        passwordInput = self.driver.find_element_by_id("password1")
+        passwordInput.send_keys(password_testchoice)
+        password2Input = self.driver.find_element_by_id("password2")
+        password2Input.send_keys(password_testchoice)
+        submitkey = self.driver.find_element_by_id("submit")
+        submitkey.click()
+        self.assertIn("Username already exists", self.driver.page_source)
 
     @classmethod
     def tearDown(cls):
