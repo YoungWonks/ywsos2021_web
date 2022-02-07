@@ -10,7 +10,13 @@ Frontend/Backend:
     - Images & Text
 - Dashboard
     - Account settings
+        - Change username
+        - Change password
+        - Change pfp
     - Stats
+        - Total number of scans uploaded
+        - number of scans pending/resolved
+        - total upvotes
     - Reports
     - Styling
         - Center Nav Buttons

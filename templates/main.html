@@ -40,6 +40,22 @@
             background-image: linear-gradient(#A2C08B -5%,#B2D5DF 100%);
         }
 
+        .submitBtn {
+            background: linear-gradient(180deg, #000000 -14.74%, rgba(41, 41, 41, 0.6) 132.63%);
+            box-shadow: 6.19761px 3.54149px 16.8221px rgba(0, 0, 0, 0.54);
+            width: 6em;
+            height: 2.5em;
+            border-radius: 0.5em;
+            border: none;
+            color: white;
+            font-family: Inter;
+            font-style: normal;
+            font-weight: bolder;
+            letter-spacing: -0.017em;
+            margin: auto;
+        }
+
+
         #pic {
             object-fit: cover;
             width: 100%;
@@ -102,36 +118,38 @@
             </div>
             
             <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
-                <div class="tab-pane fade active show" id="stats" role="tabpanel">
+                <div class="tab-pane fade" id="stats" role="tabpanel">
                     <h1 class="text-center">Stats</h1>
                 </div>
-                <div class="tab-pane fade" id="profile" role="tabpanel">
+                <div class="tab-pane fade active show" id="profile" role="tabpanel">
                     <h1 class="text-center">Change Your Account Info</h1>
                     <div id="vue-app">
                         <label for="username-input">Change Username</label><br>
                         <input id="username-input" type="text" v-model="username">
                         <p id="username-input-Msg" style="color:red;"></p>
-                        <br><br>
-
-                        <button @click="submit(username, oldPass, newPass, confirmPass)">Submit</button>
                         <br>
 
+                        <button @click="submit(username, oldPass, newPass, confirmPass)" class="submitBtn">Submit</button>
+                        <br>
+
+                        <hr style="border:2px solid black; opacity:0.6;">
+
                         <label for="oldPass-input">Current Password</label><br>
-                        <input id="oldPass-input" type="text" v-model="oldPass">
+                        <input id="oldPass-input" type="password" v-model="oldPass">
                         <p id="oldPass-input-Msg" style="color:red;"></p>
-                        <br><br>
+                        <br>
 
                         <label for="newPass-input">New Password</label><br>
-                        <input id="newPass-input" type="text" v-model="newPass">
+                        <input id="newPass-input" type="password" v-model="newPass">
                         <p id="newPass-input-Msg" style="color:red;"></p>
                         <br>
 
                         <label for="confirmPass-input">Confirm New Password</label><br>
-                        <input id="confirmPass-input" type="text" v-model="confirmPass">
+                        <input id="confirmPass-input" type="password" v-model="confirmPass">
                         <p id="confirmPass-input-Msg" style="color:red;"></p>
                         <br>
 
-                        <button @click="changePass()">Submit</button>
+                        <button @click="changePass()" class="submitBtn">Submit</button>
                     </div>
                 </div>
             </div>
@@ -154,6 +172,21 @@
             };
         },
         methods: {
+            changeUser(){
+                $.ajax({
+                    type: 'POST',
+                    url: '/main',
+                    data: JSON.stringify({
+                        "oldPass": this.oldPass.value,
+                        "newPass": this.newPass.value,
+                    }),
+                    contentType: "application/json",
+                    dataType: "json"
+                }).done((response) => {
+                    console.log(response)    
+                });
+            },
+
             changePass() {
                 var oldpass = document.getElementById("oldPass-input");
                 var newPass = document.getElementById("newPass-input");
@@ -162,15 +195,19 @@
                 var newPassMsg = document.getElementById("newPass-input-Msg");
                 var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
                 var messages = [oldPassMsg, newPassMsg, confirmPassMsg];
-                
                 messages.forEach((element) => {
                     element.textContent="";
                 })
 
-                if (newPass.value != confirmPass.value){
+                if (newPass.value.length < 6){
+                    newPassMsg.textContent = "Password needs to be 6 characters or longer";
+                }
+
+                else if (newPass.value != confirmPass.value){
                     newPassMsg.textContent = "Password Does Not Match";
                     confirmPassMsg.textContent = "Password Does Not Match";
                 }
+
                 else{
                     console.log("Request Submitted");
                     $.ajax({
@@ -190,22 +227,6 @@
                 }
             }
         }
-    });
-</script>
-
-<script type="text/javascript">
-    
-    // $(".nav-pills .nav-item .nav-link:not(.nav-pills .nav-item.dropdown .nav-link), .dropdown-item").click(function()
-    // {
-    //     $(".dropdown-item.active").removeClass('active');
-    // });
-    // function change(){
-    //     document.getElementById(stats);
-    //     document.getElementBy
-    // }
-    document.addEventListener("click", function(){
-        console.log("stats", document.getElementById("stats").classList);
-        console.log("profile", document.getElementById("profile").classList);
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
