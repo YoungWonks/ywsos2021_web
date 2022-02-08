@@ -117,7 +117,7 @@ def login_required(something):
         if 'logged_in' in session and session["logged_in"]:
             return something(session['logged_in_id'], *args, **kwargs)
         else:
-            flash("Please Sign In First")
+            flash("Please Sign In First", 'error')
             return redirect('/')
     return wrap_login
 
@@ -221,18 +221,32 @@ def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     if request.method == "POST":
-        if request.form.get("changepass"):
-            newpass = request.form.get("newpass")
-            confirmpass = request.form.get("confirmpass")
-            if newpass == confirmpass and newpass is not None:
+        requestType = request.get_json()['requestType']
+
+        if requestType == "changePassword":
+            oldPassword = request.get_json()['oldPass']
+            newPassword = request.get_json()['newPass']
+            if pbkdf2_sha256.verify(oldPassword, user['password_hash']):
                 users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {
-                                 '$set': {'password': pbkdf2_sha256.hash(newpass)}})
-                return jsonify({"error": "0", "message": "Password changed successfully"})
+                '$set': {'password_hash': pbkdf2_sha256.hash(newPassword)}})
+                flash("Password Reset Complete", 'success')
+                return redirect('/contact') ###### redirect + flash does not work
             else:
-                return jsonify({"error": "1", "message": "Password doesn't match"})
-        if request.form.get("deleteacc"):
-            users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
-            return redirect("/logout")
+                return jsonify({"error": "1", "message": "Current Password Does Not Match With Database", "type": "oldPass"})
+
+        elif requestType == "changeUsername":
+            username = request.get_json()['username']
+            if users.find_one({"username": username}) is not None:
+                return jsonify({"error": "1", "message": "Username Already Exists"})
+            else:
+                users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {
+                '$set': {'username': username}})
+                flash("Username Change Complete", 'success')
+                return redirect('/contact') ###### redirect + flash does not work
+
+        # if request.form.get("deleteacc"):
+        #     users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
+        #     return redirect("/logout")
     return render_template("main.html", user=user)
 
 

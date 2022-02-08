@@ -127,9 +127,8 @@
                         <label for="username-input">Change Username</label><br>
                         <input id="username-input" type="text" v-model="username">
                         <p id="username-input-Msg" style="color:red;"></p>
-                        <br>
 
-                        <button @click="submit(username, oldPass, newPass, confirmPass)" class="submitBtn">Submit</button>
+                        <button @click="changeUser()" class="submitBtn">Submit</button>
                         <br>
 
                         <hr style="border:2px solid black; opacity:0.6;">
@@ -137,17 +136,14 @@
                         <label for="oldPass-input">Current Password</label><br>
                         <input id="oldPass-input" type="password" v-model="oldPass">
                         <p id="oldPass-input-Msg" style="color:red;"></p>
-                        <br>
 
                         <label for="newPass-input">New Password</label><br>
                         <input id="newPass-input" type="password" v-model="newPass">
                         <p id="newPass-input-Msg" style="color:red;"></p>
-                        <br>
 
                         <label for="confirmPass-input">Confirm New Password</label><br>
                         <input id="confirmPass-input" type="password" v-model="confirmPass">
                         <p id="confirmPass-input-Msg" style="color:red;"></p>
-                        <br>
 
                         <button @click="changePass()" class="submitBtn">Submit</button>
                     </div>
@@ -168,66 +164,93 @@
                 username: "",
                 oldPass: "",
                 newPass: "",
-                confirmPass: "",
+                confirmPass: ""
             };
         },
         methods: {
             changeUser(){
+                var username = this.username;
+
+                var usernameMsg = document.getElementById("username-input-Msg");
+
+                clearMsgs();
+
+                console.log("Request Submitted");
                 $.ajax({
                     type: 'POST',
                     url: '/main',
                     data: JSON.stringify({
-                        "oldPass": this.oldPass.value,
-                        "newPass": this.newPass.value,
+                        "requestType": "changeUsername",
+                        "username": username
                     }),
                     contentType: "application/json",
                     dataType: "json"
-                }).done((response) => {
-                    console.log(response)    
+                }).done(function(response) {
+                    console.log(response)
+                    if (response["error"] == 1){
+                        usernameMsg.textContent = response["message"];
+                    }    
                 });
             },
 
             changePass() {
-                var oldpass = document.getElementById("oldPass-input");
-                var newPass = document.getElementById("newPass-input");
-                var confirmPass = document.getElementById("confirmPass-input");
+                var oldPass = this.oldPass;
+                var newPass = this.newPass;
+                var confirmPass = this.confirmPass;
+
                 var oldPassMsg = document.getElementById("oldPass-input-Msg");
                 var newPassMsg = document.getElementById("newPass-input-Msg");
                 var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
-                var messages = [oldPassMsg, newPassMsg, confirmPassMsg];
-                messages.forEach((element) => {
-                    element.textContent="";
-                })
 
-                if (newPass.value.length < 6){
+                clearMsgs()
+
+                if (newPass.length < 6){
                     newPassMsg.textContent = "Password needs to be 6 characters or longer";
                 }
 
-                else if (newPass.value != confirmPass.value){
+                else if (newPass != confirmPass){
                     newPassMsg.textContent = "Password Does Not Match";
                     confirmPassMsg.textContent = "Password Does Not Match";
                 }
 
                 else{
                     console.log("Request Submitted");
+                    console.log(oldPass);
+                    console.log(newPass);
                     $.ajax({
                         type: 'POST',
                         url: '/main',
                         data: JSON.stringify({
-                            "oldPass": this.oldPass.value,
-                            "newPass": this.newPass.value,
+                            "requestType": "changePassword",
+                            "oldPass": oldPass,
+                            "newPass": newPass,
                         }),
 
                         contentType: "application/json",
                         dataType: "json"
-                    }).done((response) => {
+                    }).done(function(response) {
                         console.log(response)
-                        
+                        if (response["error"] == 1){
+                            if (response["type"] == "oldPass"){
+                                oldPassMsg.textContent = response["message"];
+                            }
+                        }
                     });
                 }
             }
         }
     });
+    function clearMsgs(){
+        var usernameMsg = document.getElementById("username-input-Msg");
+        var oldPassMsg = document.getElementById("oldPass-input-Msg");
+        var newPassMsg = document.getElementById("newPass-input-Msg");
+        var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
+
+        var messages = [usernameMsg, oldPassMsg, newPassMsg, confirmPassMsg];
+        messages.forEach(function(element) {
+            element.textContent="";
+        })
+    }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
