@@ -84,15 +84,15 @@ TODO: (venv) ywsos2021_web/ $>  python seed_db.py
 Point your web browser to http://localhost:5000/
 
 ## Running the automated tests
-Add two environment variables to your .env file as shown below
+Add three environment variables to your .env file as shown below; TESTUSER and TESTPW are for testing login/logout and account functions, and DOMAIN is for the server location of your instance of the GeoRepair site (eg '127.0.0.1:5000').
 ```
 ###################### .env ######################
 TESTUSER=<<Add the test username as according to your MongoDB database here>>
 TESTPW=<<Add the test password as according to your MongoDB database here>>
+DOMAIN=<<Add the web address of your instance of the GeoRepair site here>>
 ###################### .env ######################
 ```
 (venv) ywsos2021_web/ $> python test_cases/run_tests.py
-
 
 Authors
 YoungWonks
