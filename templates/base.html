@@ -92,38 +92,22 @@
             </span>
         </div>
     </nav>
-    {% if get_flashed_messages(error) %}
-        <div class="container w-50">
-        {% for msg in get_flashed_messages() %}
-            <div class="alert alert-danger d-flex justify-content-between" style="height: 60px;" role="alert">
-                <p>{{msg}}</p>
-                <button type="button" style="padding: 0 0.5rem;" class="btn btn-danger close" data-dismiss="alert" onClick="closeFlash()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
-                        <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
-                    </svg>
-                </button>
-            </div>
-        {% endfor %}
-        </div>
-    {% elif get_flashed_messages(success) %}
     <div class="container w-50">
-        {% for msg in get_flashed_messages() %}
-            <div class="alert alert-success d-flex justify-content-between" style="height: 60px;" role="alert">
-                <p>{{msg}}</p>
-                <button type="button" style="padding: 0 0.5rem;" class="btn btn-danger close" data-dismiss="alert" onClick="closeFlash()">
+    {% for message in get_flashed_messages(with_categories=True) %}
+            <div class="alert alert-{{message[0]}} d-flex justify-content-between alert-dismissible show" style="height: 60px;" role="alert">
+                <p>{{message[1]}}</p>
+                <button type="button" style="padding: 0 0.5rem;" class="btn btn-danger close" data-bs-dismiss="alert">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
                         <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
                     </svg>
                 </button>
             </div>
-        {% endfor %}
-    {% endif %}
+    {% endfor %}
+    </div>
     {% block content %}
 
     {% endblock %}
-
 
     <footer>
 

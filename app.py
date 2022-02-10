@@ -117,7 +117,7 @@ def login_required(something):
         if 'logged_in' in session and session["logged_in"]:
             return something(session['logged_in_id'], *args, **kwargs)
         else:
-            flash("Please Sign In First", 'error')
+            flash("Please Sign In First", category="danger")
             return redirect('/')
     return wrap_login
 
@@ -229,8 +229,8 @@ def main(user_id):
             if pbkdf2_sha256.verify(oldPassword, user['password_hash']):
                 users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {
                 '$set': {'password_hash': pbkdf2_sha256.hash(newPassword)}})
-                flash("Password Reset Complete", 'success')
-                return redirect('/contact') ###### redirect + flash does not work
+                flash("Password Reset Complete", category="success")
+                return redirect('/main') ###### redirect + flash does not work
             else:
                 return jsonify({"error": "1", "message": "Current Password Does Not Match With Database", "type": "oldPass"})
 
@@ -241,12 +241,16 @@ def main(user_id):
             else:
                 users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {
                 '$set': {'username': username}})
-                flash("Username Change Complete", 'success')
-                return redirect('/contact') ###### redirect + flash does not work
+                flash("Username Change Complete", category="success")
+                return redirect('/main') ###### redirect + flash does not work
 
-        # if request.form.get("deleteacc"):
-        #     users.remove({'_id': bson.ObjectId(session['logged_in_id'])})
-        #     return redirect("/logout")
+        elif requestType == "changeProfilePic":
+            pass
+
+        elif requestType == "deleteAccount":
+            users.delete_one(user)
+            flash("Account Successfully Deleted", category="success")
+            return redirect('/logout') ###### redirect + flash does not work
     return render_template("main.html", user=user)
 
 
@@ -293,6 +297,7 @@ def signup():
             users.insert_one(user)
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
+            flash("Account Successfully Created", category="success")
             return redirect('/main')
     return render_template("signup.html", signup_form=signup_form, usererror=usererror, notallowed=notallowed, passlength=passlength)
 
