@@ -1,12 +1,38 @@
-{% extends "base.html" %} {% block title %}Upload{% endblock %} {% block content
-%}
-<div id="uploadForm">
-  <form enctype="multipart/form-data" @submit="formSubmit">
-    <label>Title</label>
-    <input type="text" v-model="title" />
+{% extends "base.html" %} {% block title %}Upload{% endblock %} {% block
+content%}
+<br />
+<h1 class="navbar-brand sign-up-heading">Upload Scan</h1>
+<p class="nav-item px-1" style="color: white !important; text-align: center">
+  New to GeoRepair?
+  <a href="/signup" style="color: #4e7e7e; text-decoration: none"
+    >Create an account here!</a
+  >
+</p>
+<div
+  id="uploadForm"
+  class="sign-up-wrapper"
+  style="margin: auto; text-align: center; width: 50%"
+>
+  <form enctype="multipart/form-data" @submit="formSubmit" class="sign-up-grad">
+    <span class="text-wrapper">
+      <input
+        type="text"
+        v-model="title"
+        placeholder="Title"
+        class="text-input"
+        size="32"
+        required
+      />
+      <span class="text-border"></span>
+    </span>
     <br />
-    <label>Description</label>
-    <input type="text" v-model="des" />
+    <span class="text-wrapper"
+      ><input
+        class="text-input"
+        placeholder="Description"
+        type="text"
+        v-model="des"
+    /></span>
     <br />
     <label>Latitude</label>
     <input type="number" v-model="lat" />
@@ -18,10 +44,18 @@
     <br />
     <input type="file" id="file" accept="image/*" />
     <br />
-    <button>Submit</button>
-    <h1 class="formsubmit"></h1>
+    <input
+      class="btn nav-button flask-buttonrect sign-up-btn"
+      id="submit"
+      name="submit"
+      style="margin: auto !important"
+      type="submit"
+      value="Submit"
+    />
   </form>
 </div>
+<h1 class="formsubmit"></h1>
+
 {% endblock %} {% block scripts %}
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 
