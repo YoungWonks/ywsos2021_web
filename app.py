@@ -296,6 +296,14 @@ def logout(u_is):
 @app.errorhandler(404)
 def pagenotfound(errorcode):
     return render_template("error.html", errorCode=404, errorMsg="Page not found"), 404
+
+@app.route("/admin")
+@login_required
+def admin(u_id):
+    users = db["users"]
+    if "role" not in users.find_one({"_id": bson.ObjectId(u_id)}):
+        abort(404)
+    return "placeholder"
 ########################################################################
 #########################API############################################
 ########################################################################
