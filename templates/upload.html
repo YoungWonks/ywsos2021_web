@@ -1,19 +1,25 @@
 {% extends "base.html" %} {% block title %}Upload{% endblock %} {% block
 content%}
+<style>
+  .text-wrapper {
+    --space: 5px;
+    margin-top: var(--space);
+    margin-bottom: var(--space);
+  }
+</style>
 <br />
 <h1 class="navbar-brand sign-up-heading">Upload Scan</h1>
-<p class="nav-item px-1" style="color: white !important; text-align: center">
-  New to GeoRepair?
-  <a href="/signup" style="color: #4e7e7e; text-decoration: none"
-    >Create an account here!</a
-  >
-</p>
 <div
   id="uploadForm"
   class="sign-up-wrapper"
   style="margin: auto; text-align: center; width: 50%"
 >
-  <form enctype="multipart/form-data" @submit="formSubmit" class="sign-up-grad">
+  <form
+    enctype="multipart/form-data"
+    @submit="formSubmit"
+    class="sign-up-grad"
+    style="padding: 1rem 0"
+  >
     <span class="text-wrapper">
       <input
         type="text"
@@ -26,21 +32,54 @@ content%}
       <span class="text-border"></span>
     </span>
     <br />
-    <span class="text-wrapper"
-      ><input
-        class="text-input"
-        placeholder="Description"
+    <span class="text-wrapper">
+      <input
         type="text"
         v-model="des"
-    /></span>
+        placeholder="Description"
+        class="text-input"
+        size="32"
+        required
+      />
+      <span class="text-border"></span>
+    </span>
     <br />
-    <label>Latitude</label>
-    <input type="number" v-model="lat" />
-    <label>Longitude</label>
-    <input type="number" v-model="long" />
+    <span class="text-wrapper">
+      <input
+        type="number"
+        v-model="lat"
+        placeholder="Latitude"
+        class="text-input"
+        size="32"
+        required
+      />
+      <span class="text-border"></span>
+    </span>
+    <span class="text-wrapper">
+      <input
+        type="number"
+        v-model="long"
+        placeholder="Longitude"
+        class="text-input"
+        size="32"
+        required
+      />
+      <span class="text-border"></span>
+    </span>
     <br />
-    <label>Urgency</label>
-    <input type="number" v-model="urgency" />
+    <span class="text-wrapper">
+      <label>Urgency</label>
+      <input
+        type="range"
+        max="10"
+        min="0"
+        v-model="urgency"
+        placeholder="Urgency"
+        class="text-input"
+        size="32"
+        required
+      />
+    </span>
     <br />
     <input type="file" id="file" accept="image/*" />
     <br />
