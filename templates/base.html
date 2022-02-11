@@ -13,6 +13,26 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <title>GeoRepair - {% block title %}{% endblock %}</title>
 
+    {% block style %}
+        <style type="text/css">
+            .submitBtn {
+                background: linear-gradient(180deg, #000000 -14.74%, rgba(41, 41, 41, 0.6) 132.63%);
+                box-shadow: 6.19761px 3.54149px 16.8221px rgba(0, 0, 0, 0.54);
+                width: 6em;
+                height: 2.5em;
+                border-radius: 0.5em;
+                border: none;
+                color: white;
+                font-family: Inter;
+                font-style: normal;
+                font-weight: bolder;
+                letter-spacing: -0.017em;
+                margin: auto;
+            }
+        </style>
+    {% endblock %}
+
+
 </head>
 
 <body class="background">
@@ -92,7 +112,7 @@
             </span>
         </div>
     </nav>
-    <div class="container w-50">
+    <div id="alert-msg" class="container w-50">
     {% for message in get_flashed_messages(with_categories=True) %}
             <div class="alert alert-{{message[0]}} d-flex justify-content-between alert-dismissible show" style="height: 60px;" role="alert">
                 <p>{{message[1]}}</p>

@@ -125,23 +125,25 @@ def login_required(something):
 
 
 def create_rep(r, user):
-    reps = {
-        "url":      '/static/images/scans/'+r['filename'],
-        "scandate": timeago.format(r['scandate'], datetime.utcnow()),
-        "position": r['position'],
-        "city":     r['city'],
-        "state":    r['state'],
-        "id":       str(r['_id']),
-        "upvote":   r['upvote'],
-        "title":    r['title'],
-        "urgency":  r["urgency"],
-        "post_username": db.users.find_one({"_id": bson.ObjectId(r['u_id'])})['username'],
-        "scan_list": str(db.users.find_one({"_id": bson.ObjectId(user)})['vote_scans'])
-    }
+    scanUser = db.users.find_one({"_id": bson.ObjectId(r['u_id'])})
+    if (scanUser is not None):
+        reps = {
+            "url":      '/static/images/scans/'+r['filename'],
+            "scandate": timeago.format(r['scandate'], datetime.utcnow()),
+            "position": r['position'],
+            "city":     r['city'],
+            "state":    r['state'],
+            "id":       str(r['_id']),
+            "upvote":   r['upvote'],
+            "title":    r['title'],
+            "urgency":  r["urgency"],
+            "post_username": scanUser['username'],
+            "scan_list": str(db.users.find_one({"_id": bson.ObjectId(user)})['vote_scans'])
+        }
 
-    if r["des"]:
-        reps["description"] = r["des"]
-    return reps
+        if r["des"]:
+            reps["description"] = r["des"]
+        return reps
 
 ########################################################################
 #########################Forms##########################################
@@ -229,8 +231,7 @@ def main(user_id):
             if pbkdf2_sha256.verify(oldPassword, user['password_hash']):
                 users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {
                 '$set': {'password_hash': pbkdf2_sha256.hash(newPassword)}})
-                flash("Password Reset Complete", category="success")
-                return redirect('/main') ###### redirect + flash does not work
+                return jsonify({"error": "0", "message": "Password Successfully Changed"})
             else:
                 return jsonify({"error": "1", "message": "Current Password Does Not Match With Database", "type": "oldPass"})
 
@@ -241,16 +242,11 @@ def main(user_id):
             else:
                 users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {
                 '$set': {'username': username}})
-                flash("Username Change Complete", category="success")
-                return redirect('/main') ###### redirect + flash does not work
-
-        elif requestType == "changeProfilePic":
-            pass
+                return jsonify({"error": "0", "message": "Username Successfully Changed"})
 
         elif requestType == "deleteAccount":
             users.delete_one(user)
-            flash("Account Successfully Deleted", category="success")
-            return redirect('/logout') ###### redirect + flash does not work
+            return jsonify({"error": "0", "message": "Account Successfully Deleted"})
     return render_template("main.html", user=user)
 
 
@@ -305,6 +301,10 @@ def signup():
 @app.route('/logout')
 @login_required
 def logout(u_is):
+    if "type" in request.args:
+        if request.args['type'] == 'deleteAccount':
+            flash("Account Successfully Deleted", category="success")
+        
     session['logged_in'] = False
     session['logged_in_id'] = ''
     return redirect('/')
@@ -421,7 +421,8 @@ def api_find(userId):
     repairs = []
     for r in result:
         scan = create_rep(r, userId)
-        repairs.append(scan)
+        if (scan is not None):
+            repairs.append(scan)
     return {
         "repairs": repairs,
     }
@@ -463,7 +464,8 @@ def api_find_all(userId):
     repairs = []
     for r in result:
         scan = create_rep(r, userId)
-        repairs.append(scan)
+        if (scan is not None):
+            repairs.append(scan)
     return {
         "repairs": repairs,
     }
@@ -524,7 +526,8 @@ def api_find_forum():
     repairs = []
     for r in result:
         scan = create_rep(r, session['logged_in_id'])
-        repairs.append(scan)
+        if (scan is not None):
+            repairs.append(scan)
     return {
         "repairs": repairs,
     }
@@ -540,7 +543,8 @@ def api_find_gallery(userId):
     repairs = []
     for r in result:
         scan = create_rep(r, userId)
-        repairs.append(scan)
+        if (scan is not None):
+            repairs.append(scan)
     return {
         "repairs": repairs,
     }
