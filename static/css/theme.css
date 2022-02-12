@@ -98,19 +98,19 @@
     font-weight: 700;
 }
 
-.nav-item, .nav-link {
+#top-nav .nav-item, #top-nav .nav-link {
     font-style: normal;
     font-weight: 500;
     color: #393939 !important;
 }
 
-.active {
+#top-nav .active {
     font-style: normal;
     font-weight: bold;
     color: #000000 !important;
 }
 
-.active:after {
+#top-nav .active:after {
     content: "";
     display: block;
     margin: 0 auto;
