@@ -552,8 +552,8 @@ def api_upload(userId):
 def api_add(userId):
     scans = db['scans']
     position = request.get_json().get('position')
-    lat = int(position[0])
-    long = int(position[1])
+    lat = float(position[0])
+    long = float(position[1])
     address = Nominatim(user_agent="georepair").reverse(
         [lat, long])
     if address is None:

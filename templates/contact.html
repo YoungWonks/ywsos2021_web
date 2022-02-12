@@ -1,50 +1,76 @@
- {% extends "base.html" %} {% block title %}Contact{% endblock %} {% block scripts %}
+{% extends "base.html" %} {% block title %}Contact{% endblock %} {% block
+scripts %}
 <script type="text/javascript">
-    var app = new Vue({
-        el: "#vue-app",
-        delimiters: ['[[', ']]'],
-        data() {
-            return {
-                email: "",
-                issueHeader: "",
-                issueDescription: "",
-            };
-        },
-        methods: {
-            submit(email, issueHeader, issueDescription) {
-                $.ajax({
-                    type: 'POST',
-                    url: '/contact',
-                    data: JSON.stringify({
-                        "email": this.email,
-                        "issueHeader": this.issueHeader,
-                        "issueDescription": this.issueDescription
-                    }),
+  var app = new Vue({
+    el: "#vue-app",
+    delimiters: ["[[", "]]"],
+    data() {
+      return {
+        email: "",
+        issueHeader: "",
+        issueDescription: "",
+      };
+    },
+    methods: {
+      submit(email, issueHeader, issueDescription) {
+        $.ajax({
+          type: "POST",
+          url: "/contact",
+          data: JSON.stringify({
+            email: this.email,
+            issueHeader: this.issueHeader,
+            issueDescription: this.issueDescription,
+          }),
 
-                    contentType: "application/json",
-                    dataType: "json"
-                }).done(function(response) {
-                    console.log(response)
-                    if (response["error"] == 1) {
-                        window.location.replace("/error?errorCode=400&errorMsg=Bad request. Make sure the Issue Description is not empty.")
-                    }
-                });
-
-            }
-        }
-    });
+          contentType: "application/json",
+          dataType: "json",
+        }).done(function (response) {
+          console.log(response);
+          if (response["error"] == 1) {
+            window.location.replace(
+              "/error?errorCode=400&errorMsg=Bad request. Make sure the Issue Description is not empty."
+            );
+          }
+        });
+      },
+    },
+  });
 </script>
 {% endblock %} {% block content %}
 <div id="vue-app">
-    <div style="text-align:center; max-width:75%;" class="container ">
-        <h1 class="navbar-brand">Contact Support</h1>
-        <p style="color:white;">Contact our support team here if you come across any issues</p>
-        <input type="email" style="margin-bottom:25px;" class="form-control" placeholder="Contact Email" v-model="email">
-        <input type="text" style="margin-bottom:25px;" class="form-control" placeholder="Issue Heading" v-model="issueHeader">
-        <textarea style="min-height:300px; margin-bottom:25px;" class="form-control" placeholder="Type your issue here." v-model="issueDescription"></textarea>
-        <button class="flask-buttonrect navbar-brand" style="border:0; display:inline !important;" @click="submit(email,issueHeader,issueDescription)">Submit</button>
-    </div>
-
+  <div style="text-align: center; max-width: 75%" class="container">
+    <h1 class="navbar-brand">Contact Support</h1>
+    <p style="color: white">
+      Contact our support team here if you come across any issues
+    </p>
+    <input
+      type="email"
+      style="margin-bottom: 25px"
+      class="form-control"
+      placeholder="Contact Email"
+      v-model="email"
+    />
+    <input
+      type="text"
+      style="margin-bottom: 25px"
+      class="form-control"
+      placeholder="Issue Heading"
+      v-model="issueHeader"
+    />
+    <textarea
+      style="min-height: 300px; margin-bottom: 25px"
+      class="form-control"
+      placeholder="Type your issue here."
+      v-model="issueDescription"
+    ></textarea>
+    <button
+      class="flask-buttonrect navbar-brand"
+      style="border: 0; display: inline !important"
+      @click="submit(email,issueHeader,issueDescription)"
+    >
+      Submit
+    </button>
+  </div>
 </div>
 
 {% endblock %}

@@ -1,58 +1,99 @@
-﻿{% extends "base.html" %}
-{% block title %}Account{% endblock %}
+﻿{% extends "base.html" %} {% block title %}Account{% endblock %} {% block
+buttons %}
+<div style="display: inline-block" class="dropdown">
+  <a
+    class="btn nav-button dropdown-toggle"
+    type="button"
+    id="account"
+    data-bs-toggle="dropdown"
+    href="#"
+    >Account Settings</a
+  >
+  <ul class="dropdown-menu" aria-labelledby="account">
+    <form method="post">
+      <button class="dropdown-item" value="changepass" name="changepass">
+        Change Password
+      </button>
+    </form>
+    <form method="post">
+      <button class="dropdown-item" value="changeuser" name="changeuser">
+        Change Username
+      </button>
+    </form>
+    <button
+      class="dropdown-item"
+      data-bs-toggle="modal"
+      data-bs-target="#deleteModal"
+    >
+      Delete Account
+    </button>
+  </ul>
+</div>
+<div style="display: inline-block; width: 1em"></div>
 
-{% block buttons %}
-    <div style="display: inline-block;" class="dropdown">
-        <a class="btn nav-button dropdown-toggle" type="button" id="account" data-bs-toggle="dropdown" href="#">Account Settings</a>
-        <ul class="dropdown-menu" aria-labelledby="account">
-            <form method="post">
-                <button class="dropdown-item" value="changepass" name="changepass">Change Password</button>
-            </form>
-            <form method="post">
-                <button class="dropdown-item" value="changeuser" name="changeuser">Change Username</button>
-            </form>
-            <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Account</button>
+<a
+  class="btn nav-button buttonrect"
+  type="button"
+  id="logout"
+  href="#"
+  data-bs-toggle="modal"
+  data-bs-target="#logoutModal"
+  ><p id="logouttext">Logout</p></a
+>
 
-        </ul>
+{% endblock %} {% block content %}
+<div
+  class="modal fade"
+  id="logoutModal"
+  tabindex="-1"
+  aria-labelledby="logoutModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
+        <a href="logout"
+          ><button type="button" id="confirmLogout" class="btn btn-primary">
+            Log Out
+          </button></a
+        >
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+      </div>
     </div>
-    <div style="display: inline-block; width: 1em;"></div>
-
-    <a class="btn nav-button buttonrect" type="button" id="logout" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><p id="logouttext">Logout</p></a>
-
-
-{% endblock %}
-
-{% block content %}
-    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
-                    <a href="logout"><button type="button" id="confirmLogout" class="btn btn-primary">Log Out</button></a>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="deleteModal"
+  tabindex="-1"
+  aria-labelledby="deleteModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+        <form method="post" action="/main">
+          <button class="btn btn-primary" value="deleteacc" name="deleteacc">
+            Delete Account
+          </button>
+        </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+      </div>
     </div>
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
-                    <form method="post" action="/main">
-                        <button class="btn btn-primary" value="deleteacc" name="deleteacc">Delete Account</button>
-                    </form>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
+</div>
 
-    <main>
-        <div class="row">
-            <div class="column">
-                <h1>Hello, {{user['username']}}!</h1>
-            </div>
-        </div>
-    </main>
+<main>
+  <div class="row">
+    <div class="column">
+      <h1>Hello, {{user['username']}}!</h1>
+    </div>
+  </div>
+</main>
 {% endblock %}

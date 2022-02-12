@@ -1,66 +1,177 @@
-{% extends "base.html" %}
-{% block title %}About{% endblock %}
-
-{% block content %}
-    <header class="row">
-        <div class="col-sm my-auto" id="headertext" style="margin-left: 5em;">
-            <h1 style="font-family: Inter; font-size: 3em; font-style: normal; font-weight: 700; line-height: 66px; letter-spacing: -0.017em; color: #000;">
-            Click, Calculate, and Repair!
-            </h1>
-            <p style="font-family: Inter; font-size: 30px; font-style: normal; font-weight: 500; line-height: 36px; letter-spacing: -0.017em; text-align: left; color:rgba(255, 255, 255, 0.75);">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-            </p>
-            <a class="btn nav-button" href="/signup">
-                <div class="buttonrect" style="width:10em; height:4em;"><p style="font-size: 1.5em;">Start today!</p></div>
-            </a>
-        </div>
-        <div class="col-sm-auto">
-            <img src="{{ url_for('static', filename='images/homepage.svg') }}" id="headerimage" style="max-width: 633px; position: relative; top: -1.5em;">
-        </div>
-    </header>
-    <section class="row" style="margin:0 8em;" id="aboutsection">
-        <div class="section-header">
-            <h1 style="font-family: Inter; font-size: 3em; font-style: normal; font-weight: 700; line-height: 66px; letter-spacing: -0.017em; color: #000; text-align: center;">
-            Our App's Features
-            </h1>
-            <p style="font-family: Inter; font-size: 30px; font-style: normal; font-weight: 500; line-height: 36px; letter-spacing: -0.017em; text-align: left; color:rgba(255, 255, 255, 0.75); text-align: center; width: 665px; margin: auto; padding-bottom: 10px;">
-            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
-            </p>
-        </div>
-        <div class="col-lg-4">
-            <img src="{{ url_for('static', filename='images/column1.png') }}" width="75%" class="column-image">
-            <h1 class="column-header" style="max-width:138px;">Scan on our Mobile App</h1>
-            <p class="column-desc">The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
-        </div>
-        <div class="col-lg-4 justify-content-center">
-            <img src="{{ url_for('static', filename='images/column2.png') }}" width="75%" class="column-image">
-            <h1 class="column-header" style="max-width:222px;">Determine if an Object needs Repair</h1>
-            <p class="column-desc">The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
-        </div>
-        <div class="col-lg-4">
-            <img src="{{ url_for('static', filename='images/column3.png') }}" width="75%" class="column-image">
-            <h1 class="column-header" style="max-width:172px;">Upload on your Computer</h1>
-            <p class="column-desc">The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
-        </div>
-    </section>
-    <section class="row" style="margin: 0 1rem;">
-        <div class="col-sm-12 col-md-12 col-lg-6">
-            <img src="{{ url_for('static', filename='images/download.png') }}" id="appimage" width="100%">
-        </div>
-        <div class="col-sm-12 col-md-12 col-lg-6" id="apptext" style="margin-top: 3rem;">
-            <h1 style="font-family: Inter; font-size: 3em; font-style: normal; font-weight: 700; line-height: 66px; letter-spacing: -0.017em; color: #000;">
-            Download GeoRepair on your mobile phone now!
-            </h1>
-            <p style="font-family: Inter; font-size: 30px; font-style: normal; font-weight: 500; line-height: 36px; letter-spacing: -0.017em; text-align: left; color:rgba(255, 255, 255, 0.75);">
-            Our app is available on both Android and Apple phones. Get it now to make the most of all our features!
-            </p>
-            <a class="btn nav-button" href="https://appstore.com" target="_blank">
-                <img src="{{ url_for('static', filename='images/appstore.svg') }}">
-            </a>
-            <a class="btn nav-button" href="https://play.google.com" target="_blank">
-                <img src="{{ url_for('static', filename='images/playstore.svg') }}">
-            </a>
-        </div>
-        
-    </section>
+{% extends "base.html" %} {% block title %}About{% endblock %} {% block content
+%}
+<header class="row">
+  <div class="col-sm my-auto" id="headertext" style="margin-left: 5em">
+    <h1
+      style="
+        font-family: Inter;
+        font-size: 3em;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 66px;
+        letter-spacing: -0.017em;
+        color: #000;
+      "
+    >
+      Click, Calculate, and Repair!
+    </h1>
+    <p
+      style="
+        font-family: Inter;
+        font-size: 30px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 36px;
+        letter-spacing: -0.017em;
+        text-align: left;
+        color: rgba(255, 255, 255, 0.75);
+      "
+    >
+      Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+    </p>
+    <a class="btn nav-button" href="/signup">
+      <div class="buttonrect" style="width: 10em; height: 4em">
+        <p style="font-size: 1.5em">Start today!</p>
+      </div>
+    </a>
+  </div>
+  <div class="col-sm-auto">
+    <img
+      src="{{ url_for('static', filename='images/homepage.svg') }}"
+      id="headerimage"
+      style="max-width: 633px; position: relative; top: -1.5em"
+    />
+  </div>
+</header>
+<section class="row" style="margin: 0 8em" id="aboutsection">
+  <div class="section-header">
+    <h1
+      style="
+        font-family: Inter;
+        font-size: 3em;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 66px;
+        letter-spacing: -0.017em;
+        color: #000;
+        text-align: center;
+      "
+    >
+      Our App's Features
+    </h1>
+    <p
+      style="
+        font-family: Inter;
+        font-size: 30px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 36px;
+        letter-spacing: -0.017em;
+        text-align: left;
+        color: rgba(255, 255, 255, 0.75);
+        text-align: center;
+        width: 665px;
+        margin: auto;
+        padding-bottom: 10px;
+      "
+    >
+      Lorem Ipsum has been the industry's standard dummy text ever since the
+      1500s...
+    </p>
+  </div>
+  <div class="col-lg-4">
+    <img
+      src="{{ url_for('static', filename='images/column1.png') }}"
+      width="75%"
+      class="column-image"
+    />
+    <h1 class="column-header" style="max-width: 138px">
+      Scan on our Mobile App
+    </h1>
+    <p class="column-desc">
+      The point of using Lorem Ipsum is that it has a more-or-less normal
+      distribution of letters, as opposed to using 'Content here, content here',
+      making it look like readable English.
+    </p>
+  </div>
+  <div class="col-lg-4 justify-content-center">
+    <img
+      src="{{ url_for('static', filename='images/column2.png') }}"
+      width="75%"
+      class="column-image"
+    />
+    <h1 class="column-header" style="max-width: 222px">
+      Determine if an Object needs Repair
+    </h1>
+    <p class="column-desc">
+      The point of using Lorem Ipsum is that it has a more-or-less normal
+      distribution of letters, as opposed to using 'Content here, content here',
+      making it look like readable English.
+    </p>
+  </div>
+  <div class="col-lg-4">
+    <img
+      src="{{ url_for('static', filename='images/column3.png') }}"
+      width="75%"
+      class="column-image"
+    />
+    <h1 class="column-header" style="max-width: 172px">
+      Upload on your Computer
+    </h1>
+    <p class="column-desc">
+      The point of using Lorem Ipsum is that it has a more-or-less normal
+      distribution of letters, as opposed to using 'Content here, content here',
+      making it look like readable English.
+    </p>
+  </div>
+</section>
+<section class="row" style="margin: 0 1rem">
+  <div class="col-sm-12 col-md-12 col-lg-6">
+    <img
+      src="{{ url_for('static', filename='images/download.png') }}"
+      id="appimage"
+      width="100%"
+    />
+  </div>
+  <div
+    class="col-sm-12 col-md-12 col-lg-6"
+    id="apptext"
+    style="margin-top: 3rem"
+  >
+    <h1
+      style="
+        font-family: Inter;
+        font-size: 3em;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 66px;
+        letter-spacing: -0.017em;
+        color: #000;
+      "
+    >
+      Download GeoRepair on your mobile phone now!
+    </h1>
+    <p
+      style="
+        font-family: Inter;
+        font-size: 30px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 36px;
+        letter-spacing: -0.017em;
+        text-align: left;
+        color: rgba(255, 255, 255, 0.75);
+      "
+    >
+      Our app is available on both Android and Apple phones. Get it now to make
+      the most of all our features!
+    </p>
+    <a class="btn nav-button" href="https://appstore.com" target="_blank">
+      <img src="{{ url_for('static', filename='images/appstore.svg') }}" />
+    </a>
+    <a class="btn nav-button" href="https://play.google.com" target="_blank">
+      <img src="{{ url_for('static', filename='images/playstore.svg') }}" />
+    </a>
+  </div>
+</section>
 {% endblock %}
