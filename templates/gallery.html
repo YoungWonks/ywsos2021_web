@@ -1,71 +1,103 @@
-{% extends "base.html" %} {% block title %}Gallery{% endblock %} {% block content %}
-<br>
-<br>
-<h3 style="text-align:center">Your gallery</h3>
-<h5 style="text-align:center">View your posts and contributions to the Georepair website here!</h5>
+{% extends "base.html" %} {% block title %}Gallery{% endblock %} {% block
+content %}
+<br />
+<br />
+<h3 style="text-align: center">Your gallery</h3>
+<h5 style="text-align: center">
+  View your posts and contributions to the Georepair website here!
+</h5>
 <div id="vue-app" class="row">
-        <div class="fordiv col-lg-3 col-md-6 col-12 me-0 ms-0" v-for="scan in repairs" v-cloak>
-                <div class="card" style="height: 100%;">
-                    <img class="card-img-top" :src="scan.url" :alt="scan.description" style="height: 10rem; object-fit: cover;">
-                    <div class="card-body">
-                        <h3 class="card-title">[[ scan.title ]]</h3>
-                        <p class="card-title" style="display: inline-block; margin: 0; font-weight: 500; vertical-align: middle; font-size: 16px;">[[ scan.upvote ]] upvotes</p>
-                        <hr>
-                        <div class="scan-details">
-                            <div>
-                                <img src="{{ url_for('static', filename='images/scandate.svg') }}">
-                                <p style="margin: 0;">[[ scan.scandate ]]</p>
-                            </div>
-                        </div>
-                        <div class="scan-details">
-                            <div>
-                                <img src="{{ url_for('static', filename='images/location.svg') }}">
-                                <p style="margin: 0;">[[ scan.city]], [[ scan.state ]]</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <div
+    class="fordiv col-lg-3 col-md-6 col-12 me-0 ms-0"
+    v-for="scan in repairs"
+    v-cloak
+  >
+    <div class="card" style="height: 100%">
+      <img
+        class="card-img-top"
+        :src="scan.url"
+        :alt="scan.description"
+        style="height: 10rem; object-fit: cover"
+      />
+      <div class="card-body">
+        <h3 class="card-title">[[ scan.title ]]</h3>
+        <p
+          class="card-title"
+          style="
+            display: inline-block;
+            margin: 0;
+            font-weight: 500;
+            vertical-align: middle;
+            font-size: 16px;
+          "
+        >
+          [[ scan.upvote ]] upvotes
+        </p>
+        <hr />
+        <div class="scan-details">
+          <div>
+            <img
+              src="{{ url_for('static', filename='images/scandate.svg') }}"
+            />
+            <p style="margin: 0">[[ scan.scandate ]]</p>
+          </div>
         </div>
-        <div v-if="repairs == null" class="forum-loader d-flex justify-content-center align-items-center">
-			<div class="spinner-border" role="status">
-				<span class="visually-hidden">Loading...</span>
-			</div>
-            
-		</div>
-        <div v-if="repairs == false" class="forum-loader d-flex justify-content-center align-items-center">
-			<h1>No posts yet!</h1>
-		</div>
+        <div class="scan-details">
+          <div>
+            <img
+              src="{{ url_for('static', filename='images/location.svg') }}"
+            />
+            <p style="margin: 0">[[ scan.city]], [[ scan.state ]]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    v-if="repairs == null"
+    class="forum-loader d-flex justify-content-center align-items-center"
+  >
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div
+    v-if="repairs == false"
+    class="forum-loader d-flex justify-content-center align-items-center"
+  >
+    <h1>No posts yet!</h1>
+  </div>
 </div>
 {% endblock %} {% block scripts %}
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 
 <script type="text/javascript">
-    var app = new Vue({
-        el: "#vue-app",
-        delimiters: ['[[', ']]'],
-        data() {
-            return {
-                repairs: null,
-            };
-        },
-        methods: {
-            getCurrent: function() {
-                $.post(
-                    "/api/scans/gallery",
+  var app = new Vue({
+    el: "#vue-app",
+    delimiters: ["[[", "]]"],
+    data() {
+      return {
+        repairs: null,
+      };
+    },
+    methods: {
+      getCurrent: function () {
+        $.post(
+          "/api/scans/gallery",
 
-                    function(res) {
-                        if (res.repairs.length <= 0) {
-                            app.repairs = false;
-                        } else {
-                            app.repairs = res.repairs;
-                        }
-                    }
-                );
-            },
-        }
-    });
+          function (res) {
+            if (res.repairs.length <= 0) {
+              app.repairs = false;
+            } else {
+              app.repairs = res.repairs;
+            }
+          }
+        );
+      },
+    },
+  });
 
-    app.getCurrent();
-    setInterval(app.getCurrent, 60000);
+  app.getCurrent();
+  setInterval(app.getCurrent, 60000);
 </script>
 {% endblock %}
