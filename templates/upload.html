@@ -5,22 +5,22 @@
 <div id="uploadForm">
     <form enctype="multipart/form-data" @submit="formSubmit">
         <label>Title</label>
-        <input type="text" v-model="title">
+        <input type="text" id="title" v-model="title">
         <br>
         <label>Description</label>
-        <input type="text" v-model="des">
+        <input type="text" id="desc" v-model="des">
         <br>
         <label>Latitude</label>
-        <input type="number" v-model="lat">
+        <input type="number" id="lat" v-model="lat">
         <label>Longitude</label>
-        <input type="number" v-model="long">
+        <input type="number" id="long" v-model="long">
         <br>
         <label>Urgency</label>
-        <input type="number" v-model="urgency">
+        <input type="number" id="urgency" v-model="urgency">
         <br>
         <input type="file" id="file" accept="image/*">
         <br>
-        <button>Submit</button>
+        <button id="submit">Submit</button>
     </form>
 </div>
 {% endblock %}

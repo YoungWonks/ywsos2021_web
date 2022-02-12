@@ -19,19 +19,19 @@
 
             <img src="{{ url_for('static', filename='images/person.svg') }}" class="sign-up-icon">
             <span class="text-wrapper">
-                {{signup_form.username(size=32, class = "text-input", placeholder = "Username")}}
+                {{signup_form.username(size=32, id = "username", class = "text-input", placeholder = "Username")}}
                 <span class="text-border"></span>
             </span>
             <br /><br />
             <img src="{{ url_for('static', filename='images/key.svg') }}" class="sign-up-icon">
             <span class="text-wrapper">
-                {{signup_form.password(size=32, class = "text-input", placeholder = "Password")}}
+                {{signup_form.password(size=32, id = "password1", class = "text-input", placeholder = "Password")}}
                 <span class="text-border"></span>
             </span>
             <p class="nav-item px-1" style="color: #999999 !important; font-size:15px">(6 or more characters)</p>
             <img src="{{ url_for('static', filename='images/key.svg') }}" class="sign-up-icon">
             <span class="text-wrapper">
-                {{signup_form.confirm_password(size=32, class = "text-input", placeholder = "Confirm Password")}}
+                {{signup_form.confirm_password(size=32, id = "password2", class = "text-input", placeholder = "Confirm Password")}}
                 <span class="text-border"></span>
             </span>
             <br /><br />
@@ -48,7 +48,7 @@
             {% if passlength %}
             <p style="color: red;">Password length must be greater than 6</p>
             {% endif %}
-            {{signup_form.submit(class="btn nav-button flask-buttonrect sign-up-btn", style="margin:auto
+            {{signup_form.submit(class="btn nav-button flask-buttonrect sign-up-btn", id="submit", style="margin:auto
             !important;")}}<br />
         </form>
     </div>

@@ -1,8 +1,8 @@
 venv/
 .env
 __pycache__/
-test_cases/__pycache__
-test_cases/reports
+test_cases/__pycache__/
+test_cases/reports/
 documentation/_build/
 .idea/
 **/.DS_Store
