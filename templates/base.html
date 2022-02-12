@@ -36,6 +36,17 @@
 </head>
 
 <body class="background">
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
+                    <a href="logout"><button type="button" class="btn btn-danger">Log Out</button></a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light" id="top-nav">
         <div class="container-fluid">
@@ -99,7 +110,8 @@
                 {% if session['logged_in'] %}
                     <!-- <a class="btn nav-button" type="button" id="account" href="/main"><span id="accounttext">My Account</span></a>
                     <div style="display: inline-block; width: 1em;"></div> -->
-                    <a class="btn nav-button buttonrect" type="button" id="logout" href="/logout" style="box-shadow: 6.19761px 3.54149px 16.8221px rgba(0, 0, 0, 0.54) !important; border: 0 !important;"><p id="logouttext">Logout</p></a>
+                    <!-- <a class="btn nav-button buttonrect" type="button" id="logout" href="/logout" style="box-shadow: 6.19761px 3.54149px 16.8221px rgba(0, 0, 0, 0.54) !important; border: 0 !important;"><p id="logouttext">Logout</p></a> -->
+                    <a class="btn nav-button buttonrect" type="button" id="logout" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal"><p id="logouttext">Logout</p></a>
                 {% else %}
                     <a class="btn nav-button" type="button" id="login" href="/login"><span id="logintext">Login</span></a>
                     <div style="display: inline-block; width: 1em;"></div>

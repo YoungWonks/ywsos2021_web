@@ -222,9 +222,24 @@ def gallery(user_id):
 def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
+    scans = list(db.scans.find({'u_id': session['logged_in_id']}))
+    aTotalScans = len(scans)
+    aPendingScans = 0
+    aResolvedScans = 0
+    aUpvotes = 0
+
+    for scan in scans:
+        # if scan['status'] == 'pending': ### Status function currently unavailable
+        #     pendingScans+=1
+        # elif scan['status'] == 'resolved':
+        #     resolvedScans+=1
+        aUpvotes+=len(scan['vote_users'])
+
+    allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes}
+        
+
     if request.method == "POST":
         requestType = request.get_json()['requestType']
-
         if requestType == "changePassword":
             oldPassword = request.get_json()['oldPass']
             newPassword = request.get_json()['newPass']
@@ -247,7 +262,7 @@ def main(user_id):
         elif requestType == "deleteAccount":
             users.delete_one(user)
             return jsonify({"error": "0", "message": "Account Successfully Deleted"})
-    return render_template("main.html", user=user)
+    return render_template("main.html", user=user, allTimeStats=allTimeStats)
 
 
 @app.route('/login', methods=['GET', 'POST'])

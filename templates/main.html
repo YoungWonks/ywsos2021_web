@@ -85,26 +85,33 @@
             </div>
             
             <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
-                <div class="tab-pane fade" id="stats" role="tabpanel">
+                <div class="tab-pane fade active show" id="stats" role="tabpanel">
                     <br>
                     <h1 class="text-center">Stats</h1>
+                    <div class="row">
+                        <div class="col">
+                            <h3>Total Scans:</h3>
+                            <p>{{allTimeStats['totalScans']}}</p>
+                        </div>
+                        <div class="col">
+                            <h3>Pending Scans:</h3>
+                            <p>{{allTimeStats['pendingScans']}}</p>
+                        </div>
+                        <div class="col">
+                            <h3>Resolved Scans:</h3>
+                            <p>{{allTimeStats['resolvedScans']}}</p>
+                        </div>
+                        <div class="col">
+                            <h3>Upvotes:</h3>
+                            <p>{{allTimeStats['upvotes']}}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="tab-pane fade active show" id="profile" role="tabpanel">
+
+                <div class="tab-pane fade" id="profile" role="tabpanel">
                     <br>
                     <h1 class="text-center">Change Your Account Info</h1>
                     <div id="vue-app-dash">
-                        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
-                                        <a href="logout"><button type="button" class="btn btn-danger">Log Out</button></a>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    
                         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
