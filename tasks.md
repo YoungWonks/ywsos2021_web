@@ -5,22 +5,41 @@ Design:
 - Any remaining mobile designs
 - Frontend pages need designs (upload, contact, forum, account, scans)
 
-Frontend:
-- Account management page?
-    - functionality
-    - change password
-    - change account
-- Create skeleton pages that don't have design yet
-- Make page better looking on smaller devices
-- Add more account information in main.html like forum posts or something
-- switch to long/lat instead of address for adding scan
+Frontend/Backend:
+- Home Page
+    - Images & Text
+- Dashboard
+    - Account settings
+        - Change pfp
+    - Stats
+        - Total number of scans uploaded
+        - number of scans pending/resolved
+        - total upvotes
+- Upload
+    - CSS
+- Forum
+    - Upvote Function Load Speed
+    - Location in language
+    - View status
+
+- Gallery
+    - Location in language
+    - View status & Change status
+    - If images don't exist, don't show
+
+- Admin feature (web only)
+    - Manually added account
+        - email
+        - password
+        - role: admin
+    - Dashboard --> Forum
+        - Change status of scans
+            - Pending, resolved
+    - Change password
+    - Filtering
 
 
-Mobile:
-- ???
-
-
-### What is already done
+### What is already done (not updated)
 
 
 Design:
