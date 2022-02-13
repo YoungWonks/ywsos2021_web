@@ -53,6 +53,17 @@
 </head>
 
 <body class="background">
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
+                    <a href="logout"><button type="button" class="btn btn-danger">Log Out</button></a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light" id="top-nav">
         <div class="container-fluid">
@@ -114,6 +125,7 @@
                 </ul>
                 {% block buttons %}
                 {% if session['logged_in'] %}
+
                     {% if session['admin'] %}
                       <a class="btn nav-button" type="button" id="account" href="/admin"><span id="accounttext">Admin</span></a>
                     {% endif %}
