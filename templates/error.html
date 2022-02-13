@@ -1,18 +1,16 @@
-{% extends "base.html" %}
-{% block title %}Page not found{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Page not found{% endblock %} {% block
+content %}
 <div class="page-wrap d-flex flex-row align-items-center" style="height: 100%">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12 text-center">
-                <span class="display-1 d-block">{{errorCode}}</span>
-                <div class="mb-4 lead">{{errorMsg}}</div>
-                <div class="buttonrect" style="margin: auto !important; width: 10rem;">
-                    <p><a href="/" class="btn nav-link">Back to Home</a></p>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-12 text-center">
+        <span class="display-1 d-block">{{errorCode}}</span>
+        <div class="mb-4 lead">{{errorMsg}}</div>
+        <div class="buttonrect" style="margin: auto !important; width: 10rem">
+          <p><a href="/" class="btn nav-link">Back to Home</a></p>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

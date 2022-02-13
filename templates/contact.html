@@ -1,26 +1,26 @@
 {% extends "base.html" %} {% block title %}Contact{% endblock %} {% block scripts %}
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 <script type="text/javascript">
-    var app = new Vue({
-        el: "#vue-app",
-        delimiters: ['[[', ']]'],
-        data() {
-            return {
-                email: "",
-                issueHeader: "",
-                issueDescription: "",
-            };
-        },
-        methods: {
-            submit(email, issueHeader, issueDescription) {
-                $.ajax({
-                    type: 'POST',
-                    url: '/contact',
-                    data: JSON.stringify({
-                        "email": this.email,
-                        "issueHeader": this.issueHeader,
-                        "issueDescription": this.issueDescription
-                    }),
+  var app = new Vue({
+    el: "#vue-app",
+    delimiters: ["[[", "]]"],
+    data() {
+      return {
+        email: "",
+        issueHeader: "",
+        issueDescription: "",
+      };
+    },
+    methods: {
+      submit(email, issueHeader, issueDescription) {
+        $.ajax({
+          type: "POST",
+          url: "/contact",
+          data: JSON.stringify({
+            email: this.email,
+            issueHeader: this.issueHeader,
+            issueDescription: this.issueDescription,
+          }),
 
                     contentType: "application/json",
                     dataType: "json"

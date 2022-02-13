@@ -328,6 +328,14 @@ def logout(u_is):
 @app.errorhandler(404)
 def pagenotfound(errorcode):
     return render_template("error.html", errorCode=404, errorMsg="Page not found"), 404
+
+@app.route("/admin")
+@login_required
+def admin(u_id):
+    users = db["users"]
+    if "role" not in users.find_one({"_id": bson.ObjectId(u_id)}):
+        abort(404)
+    return "placeholder"
 ########################################################################
 #########################API############################################
 ########################################################################
@@ -580,10 +588,13 @@ def api_upload(userId):
 def api_add(userId):
     scans = db['scans']
     position = request.get_json().get('position')
-    lat = int(position[0])
-    long = int(position[1])
+    lat = float(position[0])
+    long = float(position[1])
     address = Nominatim(user_agent="georepair").reverse(
-        [lat, long]).raw['address']
+        [lat, long])
+    if address is None:
+        raise Exception()
+    address = address.raw["address"]
     city = None
     if 'city' in address:
         city = address.get('city')
@@ -617,7 +628,7 @@ def api_add(userId):
         "city": city,
         "state": state
     })
-    return {"error": "0", "message": "Succesful", }
+    return jsonify({"error": "0", "message": "Succesful", })
 
 
 @app.route('/api/wel', methods=['POST'])

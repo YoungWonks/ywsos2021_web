@@ -1,78 +1,242 @@
-{% extends "base.html" %}
-{% block title %}Upload{% endblock %}
-
-{% block content %}
-<div id="uploadForm">
-    <form enctype="multipart/form-data" @submit="formSubmit">
-        <label>Title</label>
-        <input type="text" id="title" v-model="title">
-        <br>
-        <label>Description</label>
-        <input type="text" id="desc" v-model="des">
-        <br>
-        <label>Latitude</label>
-        <input type="number" id="lat" v-model="lat">
-        <label>Longitude</label>
-        <input type="number" id="long" v-model="long">
-        <br>
+{% extends "base.html" %} {% block title %}Upload{% endblock %} {% block
+content%}
+<style>
+  .text-wrapper {
+    --space: 5px;
+    margin-top: var(--space);
+    margin-bottom: var(--space);
+  }
+</style>
+<br />
+<h1 class="navbar-brand sign-up-heading">Upload Scan</h1>
+<div id="vueApp">
+  <div
+    id="uploadForm"
+    class="sign-up-wrapper"
+    style="margin: auto; text-align: center; width: 50%"
+  >
+    <form
+      enctype="multipart/form-data"
+      @submit="formSubmit"
+      class="sign-up-grad"
+      style="padding: 1rem 0"
+      @input="saveForm"
+    >
+      <span class="text-wrapper">
+        <input
+          type="text"
+          v-model="title"
+          placeholder="Title"
+          class="text-input"
+          size="32"
+          required
+        />
+        <span class="text-border"></span>
+      </span>
+      <br />
+      <span class="text-wrapper">
+        <input
+          type="text"
+          v-model="des"
+          placeholder="Description"
+          class="text-input"
+          size="32"
+          required
+        />
+        <span class="text-border"></span>
+      </span>
+      <br />
+      <span class="text-wrapper" style="width: 25%">
+        <input
+          type="number"
+          v-model="lat"
+          step="0.000000001"
+          placeholder="Latitude"
+          class="text-input"
+          size="32"
+          required
+        />
+        <span class="text-border"></span>
+      </span>
+      <span class="text-wrapper" style="width: 25%">
+        <input
+          type="number"
+          v-model="long"
+          step="0.000000001"
+          placeholder="Longitude"
+          class="text-input"
+          size="32"
+          required
+        />
+        <span class="text-border"></span>
+      </span>
+      <button
+        @click="getPosition"
+        type="button"
+        class="btn"
+        style="display: inline-block !important"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-pin-map-fill"
+          viewBox="0 0 16 16"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M3.1 11.2a.5.5 0 0 1 .4-.2H6a.5.5 0 0 1 0 1H3.75L1.5 15h13l-2.25-3H10a.5.5 0 0 1 0-1h2.5a.5.5 0 0 1 .4.2l3 4a.5.5 0 0 1-.4.8H.5a.5.5 0 0 1-.4-.8l3-4z"
+          />
+          <path
+            fill-rule="evenodd"
+            d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999z"
+          />
+        </svg>
+      </button>
+      <br />
+      <span class="text-wrapper" style="opacity: 0.5">
         <label>Urgency</label>
-        <input type="number" id="urgency" v-model="urgency">
-        <br>
-        <input type="file" id="file" accept="image/*">
-        <br>
-        <button id="submit">Submit</button>
+        <input
+          type="range"
+          max="10"
+          min="0"
+          v-model="urgency"
+          placeholder="Urgency"
+          class="text-input"
+          size="32"
+          style="opacity: 1"
+          required
+        />
+      </span>
+      <br />
+      <input type="file" id="file" accept="image/png, image/jpeg, image/jpg" />
+      <br />
+      <br />
+      <input
+        class="btn nav-button flask-buttonrect sign-up-btn"
+        id="submit"
+        name="submit"
+        style="margin: auto !important"
+        type="submit"
+        value="Submit"
+      />
     </form>
+  </div>
+  <div
+    class="alert justify-content-between formsubmit"
+    style="height: 60px; display: none"
+    role="alert"
+  >
+    <p>[[ msg ]]</p>
+    <button
+      type="button"
+      style="padding: 0 0.5rem"
+      class="btn btn-danger close"
+      data-dismiss="alert"
+      onClick="$('.formsubmit').css({'display': 'none'});"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        class="bi bi-x-lg"
+        viewBox="0 0 16 16"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"
+        />
+        <path
+          fill-rule="evenodd"
+          d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"
+        />
+      </svg>
+    </button>
+  </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 
 <script type="text/javascript">
-    var app = new Vue({
-        el: "#uploadForm",
-        delimiters: ['[[', ']]'],
-        data() {
-            return {
-                title: '',
-                des: '',
-                long: '',
-                lat: '',
-                urgency: ''
-            }
-        },
-        methods: {
-            formSubmit(e) {
-                var datasubmit = { "title": this.title, "des": this.des, "filename": undefined, "position": [this.lat, this.long], "urgency": parseInt(this.urgency, 10) };
-                e.preventDefault();
-                var formdata = new FormData();
-                var imagefile = document.querySelector("#file");
-                formdata.append("image", imagefile.files[0]);
-                function postImage(callback) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/api/scans/upload',
-                        data: formdata,
-                        contentType: false,
-                        processData: false,
-                        success: callback
-                    });
-                }
-                function postData(result) {
-                    datasubmit["filename"] = result.filename;
-                    $.ajax({
-                        type: 'POST',
-                        url: '/api/scans/add',
-                        data: JSON.stringify(datasubmit),
-                        contentType: "application/json",
-                        dataType: "json"
-                    });
-                }
-                postImage(postData);
-                $('form').html('<h1>Form submitted</h1>');
-
-            }
+  var app = new Vue({
+    el: "#vueApp",
+    delimiters: ["[[", "]]"],
+    data() {
+      return {
+        title: localStorage.getItem("title") || "",
+        des: localStorage.getItem("desc") || "",
+        long: localStorage.getItem("long") || 0,
+        lat: localStorage.getItem("lat") || 0,
+        urgency: localStorage.getItem("urgency") || 0,
+        msg: "",
+      };
+    },
+    methods: {
+      formSubmit(e) {
+        var datasubmit = {
+          title: this.title,
+          des: this.des,
+          filename: undefined,
+          position: [this.lat, this.long],
+          urgency: parseInt(this.urgency, 10),
+        };
+        e.preventDefault();
+        var formdata = new FormData();
+        var imagefile = document.querySelector("#file");
+        formdata.append("image", imagefile.files[0]);
+        function postImage(callback) {
+          $.ajax({
+            type: "POST",
+            url: "/api/scans/upload",
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: callback,
+          });
         }
-    });
+        function postData(result) {
+          datasubmit["filename"] = result.filename;
+          $.ajax({
+            type: "POST",
+            url: "/api/scans/add",
+            data: JSON.stringify(datasubmit),
+            contentType: "application/json",
+            dataType: "json",
+            success: (data) => {
+              $(".formsubmit").removeClass("alert-danger")
+              $(".formsubmit").addClass("alert-success")
+              $(".formsubmit").css({ display: "flex" });
+              app.msg = "Form successfully submitted"
+              localStorage.clear()
+            },
+            error: () => {
+              $(".formsubmit").removeClass("alert-success")
+              $(".formsubmit").addClass("alert-danger")
+              $(".formsubmit").css({ display: "flex" });
+              app.msg = "Invalid coordinates. Please try again."
+            },
+          });
+        }
+        postImage(postData);
+      },
+      getPosition() {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          app.lat = pos.coords.latitude;
+          app.long = pos.coords.longitude;
+          app.saveForm();
+        });
+      },
+      saveForm() {
+        localStorage.setItem("title", app.title);
+        localStorage.setItem("desc", app.des);
+        localStorage.setItem("lat", app.lat);
+        localStorage.setItem("long", app.long);
+        localStorage.setItem("urgency", app.urgency);
+      },
+    },
+  });
 </script>
 {% endblock %}
