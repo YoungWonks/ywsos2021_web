@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Account{% endblock %} {% block
+﻿{% extends "base.html" %} {% block title %}Account{% endblock %} {% block
 buttons %} {% if session["admin"] %}
 <a class="btn nav-button" type="button" id="account" href="/admin"
   ><span id="accounttext">Admin</span></a
@@ -333,7 +333,7 @@ buttons %} {% if session["admin"] %}
   </div>
 </main>
 {% endblock %} {% block scripts %}
-  <script src="path/to/chartjs/dist/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 <script type="text/javascript">
   var app = new Vue({
@@ -417,8 +417,8 @@ buttons %} {% if session["admin"] %}
             }
           });
         }
-
-    });
+      }
+    }});
     function showAlert(msg){
         var alert = document.getElementById("alert-msg");
             alert.innerHTML = `
