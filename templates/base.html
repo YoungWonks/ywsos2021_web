@@ -114,8 +114,10 @@
                 </ul>
                 {% block buttons %}
                 {% if session['logged_in'] %}
-                    <!-- <a class="btn nav-button" type="button" id="account" href="/main"><span id="accounttext">My Account</span></a>
-                    <div style="display: inline-block; width: 1em;"></div> -->
+                    {% if session['admin'] %}
+                      <a class="btn nav-button" type="button" id="account" href="/admin"><span id="accounttext">Admin</span></a>
+                    {% endif %}
+                    <div style="display: inline-block; width: 1em;"></div>
                     <a class="btn nav-button buttonrect" type="button" id="logout" href="/logout" style="box-shadow: 6.19761px 3.54149px 16.8221px rgba(0, 0, 0, 0.54) !important; border: 0 !important;"><p id="logouttext">Logout</p></a>
                 {% else %}
                     <a class="btn nav-button" type="button" id="login" href="/login"><span id="logintext">Login</span></a>
@@ -128,51 +130,6 @@
 
             </span>
           </button>
-          <span class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mb-2 mb-lg-0">
-              <li class="nav-item px-1">
-                <a href="/forum" class="nav-link nav">Forum</a>
-              </li>
-              <li class="nav-item px-1">
-                <a href="/upload" class="nav-link nav">Upload</a>
-              </li>
-              <li class="nav-item px-1">
-                <a href="/gallery" class="nav-link nav">Gallery</a>
-              </li>
-              <li class="nav-item px-1">
-                <a href="/contact" class="nav-link nav">Contact</a>
-              </li>
-            </ul>
-            {% block buttons %} {% if session['logged_in'] %}
-            <a class="btn nav-button" type="button" id="account" href="/main"
-              ><span id="accounttext">My Account</span></a
-            >
-            <div style="display: inline-block; width: 1em"></div>
-            <a
-              class="btn nav-button buttonrect"
-              type="button"
-              id="logout"
-              href="/logout"
-              style="
-                box-shadow: 6.19761px 3.54149px 16.8221px rgba(0, 0, 0, 0.54) !important;
-                border: 0 !important;
-              "
-              ><p id="logouttext">Logout</p></a
-            >
-            {% else %}
-            <a class="btn nav-button" type="button" id="login" href="/login"
-              ><span id="logintext">Login</span></a
-            >
-            <div style="display: inline-block; width: 1em"></div>
-            <a
-              href="/signup"
-              class="btn nav-button"
-              style="box-shadow: none !important"
-            >
-              <div class="buttonrect"><p>Sign Up!</p></div>
-            </a>
-            {% endif %} {% endblock %}
-          </span>
         </div>
     </nav>
     <div id="alert-msg" class="container w-50">

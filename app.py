@@ -137,6 +137,7 @@ def create_rep(r, user):
             "upvote":   r['upvote'],
             "title":    r['title'],
             "urgency":  r["urgency"],
+            "status": r["status"],
             "post_username": scanUser['username'],
             "scan_list": str(db.users.find_one({"_id": bson.ObjectId(user)})['vote_scans'])
         }
@@ -262,6 +263,10 @@ def login():
         if result is not None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
             session['logged_in'] = True
             session['logged_in_id'] = str(result['_id'])
+            if "role" in result:
+                session['admin'] = True
+            else:
+                session["admin"] = False
             return redirect('/main')
         else:
             error = True
@@ -293,6 +298,7 @@ def signup():
             users.insert_one(user)
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
+            session['admin'] = False
             flash("Account Successfully Created", category="success")
             return redirect('/main')
     return render_template("signup.html", signup_form=signup_form, usererror=usererror, notallowed=notallowed, passlength=passlength)
@@ -320,7 +326,7 @@ def admin(u_id):
     users = db["users"]
     if "role" not in users.find_one({"_id": bson.ObjectId(u_id)}):
         abort(404)
-    return "placeholder"
+    return render_template("admin.html")
 ########################################################################
 #########################API############################################
 ########################################################################
@@ -611,10 +617,18 @@ def api_add(userId):
         "urgency": urgency,
         "vote_users": [],
         "city": city,
-        "state": state
+        "state": state,
+        "status": False
     })
     return jsonify({"error": "0", "message": "Succesful", })
 
+@app.route("/api/scans/update", methods=["POST"])
+@token_required
+def scans_update(uid):
+    id_scan = bson.ObjectId(request.get_json().get('scan_id'))
+    db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {
+                '$set': {"status": True}})
+    return jsonify({"error": 0, "message": "Successful"})
 
 @app.route('/api/wel', methods=['POST'])
 @token_required
@@ -634,4 +648,4 @@ def api_welcome(userId):
 
 if __name__ == "__main__":
     minify_css(css_map)
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)

@@ -1,0 +1,201 @@
+{% extends "base.html" %} {% block title %}Admin Panel{% endblock %} {% block
+content %}
+<div id="vue-app" class="container">
+  <div class="forum-control row">
+    <div class="col-3"></div>
+    <div
+      class="col-9"
+      style="
+        display: inline-flex;
+        justify-content: flex-end;
+        align-items: center;
+      "
+    >
+      <div class="forum-search">
+        <img src="{{ url_for('static', filename='images/search.svg') }}" />
+        <span class="text-wrapper">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search Posts"
+            v-model="searchbox"
+            v-on:input="search"
+          />
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="gap: 1rem">
+    <div
+      class="fordiv col-lg-3 col-md-6 col-12 me-0 ms-0"
+      v-for="scan in repairs"
+      v-cloak
+    >
+      <div class="card" style="height: 100%">
+        <img
+          class="card-img-top"
+          :src="scan.url"
+          :alt="scan.description"
+          style="height: 10rem; object-fit: cover"
+          loading="lazy"
+        />
+        <div class="card-body">
+          <h3 class="card-title">[[ scan.title ]]</h3>
+          <p
+            class="card-title"
+            style="
+              display: inline-block;
+              margin: 0;
+              font-weight: 500;
+              vertical-align: middle;
+              font-size: 16px;
+            "
+          >
+            [[ scan.upvote ]] upvotes
+          </p>
+          <hr />
+          <div class="scan-details">
+            <div>
+              <img
+                src="{{ url_for('static', filename='images/scandate.svg') }}"
+              />
+              <p style="margin: 0">[[ scan.scandate ]]</p>
+            </div>
+          </div>
+          <div class="scan-details">
+            <div>
+              <img
+                src="{{ url_for('static', filename='images/location.svg') }}"
+              />
+              <p style="margin: 0">
+                [[ scan.position.lat ]], [[ scan.position.long ]]
+              </p>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center">
+            <button @click="updatePostStatus(scan.id)">
+              <p v-if="!scan.status">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-circle-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <circle cx="8" cy="8" r="8" />
+                </svg>
+                Mark Resolved
+              </p>
+              <p v-else>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-check-circle-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                  />
+                </svg>
+                Resolved
+              </p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-if="repairs == null"
+      class="forum-loader d-flex justify-content-center align-items-center"
+    >
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <div
+      v-if="repairs == false"
+      class="forum-loader d-flex justify-content-center align-items-center"
+    >
+      <h1>No posts yet!</h1>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+<script type="text/javascript">
+  var app = new Vue({
+    el: "#vue-app",
+    delimiters: ["[[", "]]"],
+    data() {
+      return {
+        repairs: null,
+        searchbox: "",
+      };
+    },
+    methods: {
+      getCurrent: function () {
+        if (this.searchbox == "") {
+          navigator.geolocation.getCurrentPosition(function (pos) {
+            $.ajax({
+              type: "POST",
+              url: "/api/scans/all",
+              data: JSON.stringify({
+                position: [pos.coords.latitude, pos.coords.longitude],
+                range: 100,
+              }),
+              contentType: "application/json",
+              dataType: "json",
+              success: function (data) {
+                if (data.repairs.length <= 0) {
+                  this.repairs = false;
+                  if (app) {
+                    app.repairs = false;
+                  }
+                } else {
+                  this.repairs = data.repairs;
+                  if (app) {
+                    app.repairs = data.repairs;
+                  }
+                }
+              },
+            });
+          });
+        }
+      },
+      search: function () {
+        if (this.searchbox != "") {
+          this.repairs = this.repairs.filter(
+            (scan) =>
+              scan.title.toLowerCase().includes(app.searchbox) ||
+              scan.description.toLowerCase().includes(app.searchbox)
+          );
+        } else {
+          this.getCurrent();
+        }
+      },
+      updatePostStatus: (id) => {
+        $.ajax({
+          method: "POST",
+          url: "/api/scans/update",
+          data: JSON.stringify({
+            scan_id: id,
+          }),
+          contentType: "application/json",
+          dataType: "json",
+          success: (data) => {
+            console.log(data);
+            app.getCurrent();
+          },
+        });
+      },
+    },
+    created: function () {
+      this.getCurrent();
+      setInterval(this.getCurrent, 2000);
+    },
+  });
+</script>
+{% endblock %}
