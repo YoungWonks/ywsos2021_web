@@ -73,7 +73,7 @@ buttons %} {% if session["admin"] %}
             type="button"
             style="background-color: #c6dcc4; color: black"
             onclick="location.href='/gallery'"
-          >
+        >
             Gallery
             <img
               src="{{ url_for('static', filename='images/gallery.svg') }}"
@@ -136,30 +136,6 @@ buttons %} {% if session["admin"] %}
         <br />
       </ul>
     </div>
-
-    
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-body">
-                  <h5 class="modal-title" id="loginModalLabel">
-                    Are you sure?
-                  </h5>
-                  <a href="logout"
-                    ><button type="button" class="btn btn-danger">
-                      Log Out
-                    </button></a
-                  >
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-            
             <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
                 <div class="tab-pane fade active show" id="stats" role="tabpanel">
                     <br>
@@ -238,96 +214,6 @@ buttons %} {% if session["admin"] %}
                     </div>
 
           </div>
-
-          <div
-            class="modal fade"
-            id="deleteModal"
-            tabindex="-1"
-            aria-labelledby="deleteModalLabel"
-            aria-hidden="true"
-          >
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-body">
-                  <h5 class="modal-title" id="loginModalLabel">
-                    Are you sure?
-                  </h5>
-                  <p>This action is irreversable</p>
-                  <button
-                    @click="deleteAcc()"
-                    type="button"
-                    class="btn btn-danger"
-                  >
-                    Delete Account
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
-
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <label for="username-input">Change Username</label><br />
-          <input
-            id="username-input"
-            type="text"
-            v-model="username"
-            class="form-control"
-          />
-          <p id="username-input-Msg" style="color: red"></p>
-
-          <button @click="changeUser()" class="submitBtn">Submit</button>
-          <br />
-
-          <hr style="border: 2px solid black; opacity: 0.6" />
-
-          <label for="oldPass-input">Current Password</label><br />
-          <input
-            id="oldPass-input"
-            type="password"
-            v-model="oldPass"
-            class="form-control"
-          />
-          <p id="oldPass-input-Msg" style="color: red"></p>
-
-          <label for="newPass-input">New Password</label><br />
-          <input
-            id="newPass-input"
-            type="password"
-            v-model="newPass"
-            class="form-control"
-          />
-          <p id="newPass-input-Msg" style="color: red"></p>
-
-          <label for="confirmPass-input">Confirm New Password</label><br />
-          <input
-            id="confirmPass-input"
-            type="password"
-            v-model="confirmPass"
-            class="form-control"
-          />
-          <p id="confirmPass-input-Msg" style="color: red"></p>
-
-          <button @click="changePass()" class="submitBtn">Submit</button>
-
-          <hr style="border: 2px solid black; opacity: 0.6" />
-
-          <button
-            data-bs-toggle="modal"
-            data-bs-target="#deleteModal"
-            class="submitBtn"
-            style="background: red; width: 9em"
-          >
-            Delete Account
-          </button>
-        </div>
-
       </div>
     </div>
   </div>
@@ -354,7 +240,8 @@ buttons %} {% if session["admin"] %}
         var usernameMsg = document.getElementById("username-input-Msg");
         var name = document.getElementById("user_name");
 
-        this.clearMsgs();
+        clearMsgs();
+        
         if (this.username === "" || this.username === " ") {
           usernameMsg.textContent = "Invalid username";
         } else {
@@ -387,7 +274,7 @@ buttons %} {% if session["admin"] %}
         var newPassMsg = document.getElementById("newPass-input-Msg");
         var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
 
-        this.clearMsgs();
+        clearMsgs();
 
         if (newPass.length < 6) {
           newPassMsg.textContent =
@@ -417,7 +304,22 @@ buttons %} {% if session["admin"] %}
             }
           });
         }
-      }
+      },
+      deleteAcc(){
+        $.ajax({
+            type: 'POST',
+            url: '/main',
+            data: JSON.stringify({
+                "requestType": "deleteAccount",
+            }),
+
+            contentType: "application/json",
+            dataType: "json"
+        }).done(function(response) {
+            window.location.replace('/logout?type=deleteAccount');
+    
+        });
+    },
     }});
     function showAlert(msg){
         var alert = document.getElementById("alert-msg");
@@ -431,6 +333,16 @@ buttons %} {% if session["admin"] %}
                     </svg>
                 </button>
             </div>`
+    }
+    function clearMsgs(){
+        var usernameMsg = document.getElementById("username-input-Msg");
+        var oldPassMsg = document.getElementById("oldPass-input-Msg");
+        var newPassMsg = document.getElementById("newPass-input-Msg");
+        var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
+        var messages = [usernameMsg, oldPassMsg, newPassMsg, confirmPassMsg];
+        messages.forEach(function(element) {
+            element.textContent="";
+        })
     }
 </script>
 <!-- <script type="text/javascript">
