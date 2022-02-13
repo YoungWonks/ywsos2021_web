@@ -262,7 +262,7 @@ def main(user_id):
         elif requestType == "deleteAccount":
             users.delete_one(user)
             return jsonify({"error": "0", "message": "Account Successfully Deleted"})
-    return render_template("main.html", user=user, allTimeStats=allTimeStats)
+    return render_template("main.html", user=user, scans=scans, allTimeStats=allTimeStats)
 
 
 @app.route('/login', methods=['GET', 'POST'])

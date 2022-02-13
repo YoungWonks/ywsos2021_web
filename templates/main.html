@@ -106,6 +106,14 @@
                             <p>{{allTimeStats['upvotes']}}</p>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col">
+                            <canvas id="totalScansLine" style="width:100%;max-width:600px"></canvas>
+                        </div>
+                        <div class="col">
+                            <canvas id="scansFreqScatter" style="width:100%;max-width:600px"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="tab-pane fade" id="profile" role="tabpanel">
@@ -159,6 +167,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="path/to/chartjs/dist/chart.js"></script>
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 <script type="text/javascript">
     var app = new Vue({
@@ -282,20 +291,57 @@
         }
     });
     function showAlert(msg){
-                var alert = document.getElementById("alert-msg");
-                            alert.innerHTML = `
-                            <div class="alert alert-success d-flex justify-content-between alert-dismissible show" style="height: 60px;" role="alert">
-                                <p>${msg}</p>
-                                <button type="button" style="padding: 0 0.5rem;" class="btn btn-danger close" data-bs-dismiss="alert">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
-                                        <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
-                                    </svg>
-                                </button>
-                            </div>`
-            }
-
+        var alert = document.getElementById("alert-msg");
+            alert.innerHTML = `
+            <div class="alert alert-success d-flex justify-content-between alert-dismissible show" style="height: 60px;" role="alert">
+                <p>${msg}</p>
+                <button type="button" style="padding: 0 0.5rem;" class="btn btn-danger close" data-bs-dismiss="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
+                        <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
+                    </svg>
+                </button>
+            </div>`
+    }
 </script>
+<!-- <script type="text/javascript">
+    function createLine(element, timeSpan){
+        if (timeSpan == "year-1"){
+            var labels = Utils.months({count: 12});
+            var data = {
+                labels: labels,
+                datasets: [{
+                label: '# of Scans',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [],
+                }]
+            }
+            var config = {
+                type: 'line',
+                data: data,
+                options: {}
+            };
+         };
+
+        new Chart("myChart", {
+        type: "scatter",
+        data: {
+            datasets: [{
+            pointRadius: 4,
+            pointBackgroundColor: "rgb(0,0,255)",
+            data: xyValues
+            }]
+        },
+        options: {
+            legend: {display: false},
+            scales: {
+                xAxes: [{ticks: {min: 28, max:31}}],
+            }
+        }
+        });
+    }
+</script> -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 {% endblock %}
