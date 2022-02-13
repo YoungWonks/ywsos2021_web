@@ -12,8 +12,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from random_word import RandomWords
 
 r = RandomWords()
-username_testchoice = r.get_random_word()
-password_testchoice = r.get_random_word()
+username_testchoice = r.get_random_word(minLength=7)
+password_testchoice = r.get_random_word(minLength=7)
 
 # HW ADD ENV VARIABLES
 APP_ROOT = os.path.join(os.path.dirname(__file__), '..')  # refers to application_top
@@ -131,13 +131,11 @@ class UploadTest(unittest.TestCase):
         latInput.send_keys("33.8658")
         longInput = self.driver.find_element_by_id("long")
         longInput.send_keys("151.2153")
-        urgeTest = self.driver.find_element_by_id("urgency")
-        urgeTest.send_keys("1")
         print(os.getcwd() + "test_image.jpeg")
         self.driver.find_element_by_id("file").send_keys("/Volumes/contents/ywsos2021_web/test_cases")
         submitTest = self.driver.find_element_by_id("submit")
-        submitTest.click()
-        self.assertIn("Form submitted", self.driver.page_source)
+        submitTest.click()       
+        self.assertIn("Form successfully submitted", self.driver.page_source)
 
     @classmethod
     def tearDown(cls):

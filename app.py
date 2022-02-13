@@ -22,6 +22,7 @@ import timeago
 from werkzeug.utils import safe_join
 import hashlib
 import contextlib
+import json
 
 
 class AddStaticFileHashFlask(Flask):
@@ -187,7 +188,9 @@ def upload(user_id):
 @app.route('/forum')
 @login_required
 def forum(user_id):
-    return render_template('forum.html')
+    scans = db["scans"]
+    result = scans.find({},{"_id":0}).sort([('upvote', pymongo.DESCENDING)])
+    return render_template('forum.html', result=list(result))
 
 
 @app.route('/contact', methods=['GET', 'POST'])
@@ -537,7 +540,7 @@ def api_find_forum():
         if (scan is not None):
             repairs.append(scan)
     return {
-        "repairs": repairs,
+        "repairs": repairs
     }
 
 

@@ -26,6 +26,7 @@ idna==3.3
 itsdangerous==2.0.1
 Jinja2==3.0.2
 jsmin==3.0.0
+json==2020-12
 lesscpy==0.15.0
 MarkupSafe==2.0.1
 outcome==1.1.0
@@ -38,6 +39,7 @@ pyOpenSSL==21.0.0
 python-dotenv==0.19.1
 PyYAML==6.0
 PyJWT==2.3.0
+random_word==1.0.7
 rcssmin==1.0.6
 requests==2.27.1
 selenium==4.1.0
