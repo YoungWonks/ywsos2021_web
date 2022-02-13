@@ -320,7 +320,7 @@ def admin(u_id):
     users = db["users"]
     if "role" not in users.find_one({"_id": bson.ObjectId(u_id)}):
         abort(404)
-    return "placeholder"
+    return render_template("admin.html")
 ########################################################################
 #########################API############################################
 ########################################################################
