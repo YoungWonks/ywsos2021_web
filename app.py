@@ -22,7 +22,6 @@ import timeago
 from werkzeug.utils import safe_join
 import hashlib
 import contextlib
-import json
 
 
 class AddStaticFileHashFlask(Flask):
@@ -128,6 +127,7 @@ def login_required(something):
 def create_rep(r, user):
     scanUser = db.users.find_one({"_id": bson.ObjectId(r['u_id'])})
     if (scanUser is not None):
+        print(r)
         reps = {
             "url":      '/static/images/scans/'+r['filename'],
             "scandate": timeago.format(r['scandate'], datetime.utcnow()),
@@ -137,7 +137,8 @@ def create_rep(r, user):
             "id":       str(r['_id']),
             "upvote":   r['upvote'],
             "title":    r['title'],
-            "urgency":  r["urgency"],
+            "urgency":  r['urgency'],
+            "status":   r['status'],
             "post_username": scanUser['username'],
             "scan_list": str(db.users.find_one({"_id": bson.ObjectId(user)})['vote_scans'])
         }
@@ -225,9 +226,24 @@ def gallery(user_id):
 def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
+    scans = list(db.scans.find({'u_id': session['logged_in_id']}))
+    aTotalScans = len(scans)
+    aPendingScans = 0
+    aResolvedScans = 0
+    aUpvotes = 0
+
+    for scan in scans:
+        # if scan['status'] == 'pending': ### Status function currently unavailable
+        #     pendingScans+=1
+        # elif scan['status'] == 'resolved':
+        #     resolvedScans+=1
+        aUpvotes+=len(scan['vote_users'])
+
+    allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes}
+        
+
     if request.method == "POST":
         requestType = request.get_json()['requestType']
-
         if requestType == "changePassword":
             oldPassword = request.get_json()['oldPass']
             newPassword = request.get_json()['newPass']
@@ -250,7 +266,7 @@ def main(user_id):
         elif requestType == "deleteAccount":
             users.delete_one(user)
             return jsonify({"error": "0", "message": "Account Successfully Deleted"})
-    return render_template("main.html", user=user)
+    return render_template("main.html", user=user, scans=scans, allTimeStats=allTimeStats)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -265,6 +281,10 @@ def login():
         if result is not None and pbkdf2_sha256.verify(login_form.password.data, result['password_hash']):
             session['logged_in'] = True
             session['logged_in_id'] = str(result['_id'])
+            if "role" in result:
+                session['admin'] = True
+            else:
+                session["admin"] = False
             return redirect('/main')
         else:
             error = True
@@ -296,6 +316,7 @@ def signup():
             users.insert_one(user)
             session['logged_in'] = True
             session['logged_in_id'] = str(user['_id'])
+            session['admin'] = False
             flash("Account Successfully Created", category="success")
             return redirect('/main')
     return render_template("signup.html", signup_form=signup_form, usererror=usererror, notallowed=notallowed, passlength=passlength)
@@ -323,7 +344,7 @@ def admin(u_id):
     users = db["users"]
     if "role" not in users.find_one({"_id": bson.ObjectId(u_id)}):
         abort(404)
-    return "placeholder"
+    return render_template("admin.html")
 ########################################################################
 #########################API############################################
 ########################################################################
@@ -540,7 +561,7 @@ def api_find_forum():
         if (scan is not None):
             repairs.append(scan)
     return {
-        "repairs": repairs
+        "repairs": repairs,
     }
 
 
@@ -614,10 +635,18 @@ def api_add(userId):
         "urgency": urgency,
         "vote_users": [],
         "city": city,
-        "state": state
+        "state": state,
+        "status": False
     })
     return jsonify({"error": "0", "message": "Succesful", })
 
+@app.route("/api/scans/update", methods=["POST"])
+@token_required
+def scans_update(uid):
+    id_scan = bson.ObjectId(request.get_json().get('scan_id'))
+    db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {
+                '$set': {"status": True}})
+    return jsonify({"error": 0, "message": "Successful"})
 
 @app.route('/api/wel', methods=['POST'])
 @token_required
@@ -637,4 +666,4 @@ def api_welcome(userId):
 
 if __name__ == "__main__":
     minify_css(css_map)
-    app.run(debug=True)
+    app.run(debug=True, threaded=True)
