@@ -1,5 +1,10 @@
 ﻿{% extends "base.html" %} {% block title %}Account{% endblock %} {% block
-buttons %}
+buttons %} {% if session["admin"] %}
+<a class="btn nav-button" type="button" id="account" href="/admin"
+  ><span id="accounttext">Admin</span></a
+>
+{% endif %}
+<div style="display: inline-block; width: 1em"></div>
 <a
   class="btn nav-button buttonrect"
   type="button"
