@@ -333,7 +333,8 @@
   padding: 1rem;
 }
 
-#vue-app > div:not(.forum-control):not(.forum-loader) {
+#vue-app > div:not(.forum-control):not(.forum-loader):not(.row),
+#vue-app .row > .fordiv {
   margin-right: 62px;
   margin-left: 62px;
   padding: 8px;

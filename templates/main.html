@@ -1,210 +1,185 @@
-﻿{% extends "base.html" %} {% block title %}Account{% endblock %} {% block
-    buttons %} {% if session["admin"] %}
-    <a class="btn nav-button" type="button" id="account" href="/admin"
-      ><span id="accounttext">Admin</span></a
-    >
-    {% endif %}
-    <div style="display: inline-block; width: 1em"></div>
-    <a
-      class="btn nav-button buttonrect"
-      type="button"
-      id="logout"
-      href="#"
-      data-bs-toggle="modal"
-      data-bs-target="#logoutModal"
-      ><p id="logouttext">Logout</p></a
-    >
-    {% endblock %} {% block content %}
-    <style type="text/css">
-      .circle {
-        border: 3px solid;
-        border-color: #c5dcc2;
-        padding-bottom: 50%;
-        border-radius: 50%;
-        overflow: hidden;
-        max-width: 10vw;
-        max-height: 10vw;
-      }
-    
-      #pic {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-      }
-    
-      #hoverText {
-        margin: auto;
-      }
-    
-      .btn-dash {
-        box-shadow: 0px 1px 9px rgba(0, 0, 0, 0.25);
-      }
-    
-      .dashboard-border {
-        border: 3px solid;
-        border-color: #c5dcc2;
-        border-radius: 25px;
-      }
-    
-      .dashboard-grad {
-        background-image: linear-gradient(#a2c08b -5%, #b2d5df 100%);
-      }
-    </style>
-    
-    <main>
-      <div style="height: 85vh" class="row text-center mt-3 mx-0 px-0">
-        <div class="col-3 dashboard-border dashboard-grad">
-          <div>
-            <div style="margin: auto; margin-top: 20px" class="circle" id="picDiv">
-              <img src="/static/images/person.svg" id="pic" />
-            </div>
-            <h1 id="user_name" class="mt-2 mb-3">{{user['username']}}</h1>
-          </div>
-    
-          <ul
-            class="nav flex-column nav-pills d-flex align-items-center"
-            id="dashboard-tab"
-            role="tablist"
-          >
-            <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
-              <button
-                class="nav-link btn btn-dash"
-                id="gallery-btn"
-                type="button"
-                style="background-color: #c6dcc4; color: black"
-                onclick="location.href='/gallery'"
-              >
-                Gallery
-                <img
-                  src="{{ url_for('static', filename='images/gallery.svg') }}"
-                  class="sign-up-icon"
-                />
-              </button>
-            </li>
-            <br />
-            <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
-              <button
-                class="nav-link btn btn-dash"
-                id="upload-btn"
-                type="button"
-                style="background-color: #c6dbcb; color: black"
-                onclick="location.href='/upload'"
-              >
-                Upload
-                <img
-                  src="{{ url_for('static', filename='images/upload.svg') }}"
-                  class="sign-up-icon"
-                />
-              </button>
-            </li>
-            <br />
-            <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
-              <button
-                class="nav-link btn btn-dash"
-                id="stats-tab"
-                style="background-color: #c9dbda; color: black"
-                data-bs-toggle="tab"
-                data-bs-target="#stats"
-                type="button"
-                role="tab"
-              >
-                Stats
-                <img
-                  src="{{ url_for('static', filename='images/share.svg') }}"
-                  class="sign-up-icon"
-                />
-              </button>
-            </li>
-            <br />
-            <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
-              <button
-                class="nav-link btn btn-dash"
-                id="profile-tab"
-                style="background-color: #c9dbdf; color: black"
-                data-bs-toggle="tab"
-                data-bs-target="#profile"
-                type="button"
-                role="tab"
-              >
-                Edit Profile
-                <img
-                  src="{{ url_for('static', filename='images/person_2.svg') }}"
-                  class="sign-up-icon"
-                />
-              </button>
-            </li>
-            <br />
-          </ul>
+{% extends "base.html" %} {% block title %}Account{% endblock %} {% block buttons %} {% if session["admin"] %}
+<a class="btn nav-button" type="button" id="account" href="/admin"
+  ><span id="accounttext">Admin</span></a
+>
+{% endif %}
+<div style="display: inline-block; width: 1em"></div>
+<a
+  class="btn nav-button buttonrect"
+  type="button"
+  id="logout"
+  href="#"
+  data-bs-toggle="modal"
+  data-bs-target="#logoutModal"
+  ><p id="logouttext">Logout</p></a
+>
+{% endblock %} {% block content %}
+<style type="text/css">
+  .circle {
+    border: 3px solid;
+    border-color: #c5dcc2;
+    padding-bottom: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+    max-width: 10vw;
+    max-height: 10vw;
+  }
+
+  #pic {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  #hoverText {
+    margin: auto;
+  }
+
+  .btn-dash {
+    box-shadow: 0px 1px 9px rgba(0, 0, 0, 0.25);
+  }
+
+  .dashboard-border {
+    border: 3px solid;
+    border-color: #c5dcc2;
+    border-radius: 25px;
+  }
+
+  .dashboard-grad {
+    background-image: linear-gradient(#a2c08b -5%, #b2d5df 100%);
+  }
+</style>
+
+<main>
+  <div style="height: 85vh" class="row text-center mt-3 mx-0 px-0">
+    <div class="col-3 dashboard-border dashboard-grad">
+      <div>
+        <div style="margin: auto; margin-top: 20px" class="circle" id="picDiv">
+          <img src="/static/images/person.svg" id="pic" />
         </div>
-    
-        
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-body">
-                      <h5 class="modal-title" id="loginModalLabel">
-                        Are you sure?
-                      </h5>
-                      <a href="logout"
-                        ><button type="button" id="confirmLogout" class="btn btn-danger">
-                          Log Out
-                        </button></a
-                      >
-                      <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                      >
-                        Cancel
-                      </button>
+        <h1 id="user_name" class="mt-2 mb-3">{{user['username']}}</h1>
+      </div>
+
+      <ul
+        class="nav flex-column nav-pills d-flex align-items-center"
+        id="dashboard-tab"
+        role="tablist"
+      >
+        <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
+          <button
+            class="nav-link btn btn-dash"
+            id="gallery-btn"
+            type="button"
+            style="background-color: #c6dcc4; color: black"
+            onclick="location.href='/gallery'"
+        >
+            Gallery
+            <img
+              src="{{ url_for('static', filename='images/gallery.svg') }}"
+              class="sign-up-icon"
+            />
+          </button>
+        </li>
+        <br />
+        <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
+          <button
+            class="nav-link btn btn-dash"
+            id="upload-btn"
+            type="button"
+            style="background-color: #c6dbcb; color: black"
+            onclick="location.href='/upload'"
+          >
+            Upload
+            <img
+              src="{{ url_for('static', filename='images/upload.svg') }}"
+              class="sign-up-icon"
+            />
+          </button>
+        </li>
+        <br />
+        <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
+          <button
+            class="nav-link btn btn-dash"
+            id="stats-tab"
+            style="background-color: #c9dbda; color: black"
+            data-bs-toggle="tab"
+            data-bs-target="#stats"
+            type="button"
+            role="tab"
+          >
+            Stats
+            <img
+              src="{{ url_for('static', filename='images/share.svg') }}"
+              class="sign-up-icon"
+            />
+          </button>
+        </li>
+        <br />
+        <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
+          <button
+            class="nav-link btn btn-dash"
+            id="profile-tab"
+            style="background-color: #c9dbdf; color: black"
+            data-bs-toggle="tab"
+            data-bs-target="#profile"
+            type="button"
+            role="tab"
+          >
+            Edit Profile
+            <img
+              src="{{ url_for('static', filename='images/person_2.svg') }}"
+              class="sign-up-icon"
+            />
+          </button>
+        </li>
+        <br />
+      </ul>
+    </div>
+            <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
+                <div class="tab-pane fade active show" id="stats" role="tabpanel">
+                    <br>
+                    <h1 class="text-center">Stats</h1>
+                    <div class="row">
+                        <div class="col">
+                            <h3>Total Scans:</h3>
+                            <p>{{allTimeStats['totalScans']}}</p>
+                        </div>
+                        <div class="col">
+                            <h3>Pending Scans:</h3>
+                            <p>{{allTimeStats['pendingScans']}}</p>
+                        </div>
+                        <div class="col">
+                            <h3>Resolved Scans:</h3>
+                            <p>{{allTimeStats['resolvedScans']}}</p>
+                        </div>
+                        <div class="col">
+                            <h3>Upvotes:</h3>
+                            <p>{{allTimeStats['upvotes']}}</p>
+                        </div>
                     </div>
-                  </div>
+                    <div class="row">
+                        <div class="col">
+                            <canvas id="totalScansLine" style="width:100%;max-width:600px"></canvas>
+                        </div>
+                        <div class="col">
+                            <canvas id="scansFreqScatter" style="width:100%;max-width:600px"></canvas>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
-                    <div class="tab-pane fade active show" id="stats" role="tabpanel">
-                        <br>
-                        <h1 class="text-center">Stats</h1>
-                        <div class="row">
-                            <div class="col">
-                                <h3>Total Scans:</h3>
-                                <p>{{allTimeStats['totalScans']}}</p>
-                            </div>
-                            <div class="col">
-                                <h3>Pending Scans:</h3>
-                                <p>{{allTimeStats['pendingScans']}}</p>
-                            </div>
-                            <div class="col">
-                                <h3>Resolved Scans:</h3>
-                                <p>{{allTimeStats['resolvedScans']}}</p>
-                            </div>
-                            <div class="col">
-                                <h3>Upvotes:</h3>
-                                <p>{{allTimeStats['upvotes']}}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <canvas id="totalScansLine" style="width:100%;max-width:600px"></canvas>
-                            </div>
-                            <div class="col">
-                                <canvas id="scansFreqScatter" style="width:100%;max-width:600px"></canvas>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="tab-pane fade" id="profile" role="tabpanel">
-                        <br>
-                        <h1 class="text-center">Change Your Account Info</h1>
-                        <div id="vue-app-dash">
-                            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-body">
-                                            <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
-                                            <p>This action is irreversable</p>
-                                            <button @click="deleteAcc()"type="button" class="btn btn-danger">Delete Account</button>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        </div>
+
+                <div class="tab-pane fade" id="profile" role="tabpanel">
+                    <br>
+                    <h1 class="text-center">Change Your Account Info</h1>
+                    <div id="vue-app-dash">
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
+                                        <p>This action is irreversable</p>
+                                        <button @click="deleteAcc()"type="button" class="btn btn-danger">Delete Account</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
                                     </div>
                                 </div>
                             </div>
@@ -269,208 +244,178 @@
                       </button>
     
                     </div>
-                  </div>
-                </div>
-              </div>
-    
-              <label for="username-input">Change Username</label><br />
-              <input
-                id="username-input"
-                type="text"
-                v-model="username"
-                class="form-control"
-              />
-              <p id="username-input-Msg" style="color: red"></p>
-    
-              <button @click="changeUser()" class="submitBtn">Submit</button>
-              <br />
-    
-              <hr style="border: 2px solid black; opacity: 0.6" />
-    
-              <label for="oldPass-input">Current Password</label><br />
-              <input
-                id="oldPass-input"
-                type="password"
-                v-model="oldPass"
-                class="form-control"
-              />
-              <p id="oldPass-input-Msg" style="color: red"></p>
-    
-              <label for="newPass-input">New Password</label><br />
-              <input
-                id="newPass-input"
-                type="password"
-                v-model="newPass"
-                class="form-control"
-              />
-              <p id="newPass-input-Msg" style="color: red"></p>
-    
-              <label for="confirmPass-input">Confirm New Password</label><br />
-              <input
-                id="confirmPass-input"
-                type="password"
-                v-model="confirmPass"
-                class="form-control"
-              />
-              <p id="confirmPass-input-Msg" style="color: red"></p>
-    
-              <button @click="changePass()" class="submitBtn">Submit</button>
-    
-              <hr style="border: 2px solid black; opacity: 0.6" />
-    
-              <button
-                data-bs-toggle="modal"
-                data-bs-target="#deleteModal"
-                class="submitBtn"
-                style="background: red; width: 9em"
-              >
-                Delete Account
-              </button>
-            </div>
-    
+
           </div>
-        </div>
       </div>
-    </main>
-    {% endblock %} {% block scripts %}
-      <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
-    <script type="text/javascript">
-      var app = new Vue({
-        el: "#vue-app-dash",
-        delimiters: ["[[", "]]"],
-        data() {
-          return {
-            username: "",
-            oldPass: "",
-            newPass: "",
-            confirmPass: "",
-          };
-        },
-        methods: {
-          changeUser() {
-            var username = this.username;
-    
-            var usernameMsg = document.getElementById("username-input-Msg");
-            var name = document.getElementById("user_name");
-    
-            this.clearMsgs();
-            if (this.username === "" || this.username === " ") {
-              usernameMsg.textContent = "Invalid username";
+    </div>
+  </div>
+</main>
+{% endblock %} {% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+<script type="text/javascript">
+  var app = new Vue({
+    el: "#vue-app-dash",
+    delimiters: ["[[", "]]"],
+    data() {
+      return {
+        username: "",
+        oldPass: "",
+        newPass: "",
+        confirmPass: "",
+      };
+    },
+    methods: {
+      changeUser() {
+        var username = this.username;
+
+        var usernameMsg = document.getElementById("username-input-Msg");
+        var name = document.getElementById("user_name");
+
+        clearMsgs();
+        
+        if (this.username === "" || this.username === " ") {
+          usernameMsg.textContent = "Invalid username";
+        } else {
+          $.ajax({
+            type: "POST",
+            url: "/main",
+            data: JSON.stringify({
+              requestType: "changeUsername",
+              username: username,
+            }),
+            contentType: "application/json",
+            dataType: "json",
+          }).done(function (response) {
+            if (response["error"] == 1) {
+              usernameMsg.textContent = response["message"];
             } else {
-              $.ajax({
-                type: "POST",
-                url: "/main",
-                data: JSON.stringify({
-                  requestType: "changeUsername",
-                  username: username,
-                }),
-                contentType: "application/json",
-                dataType: "json",
-              }).done(function (response) {
-                if (response["error"] == 1) {
-                  usernameMsg.textContent = response["message"];
-                } else {
-                  showAlert(response["message"]);
-                  name.innerHTML = username;
-                }
-              });
+              showAlert(response["message"]);
+              name.innerHTML = username;
             }
-          },
-    
-          changePass() {
-            var oldPass = this.oldPass;
-            var newPass = this.newPass;
-            var confirmPass = this.confirmPass;
-    
-            var oldPassMsg = document.getElementById("oldPass-input-Msg");
-            var newPassMsg = document.getElementById("newPass-input-Msg");
-            var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
-    
-            this.clearMsgs();
-    
-            if (newPass.length < 6) {
-              newPassMsg.textContent =
-                "Password needs to be 6 characters or longer";
-            } else if (newPass != confirmPass) {
-              newPassMsg.textContent = "Password Does Not Match";
-              confirmPassMsg.textContent = "Password Does Not Match";
-            } else {
-              $.ajax({
-                type: "POST",
-                url: "/main",
-                data: JSON.stringify({
-                  requestType: "changePassword",
-                  oldPass: oldPass,
-                  newPass: newPass,
-                }),
-    
-                contentType: "application/json",
-                dataType: "json",
-              }).done(function (response) {
-                if (response["error"] == 1) {
-                  if (response["type"] == "oldPass") {
-                    oldPassMsg.textContent = response["message"];
-                  }
-                } else {
-                  showAlert(response["message"]);
-                }
-              });
-            }
-          }
-        }});
-        function showAlert(msg){
-            var alert = document.getElementById("alert-msg");
-                alert.innerHTML = `
-                <div class="alert alert-success d-flex justify-content-between alert-dismissible show" style="height: 60px;" role="alert">
-                    <p>${msg}</p>
-                    <button type="button" style="padding: 0 0.5rem;" class="btn btn-danger close" data-bs-dismiss="alert">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
-                            <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
-                        </svg>
-                    </button>
-                </div>`
+          });
         }
-    </script>
-    <!-- <script type="text/javascript">
-        function createLine(element, timeSpan){
-            if (timeSpan == "year-1"){
-                var labels = Utils.months({count: 12});
-                var data = {
-                    labels: labels,
-                    datasets: [{
-                    label: '# of Scans',
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    data: [],
-                    }]
-                }
-                var config = {
-                    type: 'line',
-                    data: data,
-                    options: {}
-                };
-             };
+      },
+
+      changePass() {
+        var oldPass = this.oldPass;
+        var newPass = this.newPass;
+        var confirmPass = this.confirmPass;
+
+        var oldPassMsg = document.getElementById("oldPass-input-Msg");
+        var newPassMsg = document.getElementById("newPass-input-Msg");
+        var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
+
+        clearMsgs();
+
+        if (newPass.length < 6) {
+          newPassMsg.textContent =
+            "Password needs to be 6 characters or longer";
+        } else if (newPass != confirmPass) {
+          newPassMsg.textContent = "Password Does Not Match";
+          confirmPassMsg.textContent = "Password Does Not Match";
+        } else {
+          $.ajax({
+            type: "POST",
+            url: "/main",
+            data: JSON.stringify({
+              requestType: "changePassword",
+              oldPass: oldPass,
+              newPass: newPass,
+            }),
+
+            contentType: "application/json",
+            dataType: "json",
+          }).done(function (response) {
+            if (response["error"] == 1) {
+              if (response["type"] == "oldPass") {
+                oldPassMsg.textContent = response["message"];
+              }
+            } else {
+              showAlert(response["message"]);
+            }
+          });
+        }
+      },
+      deleteAcc(){
+        $.ajax({
+            type: 'POST',
+            url: '/main',
+            data: JSON.stringify({
+                "requestType": "deleteAccount",
+            }),
+
+            contentType: "application/json",
+            dataType: "json"
+        }).done(function(response) {
+            window.location.replace('/logout?type=deleteAccount');
     
-            new Chart("myChart", {
-            type: "scatter",
-            data: {
+        });
+    },
+    }});
+    function showAlert(msg){
+        var alert = document.getElementById("alert-msg");
+            alert.innerHTML = `
+            <div class="alert alert-success d-flex justify-content-between alert-dismissible show" style="height: 60px;" role="alert">
+                <p>${msg}</p>
+                <button type="button" style="padding: 0 0.5rem;" class="btn btn-danger close" data-bs-dismiss="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
+                        <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
+                    </svg>
+                </button>
+            </div>`
+    }
+    function clearMsgs(){
+        var usernameMsg = document.getElementById("username-input-Msg");
+        var oldPassMsg = document.getElementById("oldPass-input-Msg");
+        var newPassMsg = document.getElementById("newPass-input-Msg");
+        var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
+        var messages = [usernameMsg, oldPassMsg, newPassMsg, confirmPassMsg];
+        messages.forEach(function(element) {
+            element.textContent="";
+        })
+    }
+</script>
+<!-- <script type="text/javascript">
+    function createLine(element, timeSpan){
+        if (timeSpan == "year-1"){
+            var labels = Utils.months({count: 12});
+            var data = {
+                labels: labels,
                 datasets: [{
-                pointRadius: 4,
-                pointBackgroundColor: "rgb(0,0,255)",
-                data: xyValues
+                label: '# of Scans',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [],
                 }]
-            },
-            options: {
-                legend: {display: false},
-                scales: {
-                    xAxes: [{ticks: {min: 28, max:31}}],
-                }
             }
-            });
+            var config = {
+                type: 'line',
+                data: data,
+                options: {}
+            };
+         };
+
+        new Chart("myChart", {
+        type: "scatter",
+        data: {
+            datasets: [{
+            pointRadius: 4,
+            pointBackgroundColor: "rgb(0,0,255)",
+            data: xyValues
+            }]
+        },
+        options: {
+            legend: {display: false},
+            scales: {
+                xAxes: [{ticks: {min: 28, max:31}}],
+            }
         }
-    </script> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    
-    {% endblock %}
+        });
+    }
+</script> -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+{% endblock %}
+

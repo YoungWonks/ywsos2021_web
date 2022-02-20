@@ -137,8 +137,9 @@ def create_rep(r, user):
             "id":       str(r['_id']),
             "upvote":   r['upvote'],
             "title":    r['title'],
-            "urgency":  r['urgency'],
-            "status":   r['status'],
+            "urgency":  r["urgency"],
+            "status": r["status"],
+
             "post_username": scanUser['username'],
             "scan_list": str(db.users.find_one({"_id": bson.ObjectId(user)})['vote_scans'])
         }

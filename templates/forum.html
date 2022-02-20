@@ -82,7 +82,9 @@
               </a>
               <p v-if="scan.upvote == 1">[[ scan.upvote ]] upvote</p>
               <p v-else>[[ scan.upvote ]] upvotes</p>
-              <br>
+
+              <br />
+
               <p v-if="!scan.status">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -96,6 +98,22 @@
                 </svg>
                 Pending
               </p>
+
+              <p v-else>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="bi bi-check-circle-fill"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
+                  />
+                </svg>
+                Resolved
+              </p>
             </div>
           </div>
         </div>
@@ -104,7 +122,7 @@
             <p>[[ scan.description ]]</p>
           </div>
           <div class="col-sm-12 col-md-4 col-lg-4">
-            <img :src="scan.url" :alt="scan.description" />
+            <img :src="scan.url" :alt="scan.description" loading="lazy" />
           </div>
         </div>
       </div>
@@ -175,8 +193,10 @@
       },
       search: function () {
         if (this.searchbox != "") {
-          this.repairs = this.repairs.filter((scan) =>
-            scan.title.toLowerCase().includes(app.searchbox) || scan.description.toLowerCase().includes(app.searchbox)
+          this.repairs = this.repairs.filter(
+            (scan) =>
+              scan.title.toLowerCase().includes(app.searchbox) ||
+              scan.description.toLowerCase().includes(app.searchbox)
           );
         } else {
           this.getCurrent();
