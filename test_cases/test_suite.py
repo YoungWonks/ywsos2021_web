@@ -95,8 +95,10 @@ class LoginTest(unittest.TestCase):
         logoutButton.click()
         self.assertTrue(expected_conditions.alert_is_present())
         self.driver.switch_to.active_element
-        logoutButton1 = self.driver.find_element_by_id("confirmLogout")
+        logoutButton1 = self.driver.find_element_by_id("logout")
         self.driver.execute_script("arguments[0].click();",logoutButton1)
+        logoutButton2 = self.driver.find_element_by_id("confirmLogout")
+        self.driver.execute_script("arguments[0].click();",logoutButton2)
         # logoutButton1.click()
         WebDriverWait(self.driver, 15).until(expected_conditions.title_is('GeoRepair - About'))
 

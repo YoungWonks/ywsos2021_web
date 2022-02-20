@@ -23,7 +23,7 @@ upload_test = unittest.TestLoader().loadTestsFromTestCase(UploadTest)
 signup_test = unittest.TestLoader().loadTestsFromTestCase(SignupTest)
 test_suite = unittest.TestSuite(
     [
-        home_test, login_test, signup_test, upload_test 
+        login_test
     ]
 )
 
