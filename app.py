@@ -127,6 +127,7 @@ def login_required(something):
 def create_rep(r, user):
     scanUser = db.users.find_one({"_id": bson.ObjectId(r['u_id'])})
     if (scanUser is not None):
+        print(r)
         reps = {
             "url":      '/static/images/scans/'+r['filename'],
             "scandate": timeago.format(r['scandate'], datetime.utcnow()),
@@ -138,6 +139,7 @@ def create_rep(r, user):
             "title":    r['title'],
             "urgency":  r["urgency"],
             "status": r["status"],
+
             "post_username": scanUser['username'],
             "scan_list": str(db.users.find_one({"_id": bson.ObjectId(user)})['vote_scans'])
         }
@@ -188,7 +190,9 @@ def upload(user_id):
 @app.route('/forum')
 @login_required
 def forum(user_id):
-    return render_template('forum.html')
+    scans = db["scans"]
+    result = scans.find({},{"_id":0}).sort([('upvote', pymongo.DESCENDING)])
+    return render_template('forum.html', result=list(result))
 
 
 @app.route('/contact', methods=['GET', 'POST'])

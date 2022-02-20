@@ -26,6 +26,7 @@ content%}
         <input
           type="text"
           v-model="title"
+          id="title"
           placeholder="Title"
           class="text-input"
           size="32"
@@ -38,6 +39,7 @@ content%}
         <input
           type="text"
           v-model="des"
+          id="desc"
           placeholder="Description"
           class="text-input"
           size="32"
@@ -50,6 +52,7 @@ content%}
         <input
           type="number"
           v-model="lat"
+          id="lat"
           step="0.000000001"
           placeholder="Latitude"
           class="text-input"
@@ -62,6 +65,7 @@ content%}
         <input
           type="number"
           v-model="long"
+          id="long"
           step="0.000000001"
           placeholder="Longitude"
           class="text-input"
@@ -102,6 +106,7 @@ content%}
           max="10"
           min="0"
           v-model="urgency"
+          id="urgency"
           placeholder="Urgency"
           class="text-input"
           size="32"

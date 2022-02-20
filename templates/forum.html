@@ -1,26 +1,27 @@
 {% extends "base.html" %} {% block title %}Forum{% endblock %} {% block content
 %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+  crossorigin="" />
+<style>
+  #map {
+    height: 180px;
+  }
+</style>
 <div id="vue-app" class="container">
   <div class="forum-control row">
     <div class="col-3"></div>
-    <div
-      class="col-9"
-      style="
+    <div class="col-9" style="
         display: inline-flex;
         justify-content: flex-end;
         align-items: center;
-      "
-    >
+      ">
       <div class="forum-search">
         <img src="{{ url_for('static', filename='images/search.svg') }}" />
         <span class="text-wrapper">
-          <input
-            type="text"
-            name="search"
-            placeholder="Search Posts"
-            v-model="searchbox"
-            v-on:input="search"
-          />
+          <input type="text" name="search" placeholder="Search Posts" v-model="searchbox" v-on:input="search" />
         </span>
       </div>
       <div class="forum-add">
@@ -33,20 +34,18 @@
       </div>
     </div>
   </div>
+  <div id="map"></div>
   <div v-for="scan in repairs" class="fordiv" v-cloak>
     <div class="card" class="col-12">
       <div class="card-body">
         <div class="row">
           <div class="col-sm-12 col-md-1 col-lg-1" style="display: block">
-            <img
-              src="{{ url_for('static', filename='images/user.svg') }}"
-              style="
+            <img src="{{ url_for('static', filename='images/user.svg') }}" style="
                 display: block;
                 background: linear-gradient(93.12deg, #acc9af 0%, #709a9b 100%);
                 border-radius: 50%;
                 border: 3px solid;
-              "
-            />
+              " />
             <h2>[[ scan.post_user ]]</h2>
           </div>
           <div class="col-sm-12 col-md-5 col-lg-5">
@@ -54,47 +53,38 @@
               <h1>[[ scan.title ]]</h1>
               <div class="scan-details">
                 <div>
-                  <img
-                    src="{{ url_for('static', filename='images/scandate.svg') }}"
-                  />
+                  <img src="{{ url_for('static', filename='images/scandate.svg') }}" />
                   <p>[[ scan.scandate ]]</p>
                 </div>
               </div>
               <div class="scan-details">
                 <div>
-                  <img
-                    src="{{ url_for('static', filename='images/location.svg') }}"
-                  />
+                  <img src="{{ url_for('static', filename='images/location.svg') }}" />
                   <p>[[ scan.city]], [[ scan.state ]]</p>
                 </div>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+                <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
               </div>
             </div>
           </div>
           <div class="col-sm-12 col-md-4 col-lg-4">
             <div>
-              <button
-                @click="vote($event,scan.filename, scan.id)"
-                v-if="'{{ session['logged_in'] }}' == 'True'"
-              >
-                <img
-                  src="{{ url_for('static', filename='images/upvote.svg') }}"
-                  v-if="scan.scan_list.includes(scan.id)"
-                />
-                <img
-                  src="{{ url_for('static', filename='images/unvote.svg') }}"
-                  v-else
-                />
+              <button @click="vote($event,scan.filename, scan.id)" v-if="'{{ session['logged_in'] }}' == 'True'">
+                <img src="{{ url_for('static', filename='images/upvote.svg') }}"
+                  v-if="scan.scan_list.includes(scan.id)" />
+                <img src="{{ url_for('static', filename='images/unvote.svg') }}" v-else />
               </button>
               <a v-else href="/login">
                 <button>
-                  <img
-                    src="{{ url_for('static', filename='images/unvote.svg') }}"
-                  />
+                  <img src="{{ url_for('static', filename='images/unvote.svg') }}" />
                 </button>
               </a>
               <p v-if="scan.upvote == 1">[[ scan.upvote ]] upvote</p>
               <p v-else>[[ scan.upvote ]] upvotes</p>
+
               <br />
+
               <p v-if="!scan.status">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -108,6 +98,7 @@
                 </svg>
                 Pending
               </p>
+
               <p v-else>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -137,18 +128,12 @@
       </div>
     </div>
   </div>
-  <div
-    v-if="repairs == null"
-    class="forum-loader d-flex justify-content-center align-items-center"
-  >
+  <div v-if="repairs == null" class="forum-loader d-flex justify-content-center align-items-center">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
-  <div
-    v-if="repairs == false"
-    class="forum-loader d-flex justify-content-center align-items-center"
-  >
+  <div v-if="repairs == false" class="forum-loader d-flex justify-content-center align-items-center">
     <h1>No posts yet!</h1>
   </div>
 </div>
@@ -224,4 +209,33 @@
     },
   });
 </script>
+<script>
+  var scans = JSON.parse('{{result|tojson|safe}}');
+	var map = L.map('map').setView([39.8283, 98.5795], 1.5);
+	var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox/streets-v11',
+		tileSize: 512,
+		zoomOffset: -1
+	}).addTo(map);
+for (scan of scans){
+	var marker = L.marker([scan["position"]["lat"], scan["position"]["long"]]).addTo(map)
+		.bindPopup(scan["title"]).openPopup();
+}
+
+
+	function onMapClick(e) {
+		popup
+			.setLatLng(e.latlng)
+			.setContent('You clicked the map at ' + e.latlng.toString())
+			.openOn(map);
+	}
+
+	map.on('click', onMapClick);
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
 {% endblock %}
