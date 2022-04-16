@@ -127,7 +127,6 @@ def login_required(something):
 def create_rep(r, user):
     scanUser = db.users.find_one({"_id": bson.ObjectId(r['u_id'])})
     if (scanUser is not None):
-        print(r)
         reps = {
             "url":      '/static/images/scans/'+r['filename'],
             "scandate": timeago.format(r['scandate'], datetime.utcnow()),
@@ -399,7 +398,7 @@ def api_signup():
     users = db['users']
     dt_now1 = datetime.utcnow()
     if users.find_one({"username": username}) is not None:
-        return {"error": "1", "message": "Username already exists", "cause": "u"}
+        return jsonify({"error": "1", "message": "Username already exists", "cause": "u"})
     users.insert_one({
         "username": username,
         "password_hash": pbkdf2_sha256.hash(password),
