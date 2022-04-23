@@ -240,7 +240,7 @@ def main(user_id):
         aUpvotes+=len(scan['vote_users'])
 
     allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes}
-        
+    # Need to find first post date
 
     if request.method == "POST":
         requestType = request.get_json()['requestType']

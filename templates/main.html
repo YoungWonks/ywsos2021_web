@@ -1,18 +1,11 @@
-{% extends "base.html" %} {% block title %}Account{% endblock %} {% block buttons %} {% if session["admin"] %}
-<a class="btn nav-button" type="button" id="account" href="/admin"
-  ><span id="accounttext">Admin</span></a
->
+﻿{% extends "base.html" %} {% block title %}Account{% endblock %} {% block buttons %} {% if session["admin"] %}
+<a class="btn nav-button" type="button" id="account" href="/admin"><span id="accounttext">Admin</span></a>
 {% endif %}
 <div style="display: inline-block; width: 1em"></div>
-<a
-  class="btn nav-button buttonrect"
-  type="button"
-  id="logout"
-  href="#"
-  data-bs-toggle="modal"
-  data-bs-target="#logoutModal"
-  ><p id="logouttext">Logout</p></a
->
+<a class="btn nav-button buttonrect" type="button" id="logout" href="#" data-bs-toggle="modal"
+  data-bs-target="#logoutModal">
+  <p id="logouttext">Logout</p>
+</a>
 {% endblock %} {% block content %}
 <style type="text/css">
   .circle {
@@ -60,198 +53,132 @@
         <h1 id="user_name" class="mt-2 mb-3">{{user['username']}}</h1>
       </div>
 
-      <ul
-        class="nav flex-column nav-pills d-flex align-items-center"
-        id="dashboard-tab"
-        role="tablist"
-      >
+      <ul class="nav flex-column nav-pills d-flex align-items-center" id="dashboard-tab" role="tablist">
         <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
-          <button
-            class="nav-link btn btn-dash"
-            id="gallery-btn"
-            type="button"
-            style="background-color: #c6dcc4; color: black"
-            onclick="location.href='/gallery'"
-        >
+          <button class="nav-link btn btn-dash" id="gallery-btn" type="button"
+            style="background-color: #c6dcc4; color: black" onclick="location.href='/gallery'">
             Gallery
-            <img
-              src="{{ url_for('static', filename='images/gallery.svg') }}"
-              class="sign-up-icon"
-            />
+            <img src="{{ url_for('static', filename='images/gallery.svg') }}" class="sign-up-icon" />
           </button>
         </li>
         <br />
         <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
-          <button
-            class="nav-link btn btn-dash"
-            id="upload-btn"
-            type="button"
-            style="background-color: #c6dbcb; color: black"
-            onclick="location.href='/upload'"
-          >
+          <button class="nav-link btn btn-dash" id="upload-btn" type="button"
+            style="background-color: #c6dbcb; color: black" onclick="location.href='/upload'">
             Upload
-            <img
-              src="{{ url_for('static', filename='images/upload.svg') }}"
-              class="sign-up-icon"
-            />
+            <img src="{{ url_for('static', filename='images/upload.svg') }}" class="sign-up-icon" />
           </button>
         </li>
         <br />
         <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
-          <button
-            class="nav-link btn btn-dash"
-            id="stats-tab"
-            style="background-color: #c9dbda; color: black"
-            data-bs-toggle="tab"
-            data-bs-target="#stats"
-            type="button"
-            role="tab"
-          >
+          <button class="nav-link btn btn-dash" id="stats-tab" style="background-color: #c9dbda; color: black"
+            data-bs-toggle="tab" data-bs-target="#stats" type="button" role="tab">
             Stats
-            <img
-              src="{{ url_for('static', filename='images/share.svg') }}"
-              class="sign-up-icon"
-            />
+            <img src="{{ url_for('static', filename='images/share.svg') }}" class="sign-up-icon" />
           </button>
         </li>
         <br />
         <li class="nav-item d-grid my-3" role="presentation" style="width: 80%">
-          <button
-            class="nav-link btn btn-dash"
-            id="profile-tab"
-            style="background-color: #c9dbdf; color: black"
-            data-bs-toggle="tab"
-            data-bs-target="#profile"
-            type="button"
-            role="tab"
-          >
+          <button class="nav-link btn btn-dash" id="profile-tab" style="background-color: #c9dbdf; color: black"
+            data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
             Edit Profile
-            <img
-              src="{{ url_for('static', filename='images/person_2.svg') }}"
-              class="sign-up-icon"
-            />
+            <img src="{{ url_for('static', filename='images/person_2.svg') }}" class="sign-up-icon" />
           </button>
         </li>
         <br />
       </ul>
     </div>
-            <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
-                <div class="tab-pane fade active show" id="stats" role="tabpanel">
-                    <br>
-                    <h1 class="text-center">Stats</h1>
-                    <div class="row">
-                        <div class="col">
-                            <h3>Total Scans:</h3>
-                            <p>{{allTimeStats['totalScans']}}</p>
-                        </div>
-                        <div class="col">
-                            <h3>Pending Scans:</h3>
-                            <p>{{allTimeStats['pendingScans']}}</p>
-                        </div>
-                        <div class="col">
-                            <h3>Resolved Scans:</h3>
-                            <p>{{allTimeStats['resolvedScans']}}</p>
-                        </div>
-                        <div class="col">
-                            <h3>Upvotes:</h3>
-                            <p>{{allTimeStats['upvotes']}}</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <canvas id="totalScansLine" style="width:100%;max-width:600px"></canvas>
-                        </div>
-                        <div class="col">
-                            <canvas id="scansFreqScatter" style="width:100%;max-width:600px"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="profile" role="tabpanel">
-                    <br>
-                    <h1 class="text-center">Change Your Account Info</h1>
-                    <div id="vue-app-dash">
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        <h5 class="modal-title" id="loginModalLabel">Are you sure?</h5>
-                                        <p>This action is irreversable</p>
-                                        <button @click="deleteAcc()"type="button" class="btn btn-danger">Delete Account</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-
-                                    </div>
-                                </div>
-                            </div>
-    
-                            <label for="username-input">Change Username</label><br>
-                            <input id="username-input" type="text" v-model="username" class="form-control">
-                            <p id="username-input-Msg" style="color:red;"></p>
-    
-                            <button @click="changeUser()" class="submitBtn">Submit</button>
-                            <br>
-    
-                            <hr style="border:2px solid black; opacity:0.6;">
-    
-                            <label for="oldPass-input">Current Password</label><br>
-                            <input id="oldPass-input" type="password" v-model="oldPass" class="form-control">
-                            <p id="oldPass-input-Msg" style="color:red;"></p>
-    
-                            <label for="newPass-input">New Password</label><br>
-                            <input id="newPass-input" type="password" v-model="newPass" class="form-control">
-                            <p id="newPass-input-Msg" style="color:red;"></p>
-    
-                            <label for="confirmPass-input">Confirm New Password</label><br>
-                            <input id="confirmPass-input" type="password" v-model="confirmPass" class="form-control">
-                            <p id="confirmPass-input-Msg" style="color:red;"></p>
-    
-                            <button @click="changePass()" class="submitBtn">Submit</button>
-    
-                            <hr style="border:2px solid black; opacity:0.6;">
-    
-                            <button data-bs-toggle="modal" data-bs-target="#deleteModal" class="submitBtn" style="background:red; width:9em;">Delete Account</button>
-                        </div>
-    
-              </div>
-    
-              <div
-                class="modal fade"
-                id="deleteModal"
-                tabindex="-1"
-                aria-labelledby="deleteModalLabel"
-                aria-hidden="true"
-              >
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-body">
-                      <h5 class="modal-title" id="loginModalLabel">
-                        Are you sure?
-                      </h5>
-                      <p>This action is irreversable</p>
-                      <button
-                        @click="deleteAcc()"
-                        type="button"
-                        class="btn btn-danger"
-                      >
-                        Delete Account
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                      >
-                        Cancel
-                      </button>
-    
-                    </div>
-
+    <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
+      <div class="tab-pane fade active show" id="stats" role="tabpanel">
+        <br>
+        <h1 class="text-center">Stats</h1>
+        <div class="row">
+          <div class="col">
+            <h3>Total Scans:</h3>
+            <p>{{allTimeStats['totalScans']}}</p>
           </div>
+          <div class="col">
+            <h3>Pending Scans:</h3>
+            <p>{{allTimeStats['pendingScans']}}</p>
+          </div>
+          <div class="col">
+            <h3>Resolved Scans:</h3>
+            <p>{{allTimeStats['resolvedScans']}}</p>
+          </div>
+          <div class="col">
+            <h3>Upvotes:</h3>
+            <p>{{allTimeStats['upvotes']}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <canvas id="totalScansLine" style="width:100%;max-width:600px"></canvas>
+          </div>
+          <!-- <div class="col">
+                            <canvas id="scansFreqScatter" style="width:100%;max-width:600px"></canvas>
+                        </div> -->
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="profile" role="tabpanel">
+        <br>
+        <h1 class="text-center">Change Your Account Info</h1>
+        <div id="vue-app-dash">
+          <label for="username-input">Change Username</label><br>
+          <input id="username-input" type="text" v-model="username" class="form-control">
+          <p id="username-input-Msg" style="color:red;"></p>
+
+          <button @click="changeUser()" class="submitBtn">Submit</button>
+          <br>
+
+          <hr style="border:2px solid black; opacity:0.6;">
+
+          <label for="oldPass-input">Current Password</label><br>
+          <input id="oldPass-input" type="password" v-model="oldPass" class="form-control">
+          <p id="oldPass-input-Msg" style="color:red;"></p>
+
+          <label for="newPass-input">New Password</label><br>
+          <input id="newPass-input" type="password" v-model="newPass" class="form-control">
+          <p id="newPass-input-Msg" style="color:red;"></p>
+
+          <label for="confirmPass-input">Confirm New Password</label><br>
+          <input id="confirmPass-input" type="password" v-model="confirmPass" class="form-control">
+          <p id="confirmPass-input-Msg" style="color:red;"></p>
+
+          <button @click="changePass()" class="submitBtn">Submit</button>
+
+          <hr style="border:2px solid black; opacity:0.6;">
+
+          <button data-bs-toggle="modal" data-bs-target="#deleteModal" class="submitBtn"
+            style="background:red; width:9em;">Delete Account</button>
+
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <h5 class="modal-title" id="loginModalLabel">
+                      Are you sure?
+                    </h5>
+                    <p>This action is irreversable</p>
+                    <button @click="deleteAcc()" type="button" class="btn btn-danger">
+                      Delete Account
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                      Cancel
+                    </button>
+        
+                  </div>
+        
+                </div>
+              </div>
+            </div>
+        </div>
       </div>
     </div>
   </div>
 </main>
 {% endblock %} {% block scripts %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
 <script type="text/javascript">
   var app = new Vue({
@@ -273,7 +200,7 @@
         var name = document.getElementById("user_name");
 
         clearMsgs();
-        
+
         if (this.username === "" || this.username === " ") {
           usernameMsg.textContent = "Invalid username";
         } else {
@@ -337,25 +264,27 @@
           });
         }
       },
-      deleteAcc(){
+      deleteAcc() {
+        console.log("apple");
         $.ajax({
-            type: 'POST',
-            url: '/main',
-            data: JSON.stringify({
-                "requestType": "deleteAccount",
-            }),
+          type: 'POST',
+          url: '/main',
+          data: JSON.stringify({
+            "requestType": "deleteAccount",
+          }),
 
-            contentType: "application/json",
-            dataType: "json"
-        }).done(function(response) {
-            window.location.replace('/logout?type=deleteAccount');
-    
+          contentType: "application/json",
+          dataType: "json"
+        }).done(function (response) {
+          window.location.replace('/logout?type=deleteAccount');
+
         });
-    },
-    }});
-    function showAlert(msg){
-        var alert = document.getElementById("alert-msg");
-            alert.innerHTML = `
+      },
+    }
+  });
+  function showAlert(msg) {
+    var alert = document.getElementById("alert-msg");
+    alert.innerHTML = `
             <div class="alert alert-success d-flex justify-content-between alert-dismissible show" style="height: 60px;" role="alert">
                 <p>${msg}</p>
                 <button type="button" style="padding: 0 0.5rem;" class="btn btn-danger close" data-bs-dismiss="alert">
@@ -365,17 +294,36 @@
                     </svg>
                 </button>
             </div>`
-    }
-    function clearMsgs(){
-        var usernameMsg = document.getElementById("username-input-Msg");
-        var oldPassMsg = document.getElementById("oldPass-input-Msg");
-        var newPassMsg = document.getElementById("newPass-input-Msg");
-        var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
-        var messages = [usernameMsg, oldPassMsg, newPassMsg, confirmPassMsg];
-        messages.forEach(function(element) {
-            element.textContent="";
-        })
-    }
+  }
+  function clearMsgs() {
+    var usernameMsg = document.getElementById("username-input-Msg");
+    var oldPassMsg = document.getElementById("oldPass-input-Msg");
+    var newPassMsg = document.getElementById("newPass-input-Msg");
+    var confirmPassMsg = document.getElementById("confirmPass-input-Msg");
+    var messages = [usernameMsg, oldPassMsg, newPassMsg, confirmPassMsg];
+    messages.forEach(function (element) {
+      element.textContent = "";
+    })
+  }
+</script>
+<script type="text/javascript">
+  var allTimeStats = JSON.parse('{{allTimeStats|tojson}}');
+  console.log(allTimeStats);
+  //Need date range for x values
+  xValues = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140]
+  yValues = [1, allTimeStats['totalScans']]
+  var totalScansLine = new Chart("totalScansLine", {
+    type: "line",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: "rgba(0,0,0,1.0)",
+        borderColor: "rgba(0,0,0,0.1)",
+        data: yValues
+      }]
+    },
+    options: {}
+  });
 </script>
 <!-- <script type="text/javascript">
     function createLine(element, timeSpan){
@@ -415,7 +363,7 @@
         });
     }
 </script> -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 {% endblock %}
-
