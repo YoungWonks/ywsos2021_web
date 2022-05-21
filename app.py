@@ -1,3 +1,4 @@
+import base64
 from flask import Flask, render_template, jsonify, request, redirect, session, abort, flash
 from flask_session import Session
 from flask_pymongo import PyMongo
@@ -128,7 +129,7 @@ def create_rep(r, user):
     scanUser = db.users.find_one({"_id": bson.ObjectId(r['u_id'])})
     if (scanUser is not None):
         reps = {
-            "url":      '/static/images/scans/'+r['filename'],
+            "url":      r['filename'],
             "scandate": timeago.format(r['scandate'], datetime.utcnow()),
             "position": r['position'],
             "city":     r['city'],
@@ -190,7 +191,7 @@ def upload(user_id):
 @login_required
 def forum(user_id):
     scans = db["scans"]
-    result = scans.find({},{"_id":0}).sort([('upvote', pymongo.DESCENDING)])
+    result = scans.find({}, {"_id": 0}).sort([('upvote', pymongo.DESCENDING)])
     return render_template('forum.html', result=list(result))
 
 
@@ -221,6 +222,7 @@ def contact():
 def gallery(user_id):
     return render_template('gallery.html')
 
+
 @app.route('/main', methods=['GET', 'POST'])
 @login_required
 def main(user_id):
@@ -237,10 +239,10 @@ def main(user_id):
         #     pendingScans+=1
         # elif scan['status'] == 'resolved':
         #     resolvedScans+=1
-        aUpvotes+=len(scan['vote_users'])
+        aUpvotes += len(scan['vote_users'])
 
-    allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes}
-        
+    allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans,
+                    'resolvedScans': aResolvedScans, 'upvotes': aUpvotes}
 
     if request.method == "POST":
         requestType = request.get_json()['requestType']
@@ -249,7 +251,7 @@ def main(user_id):
             newPassword = request.get_json()['newPass']
             if pbkdf2_sha256.verify(oldPassword, user['password_hash']):
                 users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {
-                '$set': {'password_hash': pbkdf2_sha256.hash(newPassword)}})
+                    '$set': {'password_hash': pbkdf2_sha256.hash(newPassword)}})
                 return jsonify({"error": "0", "message": "Password Successfully Changed"})
             else:
                 return jsonify({"error": "1", "message": "Current Password Does Not Match With Database", "type": "oldPass"})
@@ -260,7 +262,7 @@ def main(user_id):
                 return jsonify({"error": "1", "message": "Username Already Exists"})
             else:
                 users.update_one({'_id': bson.ObjectId(session['logged_in_id'])}, {
-                '$set': {'username': username}})
+                    '$set': {'username': username}})
                 return jsonify({"error": "0", "message": "Username Successfully Changed"})
 
         elif requestType == "deleteAccount":
@@ -328,7 +330,7 @@ def logout(u_is):
     if "type" in request.args:
         if request.args['type'] == 'deleteAccount':
             flash("Account Successfully Deleted", category="success")
-        
+
     session['logged_in'] = False
     session['logged_in_id'] = ''
     return redirect('/')
@@ -337,6 +339,7 @@ def logout(u_is):
 @app.errorhandler(404)
 def pagenotfound(errorcode):
     return render_template("error.html", errorCode=404, errorMsg="Page not found"), 404
+
 
 @app.route("/admin")
 @login_required
@@ -586,10 +589,9 @@ def api_find_gallery(userId):
 @token_required
 def api_upload(userId):
     f = request.files['image']
-    # for now it is saving as a jpeg but that will be changed
-    filename = secure_filename(str(uuid4())+".jpeg")
-    f.save(os.path.join('static/images/scans/', filename))
-    return {"error": "0", "filename": filename, }
+    base64_string = "data:image/png;base64," + \
+        str(base64.b64encode(f.read()).decode('utf-8'))
+    return {"error": "0", "filename": base64_string}
 
 
 @app.route('/api/scans/add', methods=["POST"])
@@ -640,13 +642,15 @@ def api_add(userId):
     })
     return jsonify({"error": "0", "message": "Succesful", })
 
+
 @app.route("/api/scans/update", methods=["POST"])
 @token_required
 def scans_update(uid):
     id_scan = bson.ObjectId(request.get_json().get('scan_id'))
     db.scans.update_one({'_id': bson.ObjectId(id_scan)}, {
-                '$set': {"status": True}})
+        '$set': {"status": True}})
     return jsonify({"error": 0, "message": "Successful"})
+
 
 @app.route('/api/wel', methods=['POST'])
 @token_required
