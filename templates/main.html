@@ -308,9 +308,10 @@
 </script>
 <script type="text/javascript">
   var allTimeStats = JSON.parse('{{allTimeStats|tojson}}');
+  var yearFrame = [Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec];
   console.log(allTimeStats);
   //Need date range for x values
-  xValues = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140]
+  xValues = []
   yValues = [1, allTimeStats['totalScans']]
   var totalScansLine = new Chart("totalScansLine", {
     type: "line",

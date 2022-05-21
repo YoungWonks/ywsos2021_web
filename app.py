@@ -22,6 +22,7 @@ import timeago
 from werkzeug.utils import safe_join
 import hashlib
 import contextlib
+import datetime
 
 
 class AddStaticFileHashFlask(Flask):
@@ -226,20 +227,29 @@ def gallery(user_id):
 def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
-    scans = list(db.scans.find({'u_id': session['logged_in_id']}))
+    scans = list(db.scans.find({'u_id': session['logged_in_id']}).sort("scandate", 1))
     aTotalScans = len(scans)
     aPendingScans = 0
     aResolvedScans = 0
     aUpvotes = 0
+    firstScanDate = datetime.datetime.strptime(scans[0]["scandate"], '%Y-%m-%d %H:%M:%S.%f')
+    for scan in scans:
+        date_time_str = scan['scandate']
+        date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S.%f')
+        
+        if date_time_obj.year==datetime.now.year:
+            pass
+
 
     for scan in scans:
-        # if scan['status'] == 'pending': ### Status function currently unavailable
-        #     pendingScans+=1
-        # elif scan['status'] == 'resolved':
-        #     resolvedScans+=1
+        if scan['status'] == False:
+            aPendingScans+=1
+        elif scan['status'] == True:
+            aResolvedScans+=1
         aUpvotes+=len(scan['vote_users'])
+    print(scans)
 
-    allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes}
+    allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
     # Need to find first post date
 
     if request.method == "POST":
