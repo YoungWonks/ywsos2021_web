@@ -22,7 +22,6 @@ import timeago
 from werkzeug.utils import safe_join
 import hashlib
 import contextlib
-import datetime
 
 
 class AddStaticFileHashFlask(Flask):
@@ -148,6 +147,17 @@ def create_rep(r, user):
             reps["description"] = r["des"]
         return reps
 
+#########Checking Scan Status###########################################
+
+
+def check_scan_status(status, resolved, pending):
+    if status:
+        print("Scan Resolved", status)
+        return resolved+1, pending
+    else:
+        print("Scan Pending", status)
+        return resolved, pending+1
+
 ########################################################################
 #########################Forms##########################################
 ########################################################################
@@ -227,29 +237,53 @@ def gallery(user_id):
 def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
-    scans = list(db.scans.find({'u_id': session['logged_in_id']}).sort("scandate", 1))
-    aTotalScans = len(scans)
+    scans = list(db.scans.find({'u_id': session['logged_in_id']}).sort("scandate", 1)) #Gets list of all scans from user in date order (oldest-->newest)
+    today = datetime.now()
+    aTotalScans = len(scans) #All Time Stats
     aPendingScans = 0
     aResolvedScans = 0
     aUpvotes = 0
-    firstScanDate = datetime.datetime.strptime(scans[0]["scandate"], '%Y-%m-%d %H:%M:%S.%f')
+    firstScanDate = scans[0]["scandate"].strftime('%Y-%m-%d')
+    yTotalScans = 0 #Yearly Stats
+    yPendingScans = 0
+    yResolvedScans = 0
+    yUpvotes = 0
+    mTotalScans = 0 #Monthly Stats
+    mPendingScans = 0
+    mResolvedScans = 0
+    mUpvotes = 0
+    print("First", firstScanDate)
     for scan in scans:
+        scan_upvotes = len(scan['vote_users'])
+        scan_status = scan['status']
         date_time_str = scan['scandate']
-        date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S.%f')
-        
-        if date_time_obj.year==datetime.now.year:
-            pass
+        date_time_obj = date_time_str.strftime('%Y-%m-%d')
+        date_time_obj_list = date_time_obj.split("-") #Scan in list form - [Year,Month,Day]
+        print("Apple", date_time_obj)
+        print("Year of scan: ",date_time_obj_list[0])
+        print("Current Year:", datetime.now().strftime('%Y'))
 
-
-    for scan in scans:
-        if scan['status'] == False:
-            aPendingScans+=1
-        elif scan['status'] == True:
-            aResolvedScans+=1
-        aUpvotes+=len(scan['vote_users'])
-    print(scans)
+        aUpvotes+=scan_upvotes
+        if date_time_obj_list[0]==today.strftime('%Y'): #Finding if scan in current year (Scan Year == Current Year?)
+            yTotalScans+=1
+            yUpvotes+=scan_upvotes
+            if date_time_obj_list[1]==today.strftime('%m'): #Finding if scan in current month (Scan Month == Current Month?)
+                mTotalScans+=1
+                mUpvotes+=scan_upvotes
+                print("In this Month", scan)
+                aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
+                yResolvedScans, yPendingScans = check_scan_status(scan_status, yResolvedScans, yPendingScans)
+                mResolvedScans, mPendingScans = check_scan_status(scan_status, mResolvedScans, mPendingScans)
+            else:
+                aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
+                yResolvedScans, yPendingScans = check_scan_status(scan_status, yResolvedScans, yPendingScans)
+        else:
+            aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
+    print("Scans", scans)
 
     allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
+    yearStats = {'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
+    monthStats = {'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
     # Need to find first post date
 
     if request.method == "POST":
