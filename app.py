@@ -243,7 +243,7 @@ def main(user_id):
     aPendingScans = 0
     aResolvedScans = 0
     aUpvotes = 0
-    firstScanDate = scans[0]["scandate"].strftime('%Y-%m-%d')
+    firstScanDate = scans[0]["scandate"].strftime('%Y-%B-%d').split("-")
     yTotalScans = 0 #Yearly Stats
     yPendingScans = 0
     yResolvedScans = 0
@@ -257,7 +257,7 @@ def main(user_id):
         scan_upvotes = len(scan['vote_users'])
         scan_status = scan['status']
         date_time_str = scan['scandate']
-        date_time_obj = date_time_str.strftime('%Y-%m-%d')
+        date_time_obj = date_time_str.strftime('%Y-%B-%d')
         date_time_obj_list = date_time_obj.split("-") #Scan in list form - [Year,Month,Day]
         print("Apple", date_time_obj)
         print("Year of scan: ",date_time_obj_list[0])
@@ -267,7 +267,7 @@ def main(user_id):
         if date_time_obj_list[0]==today.strftime('%Y'): #Finding if scan in current year (Scan Year == Current Year?)
             yTotalScans+=1
             yUpvotes+=scan_upvotes
-            if date_time_obj_list[1]==today.strftime('%m'): #Finding if scan in current month (Scan Month == Current Month?)
+            if date_time_obj_list[1]==today.strftime('%B'): #Finding if scan in current month (Scan Month == Current Month?)
                 mTotalScans+=1
                 mUpvotes+=scan_upvotes
                 print("In this Month", scan)
@@ -310,7 +310,7 @@ def main(user_id):
         elif requestType == "deleteAccount":
             users.delete_one(user)
             return jsonify({"error": "0", "message": "Account Successfully Deleted"})
-    return render_template("main.html", user=user, scans=scans, allTimeStats=allTimeStats)
+    return render_template("main.html", user=user, scans=scans, allTimeStats=allTimeStats, yearStats=yearStats, monthStats=monthStats)
 
 
 @app.route('/login', methods=['GET', 'POST'])

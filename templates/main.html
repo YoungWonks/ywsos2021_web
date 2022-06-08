@@ -307,7 +307,12 @@
   }
 </script>
 <script type="text/javascript">
-  var allTimeStats = JSON.parse('{{allTimeStats|tojson}}');
+  allTimeStats = JSON.parse('{{allTimeStats|tojson|safe}}');
+  yearStats = JSON.parse('{{yearStats|tojson|safe}}');
+  monthStats = JSON.parse('{{monthStats|tojson|safe}}');
+  // var allTimeStats = JSON.parse(allTimeStats);
+  // var yearStats = JSON.parse(yearStats);
+  // var monthStats = JSON.parse($(monthStats));
   var yearFrame = [Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec];
   console.log(allTimeStats);
   //Need date range for x values
