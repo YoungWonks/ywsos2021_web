@@ -314,19 +314,19 @@
   todayDate = JSON.parse('{{todayDate|tojson|safe}}')
   monthDays = JSON.parse('{{monthDays|tojson|safe}}')
 
-  var allTimeFrame = {}
+  // var allTimeFrame = {}
   var yearFrame = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var monthFrame = [];
   
-  var increments = ((todayDate[0]-firstScanDate[0])+1)*12
-  var iChanges = 12-firstScanDate[1]
-  var iYearAdd = 0
-  for (var m=0; m<increments; m++){
-    if (m%12 == 0 && m!=0){
-      iYearAdd++;
-    }
-    allTimeFrame[(parseInt(firstScanDate[0])+iYearAdd).toString()+"-"+yearFrame[m%12]] = 0;
-  }
+  // var increments = ((todayDate[0]-firstScanDate[0])+1)*12
+  // var iChanges = 12-firstScanDate[1]
+  // var iYearAdd = 0
+  // for (var m=0; m<increments; m++){
+  //   if (m%12 == 0 && m!=0){
+  //     iYearAdd++;
+  //   }
+  //   allTimeFrame[(parseInt(firstScanDate[0])+iYearAdd).toString()+"-"+yearFrame[m%12]] = 0;
+  // }
 
   for (var i=0; i<monthDays; i++){
     monthFrame.push(i+1);

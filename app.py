@@ -152,11 +152,23 @@ def create_rep(r, user):
 
 def check_scan_status(status, resolved, pending):
     if status:
-        print("Scan Resolved", status)
         return resolved+1, pending
     else:
-        print("Scan Pending", status)
         return resolved, pending+1
+
+#########Finding Number of Days In Month################################
+
+
+def find_days_month(month, year):
+    if month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12:
+        return 31
+    elif month == 4 or month == 6 or month == 9 or month == 11:
+        return 30
+    else:
+        if (year%4 == 0 and year%100 != 0) or (year%400 == 0): #If year is leapyear
+            return 29
+        else:
+            return 28
 
 ########################################################################
 #########################Forms##########################################
@@ -239,9 +251,20 @@ def main(user_id):
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     scans = list(db.scans.find({'u_id': session['logged_in_id']}).sort("scandate", 1)) #Gets list of all scans from user in date order (oldest-->newest)
     
-    today = datetime.utcnow().strftime('%Y-%B-%d').split("-")
-    monthDays = 31
-
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    today = datetime.utcnow().strftime('%Y-%m-%d').split("-")
+    thisYear=int(today[0])
+    thisMonth=int(today[1])
+    thisDay=int(today[2])
+    lastYear=thisYear-1
+    if thisMonth-1 == 0:
+        lastMonth = 12
+        lastMonthDays = find_days_month(lastMonth,lastYear)
+    else:
+        lastMonth = thisMonth-1
+        lastMonthDays = find_days_month(lastMonth,thisYear)
+    thisMonthDays = find_days_month(thisMonth,thisYear)
+    
     aTotalScans = len(scans) #All Time Stats
     aPendingScans = 0
     aResolvedScans = 0
@@ -257,54 +280,76 @@ def main(user_id):
     mPendingScans = 0
     mResolvedScans = 0
     mUpvotes = 0
+
+    lyTotalScans = 0 #Last Yearly Stats
+    lyPendingScans = 0
+    lyResolvedScans = 0
+    lyUpvotes = 0
+
+    lmTotalScans = 0 #Last Monthly Stats
+    lmPendingScans = 0
+    lmResolvedScans = 0
+    lmUpvotes = 0
     
     allTimeFrame = {}
-    yearFrame = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    monthFrame = []
+    thisYearFrame = {}
+    lastYearFrame = {}
+    thisMonthFrame = {}
+    lastMonthFrame = {}
 
-    increments = ((today[0]-firstScanDate[0])+1)*12
-    iBlankPrevious = 12-firstScanDate[1]
-    iBlankFuture = 12-today[1]
+    increments = ((int(today[0])-int(firstScanDate[0]))+1)*12
+    #iBlankPrevious = 12-int(firstScanDate[1])
+    #iBlankFuture = 12-int(today[1])
     iYearAdd = 0
     for i in range (increments):
         if i%12 == 0 and i!=0:
             iYearAdd+=1
-        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)+"-"+yearFrame[m%12]] = 0
-    print(allTimeFrame)
+        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)+"-"+months[i%12]] = 0
 
-    if today[1] == 1 or today[1] == 3 or today[1] == 5 or today[1] == 7 or today[1] == 8 or today[1] == 10 or today[1] == 12:
-        monthDays = 31
-    elif today[1] == 4 or today[1] == 6 or today[1] == 9 or today[1] == 11:
-        monthDays = 30
-    else:
-        if (int(today[0])%4 == 0 and int(today[0])%100 != 0) or (int(today[0])%400 == 0): #If year is leapyear
-            monthDays = 29
-        else:
-            monthDays = 28
+    for month in months:
+        thisYearFrame[month] = 0
+        lastYearFrame[month] = 0
+
+    for day in range(thisMonthDays):
+        thisMonthFrame[day] = 0
+
+    for day in range(lastMonthDays):
+        lastMonthFrame[day] = 0
 
     for scan in scans:
         scan_upvotes = len(scan['vote_users'])
         scan_status = scan['status']
-        date_time_str = scan['scandate']
-        date_time_obj = date_time_str.strftime('%Y-%m-%d')
-        date_time_obj_list = date_time_obj.split("-") #Scan in list form - [Year,Month,Day]
+        date_time_obj_list = scan['scandate'].strftime('%Y-%m-%d').split("-") #Scan in list form - [Year,Month,Day]
+        scan_year = int(date_time_obj_list[0])
+        scan_month = int(date_time_obj_list[1])
+        scan_day = int(date_time_obj_list[2])
 
         aUpvotes+=scan_upvotes
-        if date_time_obj_list[0]==today[0]: #Finding if scan in current year (Scan Year == Current Year?)
+
+        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)+"-"+months[int(date_time_obj_list[1])-1]]+=1
+
+        if scan_year==thisYear: #Finding if scan in current year
             yTotalScans+=1
             yUpvotes+=scan_upvotes
-            if date_time_obj_list[1]==today[1]: #Finding if scan in current month (Scan Month == Current Month?)
+            thisYearFrame[scan_month-1]+=1
+            if scan_month==thisMonth: #Finding if scan in current month
                 mTotalScans+=1
                 mUpvotes+=scan_upvotes
-                aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
-                yResolvedScans, yPendingScans = check_scan_status(scan_status, yResolvedScans, yPendingScans)
+                thisMonthFrame[scan_day]+=1
                 mResolvedScans, mPendingScans = check_scan_status(scan_status, mResolvedScans, mPendingScans)
-            else:
-                aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
-                yResolvedScans, yPendingScans = check_scan_status(scan_status, yResolvedScans, yPendingScans)
-        else:
-            aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
-
+            elif scan_month==lastMonth: #Finding if scan in last month
+                lmTotalScans+=1
+                lmUpvotes+=scan_upvotes
+                lastMonthFrame[scan_day]+=1
+                lmResolvedScans, lmPendingScans = check_scan_status(scan_status, lmResolvedScans, lmPendingScans)
+            yResolvedScans, yPendingScans = check_scan_status(scan_status, yResolvedScans, yPendingScans)
+        elif scan_year==lastYear: #Finding if scan in last year
+            lyTotalScans+=1
+            lyUpvotes+=scan_upvotes
+            lastYearFrame[months[scan_month-1]]+=1
+            lyResolvedScans, lyPendingScans = check_scan_status(scan_status, lyResolvedScans, lyPendingScans)
+        aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
+    print(allTimeFrame)
     allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
     yearStats = {'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
     monthStats = {'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
