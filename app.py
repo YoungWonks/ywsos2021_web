@@ -259,9 +259,11 @@ def main(user_id):
     lastYear=thisYear-1
     if thisMonth-1 == 0:
         lastMonth = 12
+        print("last month last year")
         lastMonthDays = find_days_month(lastMonth,lastYear)
     else:
         lastMonth = thisMonth-1
+        print("lastMonth this year")
         lastMonthDays = find_days_month(lastMonth,thisYear)
     thisMonthDays = find_days_month(thisMonth,thisYear)
     
@@ -311,10 +313,10 @@ def main(user_id):
         lastYearFrame[month] = 0
 
     for day in range(thisMonthDays):
-        thisMonthFrame[day] = 0
+        thisMonthFrame[day+1] = 0
 
     for day in range(lastMonthDays):
-        lastMonthFrame[day] = 0
+        lastMonthFrame[day+1] = 0
 
     for scan in scans:
         scan_upvotes = len(scan['vote_users'])
@@ -326,12 +328,12 @@ def main(user_id):
 
         aUpvotes+=scan_upvotes
 
-        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)+"-"+months[int(date_time_obj_list[1])-1]]+=1
+        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)+"-"+months[scan_month-1]]+=1
 
         if scan_year==thisYear: #Finding if scan in current year
             yTotalScans+=1
             yUpvotes+=scan_upvotes
-            thisYearFrame[scan_month-1]+=1
+            thisYearFrame[months[scan_month-1]]+=1
             if scan_month==thisMonth: #Finding if scan in current month
                 mTotalScans+=1
                 mUpvotes+=scan_upvotes
@@ -349,12 +351,17 @@ def main(user_id):
             lastYearFrame[months[scan_month-1]]+=1
             lyResolvedScans, lyPendingScans = check_scan_status(scan_status, lyResolvedScans, lyPendingScans)
         aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
-    print(allTimeFrame)
-    allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
-    yearStats = {'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
-    monthStats = {'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
+    allTimeStats = {'allTimeFrame': allTimeFrame, 'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
+    thisYearStats = {'thisYearFrame': thisYearFrame, 'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
+    lastYearStats = {'lastYearFrame': lastYearFrame, 'totalScans': lyTotalScans, 'pendingScans': lyPendingScans, 'resolvedScans': lyResolvedScans, 'upvotes': lyUpvotes}
+    thisMonthStats = {'thisMonthFrame': thisMonthFrame, 'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
+    lastMonthStats = {'lastMonthFrame': lastMonthFrame, 'totalScans': lmTotalScans, 'pendingScans': lmPendingScans, 'resolvedScans': lmResolvedScans, 'upvotes': lmUpvotes}
     # Need to find first post date
-
+    print("allTimeStats: ", allTimeStats)
+    print("thisYearStats: ", thisYearStats)
+    print("lastYearStats: ", lastYearStats)
+    print("thisMonthStats: ", thisMonthStats)
+    print("lastMonthStats: ", lastMonthStats)
     if request.method == "POST":
         requestType = request.get_json()['requestType']
         if requestType == "changePassword":
@@ -379,7 +386,7 @@ def main(user_id):
         elif requestType == "deleteAccount":
             users.delete_one(user)
             return jsonify({"error": "0", "message": "Account Successfully Deleted"})
-    return render_template("main.html", user=user, scans=scans, todayDate=today, monthDays=monthDays, allTimeStats=allTimeStats, yearStats=yearStats, monthStats=monthStats)
+    return render_template("main.html", user=user, scans=scans, todayDate=today, allTimeStats=allTimeStats, thisYearStats=thisYearStats, lastYearStats=lastYearStats, thisMonthStats=thisMonthStats, lastMonthStats=lastMonthStats)
 
 
 @app.route('/login', methods=['GET', 'POST'])
