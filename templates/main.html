@@ -112,7 +112,7 @@
         </div>
         <div class="row">
           <div class="col">
-            <canvas id="totalScansLine" style="width:100%;max-width:600px"></canvas>
+            <canvas id="totalScansScatter" style="width:100%;"></canvas>
           </div>
           <!-- <div class="col">
                             <canvas id="scansFreqScatter" style="width:100%;max-width:600px"></canvas>
@@ -310,26 +310,47 @@
   allTimeStats = JSON.parse('{{allTimeStats|tojson|safe}}');
   yearStats = JSON.parse('{{yearStats|tojson|safe}}');
   monthStats = JSON.parse('{{monthStats|tojson|safe}}');
-  // var allTimeStats = JSON.parse(allTimeStats);
-  // var yearStats = JSON.parse(yearStats);
-  // var monthStats = JSON.parse($(monthStats));
-  var yearFrame = [Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec];
+  firstScanDate = allTimeStats['firstScanDate'];
+  todayDate = JSON.parse('{{todayDate|tojson|safe}}')
+  monthDays = JSON.parse('{{monthDays|tojson|safe}}')
+
+  var allTimeFrame = {}
+  var yearFrame = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var monthFrame = [];
+  
+  var increments = ((todayDate[0]-firstScanDate[0])+1)*12
+  var iChanges = 12-firstScanDate[1]
+  var iYearAdd = 0
+  for (var m=0; m<increments; m++){
+    if (m%12 == 0 && m!=0){
+      iYearAdd++;
+    }
+    allTimeFrame[(parseInt(firstScanDate[0])+iYearAdd).toString()+"-"+yearFrame[m%12]] = 0;
+  }
+
+  for (var i=0; i<monthDays; i++){
+    monthFrame.push(i+1);
+  }
+  console.log(allTimeFrame);
   console.log(allTimeStats);
+
   //Need date range for x values
-  xValues = []
-  yValues = [1, allTimeStats['totalScans']]
-  var totalScansLine = new Chart("totalScansLine", {
-    type: "line",
-    data: {
-      labels: xValues,
-      datasets: [{
-        backgroundColor: "rgba(0,0,0,1.0)",
-        borderColor: "rgba(0,0,0,0.1)",
-        data: yValues
-      }]
-    },
-    options: {}
-  });
+  // data: xyValues
+  // xValues = allTimeFrame
+  // yValues = [1,2,3,4,5,6,7,8,9,10,11,12]
+  // var totalScansLine = new Chart("totalScansScatter", {
+  //   type: "scatter",
+  //   data: {
+  //     datasets: [{
+  //       pointRadius: 4,
+  //       pointBackgroundColor: "rgb(0,0,255)",
+  //       data: xyValues
+  //     }]
+  //   },
+  //   options: {
+  //     maintainAspectRatio: false
+  //   }
+  // });
 </script>
 <!-- <script type="text/javascript">
     function createLine(element, timeSpan){

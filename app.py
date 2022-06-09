@@ -238,39 +238,64 @@ def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
     scans = list(db.scans.find({'u_id': session['logged_in_id']}).sort("scandate", 1)) #Gets list of all scans from user in date order (oldest-->newest)
-    today = datetime.now()
+    
+    today = datetime.utcnow().strftime('%Y-%B-%d').split("-")
+    monthDays = 31
+
     aTotalScans = len(scans) #All Time Stats
     aPendingScans = 0
     aResolvedScans = 0
     aUpvotes = 0
-    firstScanDate = scans[0]["scandate"].strftime('%Y-%B-%d').split("-")
+    firstScanDate = scans[0]["scandate"].strftime('%Y-%m-%d').split("-")
+    
     yTotalScans = 0 #Yearly Stats
     yPendingScans = 0
     yResolvedScans = 0
     yUpvotes = 0
+    
     mTotalScans = 0 #Monthly Stats
     mPendingScans = 0
     mResolvedScans = 0
     mUpvotes = 0
-    print("First", firstScanDate)
+    
+    allTimeFrame = {}
+    yearFrame = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    monthFrame = []
+
+    increments = ((today[0]-firstScanDate[0])+1)*12
+    iBlankPrevious = 12-firstScanDate[1]
+    iBlankFuture = 12-today[1]
+    iYearAdd = 0
+    for i in range (increments):
+        if i%12 == 0 and i!=0:
+            iYearAdd+=1
+        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)+"-"+yearFrame[m%12]] = 0
+    print(allTimeFrame)
+
+    if today[1] == 1 or today[1] == 3 or today[1] == 5 or today[1] == 7 or today[1] == 8 or today[1] == 10 or today[1] == 12:
+        monthDays = 31
+    elif today[1] == 4 or today[1] == 6 or today[1] == 9 or today[1] == 11:
+        monthDays = 30
+    else:
+        if (int(today[0])%4 == 0 and int(today[0])%100 != 0) or (int(today[0])%400 == 0): #If year is leapyear
+            monthDays = 29
+        else:
+            monthDays = 28
+
     for scan in scans:
         scan_upvotes = len(scan['vote_users'])
         scan_status = scan['status']
         date_time_str = scan['scandate']
-        date_time_obj = date_time_str.strftime('%Y-%B-%d')
+        date_time_obj = date_time_str.strftime('%Y-%m-%d')
         date_time_obj_list = date_time_obj.split("-") #Scan in list form - [Year,Month,Day]
-        print("Apple", date_time_obj)
-        print("Year of scan: ",date_time_obj_list[0])
-        print("Current Year:", datetime.now().strftime('%Y'))
 
         aUpvotes+=scan_upvotes
-        if date_time_obj_list[0]==today.strftime('%Y'): #Finding if scan in current year (Scan Year == Current Year?)
+        if date_time_obj_list[0]==today[0]: #Finding if scan in current year (Scan Year == Current Year?)
             yTotalScans+=1
             yUpvotes+=scan_upvotes
-            if date_time_obj_list[1]==today.strftime('%B'): #Finding if scan in current month (Scan Month == Current Month?)
+            if date_time_obj_list[1]==today[1]: #Finding if scan in current month (Scan Month == Current Month?)
                 mTotalScans+=1
                 mUpvotes+=scan_upvotes
-                print("In this Month", scan)
                 aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
                 yResolvedScans, yPendingScans = check_scan_status(scan_status, yResolvedScans, yPendingScans)
                 mResolvedScans, mPendingScans = check_scan_status(scan_status, mResolvedScans, mPendingScans)
@@ -279,7 +304,6 @@ def main(user_id):
                 yResolvedScans, yPendingScans = check_scan_status(scan_status, yResolvedScans, yPendingScans)
         else:
             aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
-    print("Scans", scans)
 
     allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
     yearStats = {'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
@@ -310,7 +334,7 @@ def main(user_id):
         elif requestType == "deleteAccount":
             users.delete_one(user)
             return jsonify({"error": "0", "message": "Account Successfully Deleted"})
-    return render_template("main.html", user=user, scans=scans, allTimeStats=allTimeStats, yearStats=yearStats, monthStats=monthStats)
+    return render_template("main.html", user=user, scans=scans, todayDate=today, monthDays=monthDays, allTimeStats=allTimeStats, yearStats=yearStats, monthStats=monthStats)
 
 
 @app.route('/login', methods=['GET', 'POST'])
