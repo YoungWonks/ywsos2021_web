@@ -91,33 +91,53 @@
     <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
       <div class="tab-pane fade active show" id="stats" role="tabpanel">
         <br>
-        <h1 class="text-center">Stats</h1>
         <div class="row">
           <div class="col">
-            <h3>Total Scans:</h3>
+            <h1 style="display:inline-block; vertical-align:top;">Stats</h1>
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="statsDropDownMenu" data-bs-toggle="dropdown">
+                All Time
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" onclick="changeStats(allTimeStats, 'All Time')">All Time</a></li>
+                <li><a class="dropdown-item" onclick="changeStats(thisYearStats, 'This Year')">This Year</a></li>
+                <li><a class="dropdown-item" onclick="changeStats(lastYearStats, 'Last Year')">Last Year</a></li>
+                <li><a class="dropdown-item" onclick="changeStats(thisMonthStats, 'This Month')">This Month</a></li>
+                <li><a class="dropdown-item" onclick="changeStats(lastMonthStats, 'Last Month')">Last Month</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <h3><b>Total Scans:</b></h3>
             <p>{{allTimeStats['totalScans']}}</p>
           </div>
           <div class="col">
-            <h3>Pending Scans:</h3>
+            <h3><b>Pending:</b></h3>
             <p>{{allTimeStats['pendingScans']}}</p>
           </div>
           <div class="col">
-            <h3>Resolved Scans:</h3>
+            <h3><b>Resolved:</b></h3>
             <p>{{allTimeStats['resolvedScans']}}</p>
           </div>
           <div class="col">
-            <h3>Upvotes:</h3>
+            <h3><b>Upvotes:</b></h3>
             <p>{{allTimeStats['upvotes']}}</p>
           </div>
         </div>
         <div class="row">
           <div class="col">
-            <canvas id="totalScansScatter" style="width:100%;"></canvas>
+            <h4>Total Scans:</h4>
+            <canvas id="totalScansGraph" style="width:50%; height:100px;"></canvas>
           </div>
-          <!-- <div class="col">
-                            <canvas id="scansFreqScatter" style="width:100%;max-width:600px"></canvas>
-                        </div> -->
         </div>
+        <!-- <div class="row">
+          <div class="col">
+            <h4>Total Upvotes:</h4>
+            <canvas id="totalUpvotesGraph" style="width:50%; height:100px;"></canvas>
+          </div>
+        </div> -->
       </div>
 
       <div class="tab-pane fade" id="profile" role="tabpanel">
@@ -308,89 +328,83 @@
 </script>
 <script type="text/javascript">
   allTimeStats = JSON.parse('{{allTimeStats|tojson|safe}}');
-  yearStats = JSON.parse('{{yearStats|tojson|safe}}');
-  monthStats = JSON.parse('{{monthStats|tojson|safe}}');
+  thisYearStats = JSON.parse('{{thisYearStats|tojson|safe}}');
+  lastYearStats = JSON.parse('{{lastYearStats|tojson|safe}}');
+  thisMonthStats = JSON.parse('{{thisMonthStats|tojson|safe}}');
+  lastMonthStats = JSON.parse('{{lastMonthStats|tojson|safe}}');
   firstScanDate = allTimeStats['firstScanDate'];
   todayDate = JSON.parse('{{todayDate|tojson|safe}}')
-  monthDays = JSON.parse('{{monthDays|tojson|safe}}')
 
-  // var allTimeFrame = {}
-  var yearFrame = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  var monthFrame = [];
+  console.log(thisYearStats);
   
-  // var increments = ((todayDate[0]-firstScanDate[0])+1)*12
-  // var iChanges = 12-firstScanDate[1]
-  // var iYearAdd = 0
-  // for (var m=0; m<increments; m++){
-  //   if (m%12 == 0 && m!=0){
-  //     iYearAdd++;
-  //   }
-  //   allTimeFrame[(parseInt(firstScanDate[0])+iYearAdd).toString()+"-"+yearFrame[m%12]] = 0;
-  // }
+  console.log(Object.keys(thisYearStats['dataset']))
 
-  for (var i=0; i<monthDays; i++){
-    monthFrame.push(i+1);
-  }
-  console.log(allTimeFrame);
-  console.log(allTimeStats);
+  console.log(allTimeStats['dataset']);
 
-  //Need date range for x values
-  // data: xyValues
-  // xValues = allTimeFrame
-  // yValues = [1,2,3,4,5,6,7,8,9,10,11,12]
-  // var totalScansLine = new Chart("totalScansScatter", {
-  //   type: "scatter",
-  //   data: {
-  //     datasets: [{
-  //       pointRadius: 4,
-  //       pointBackgroundColor: "rgb(0,0,255)",
-  //       data: xyValues
-  //     }]
-  //   },
-  //   options: {
-  //     maintainAspectRatio: false
-  //   }
-  // });
-</script>
-<!-- <script type="text/javascript">
-    function createLine(element, timeSpan){
-        if (timeSpan == "year-1"){
-            var labels = Utils.months({count: 12});
-            var data = {
-                labels: labels,
-                datasets: [{
-                label: '# of Scans',
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
-                data: [],
-                }]
-            }
-            var config = {
-                type: 'line',
-                data: data,
-                options: {}
-            };
-         };
-
-        new Chart("myChart", {
-        type: "scatter",
-        data: {
-            datasets: [{
-            pointRadius: 4,
-            pointBackgroundColor: "rgb(0,0,255)",
-            data: xyValues
-            }]
-        },
-        options: {
-            legend: {display: false},
-            scales: {
-                xAxes: [{ticks: {min: 28, max:31}}],
-            }
-        }
-        });
+  var totalScansGraph = new Chart("totalScansGraph", {
+    type: "line",
+    data: {
+      labels: Object.keys(allTimeStats['dataset']),
+      datasets: [{
+        pointHitRadius: 5,
+        pointRadius: 3,
+        showLine: false,
+        backgroundColor: "rgba(0,0,0,1.0)",
+        data: Object.values(allTimeStats['dataset'])
+      }]
+    },
+    options: {
+      legend: {display: false},
+      scales: {
+        yAxes: [{
+          ticks: {
+            min: 0,
+            stepSize: 1,
+            suggestedMax: 6,
+            maxTicksLimit: 6
+          }
+        }]
+      },
+      responsive: true,
+      maintainAspectRatio: false
     }
-</script> -->
+  });
+  function addData(chart, newLabel, newData) {
+    newLabel.forEach(function(label){
+      chart.data.labels.push(label);
+    })
+    chart.data.datasets.forEach((dataset) => {
+        newData.forEach(function(data){
+          dataset.data.push(data);
+        })
+    });
+    chart.update();
+  }
+
+  function removeData(chart) {
+    chartLength = chart.data.labels.length;
+    for (var i=0; i<chartLength; i++){
+      chart.data.labels.pop();
+      chart.data.datasets.forEach((dataset) => {
+          dataset.data.pop();
+      });
+    }
+    chart.update();
+  }
+  function changeStats(newSet, setName){
+    removeData(totalScansGraph);
+    addData(totalScansGraph, Object.keys(newSet['dataset']), Object.values(newSet['dataset']));
+    document.getElementById("statsDropDownMenu").textContent = setName;
+  }
+
+
+</script>
+
+<!-- Original Bootstrap Import
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.js"
   integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 {% endblock %}

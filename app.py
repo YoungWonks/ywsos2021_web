@@ -54,7 +54,6 @@ app = AddStaticFileHashFlask(__name__)
 minify(app=app, html=True, js=True, cssless=True, static=True)
 app.config.from_object(Config)
 
-
 css_map = {"static/css/theme.css": "static/css/theme.min.css"}
 
 
@@ -300,17 +299,15 @@ def main(user_id):
     lastMonthFrame = {}
 
     increments = ((int(today[0])-int(firstScanDate[0]))+1)*12
-    #iBlankPrevious = 12-int(firstScanDate[1])
-    #iBlankFuture = 12-int(today[1])
     iYearAdd = 0
     for i in range (increments):
         if i%12 == 0 and i!=0:
             iYearAdd+=1
-        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)+"-"+months[i%12]] = 0
+        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(i%12+1).zfill(2)] = 0
 
-    for month in months:
-        thisYearFrame[month] = 0
-        lastYearFrame[month] = 0
+    for i in range(1,13):
+        thisYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0
+        lastYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0
 
     for day in range(thisMonthDays):
         thisMonthFrame[day+1] = 0
@@ -326,14 +323,14 @@ def main(user_id):
         scan_month = int(date_time_obj_list[1])
         scan_day = int(date_time_obj_list[2])
 
-        aUpvotes+=scan_upvotes
+        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(scan_month).zfill(2)]+=1
 
-        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)+"-"+months[scan_month-1]]+=1
+        aUpvotes+=scan_upvotes
 
         if scan_year==thisYear: #Finding if scan in current year
             yTotalScans+=1
             yUpvotes+=scan_upvotes
-            thisYearFrame[months[scan_month-1]]+=1
+            thisYearFrame[str(thisYear)[2:4]+"-"+str(scan_month).zfill(2)]+=1
             if scan_month==thisMonth: #Finding if scan in current month
                 mTotalScans+=1
                 mUpvotes+=scan_upvotes
@@ -348,15 +345,16 @@ def main(user_id):
         elif scan_year==lastYear: #Finding if scan in last year
             lyTotalScans+=1
             lyUpvotes+=scan_upvotes
-            lastYearFrame[months[scan_month-1]]+=1
+            lastYearFrame[str(lastYear)[2:4]+"-"+str(scan_month).zfill(2)]+=1
             lyResolvedScans, lyPendingScans = check_scan_status(scan_status, lyResolvedScans, lyPendingScans)
         aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
-    allTimeStats = {'allTimeFrame': allTimeFrame, 'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
-    thisYearStats = {'thisYearFrame': thisYearFrame, 'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
-    lastYearStats = {'lastYearFrame': lastYearFrame, 'totalScans': lyTotalScans, 'pendingScans': lyPendingScans, 'resolvedScans': lyResolvedScans, 'upvotes': lyUpvotes}
-    thisMonthStats = {'thisMonthFrame': thisMonthFrame, 'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
-    lastMonthStats = {'lastMonthFrame': lastMonthFrame, 'totalScans': lmTotalScans, 'pendingScans': lmPendingScans, 'resolvedScans': lmResolvedScans, 'upvotes': lmUpvotes}
-    # Need to find first post date
+
+    allTimeStats = {'dataset': allTimeFrame, 'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
+    thisYearStats = {'dataset': thisYearFrame, 'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
+    lastYearStats = {'dataset': lastYearFrame, 'totalScans': lyTotalScans, 'pendingScans': lyPendingScans, 'resolvedScans': lyResolvedScans, 'upvotes': lyUpvotes}
+    thisMonthStats = {'dataset': thisMonthFrame, 'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
+    lastMonthStats = {'dataset': lastMonthFrame, 'totalScans': lmTotalScans, 'pendingScans': lmPendingScans, 'resolvedScans': lmResolvedScans, 'upvotes': lmUpvotes}
+
     print("allTimeStats: ", allTimeStats)
     print("thisYearStats: ", thisYearStats)
     print("lastYearStats: ", lastYearStats)
