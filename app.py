@@ -260,11 +260,9 @@ def main(user_id):
     lastYear=thisYear-1
     if thisMonth-1 == 0:
         lastMonth = 12
-        print("last month last year")
         lastMonthDays = find_days_month(lastMonth,lastYear)
     else:
         lastMonth = thisMonth-1
-        print("lastMonth this year")
         lastMonthDays = find_days_month(lastMonth,thisYear)
     thisMonthDays = find_days_month(thisMonth,thisYear)
     
@@ -330,7 +328,7 @@ def main(user_id):
     for scan in scans:
         scan_upvotes = len(scan['vote_users'])
         scan_status = scan['status']
-        date_time_obj_list = scan['scandate'].strftime('%Y-%m-%d').split("-") #Scan in list form - [Year,Month,Day]
+        date_time_obj_list = scan['scandate'].strftime('%Y-%m-%d').split("-")
         scan_year = int(date_time_obj_list[0])
         scan_month = int(date_time_obj_list[1])
         scan_day = int(date_time_obj_list[2])
@@ -372,11 +370,6 @@ def main(user_id):
     thisMonthStats = {'dataset': thisMonthFrame, 'uDataset': uThisMonthFrame, 'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
     lastMonthStats = {'dataset': lastMonthFrame, 'uDataset': uLastMonthFrame, 'totalScans': lmTotalScans, 'pendingScans': lmPendingScans, 'resolvedScans': lmResolvedScans, 'upvotes': lmUpvotes}
 
-    print("allTimeStats: ", allTimeStats)
-    print("thisYearStats: ", thisYearStats)
-    print("lastYearStats: ", lastYearStats)
-    print("thisMonthStats: ", thisMonthStats)
-    print("lastMonthStats: ", lastMonthStats)
     if request.method == "POST":
         requestType = request.get_json()['requestType']
         if requestType == "changePassword":

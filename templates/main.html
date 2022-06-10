@@ -289,7 +289,6 @@
         }
       },
       deleteAcc() {
-        console.log("apple");
         $.ajax({
           type: 'POST',
           url: '/main',
@@ -338,12 +337,6 @@
   lastMonthStats = JSON.parse('{{lastMonthStats|tojson|safe}}');
   firstScanDate = allTimeStats['firstScanDate'];
   todayDate = JSON.parse('{{todayDate|tojson|safe}}')
-
-  console.log(thisYearStats);
-  
-  console.log(Object.keys(thisYearStats['dataset']))
-
-  console.log(allTimeStats['dataset']);
 
   var totalScansGraph = new Chart("totalScansGraph", {
     type: "line",
