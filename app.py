@@ -293,10 +293,15 @@ def main(user_id):
     lmUpvotes = 0
     
     allTimeFrame = {}
+    uAllTimeFrame = {}
     thisYearFrame = {}
+    uThisYearFrame = {}
     lastYearFrame = {}
+    uLastYearFrame = {}
     thisMonthFrame = {}
+    uThisMonthFrame = {}
     lastMonthFrame = {}
+    uLastMonthFrame = {}
 
     increments = ((int(today[0])-int(firstScanDate[0]))+1)*12
     iYearAdd = 0
@@ -304,16 +309,21 @@ def main(user_id):
         if i%12 == 0 and i!=0:
             iYearAdd+=1
         allTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(i%12+1).zfill(2)] = 0
+        uAllTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(i%12+1).zfill(2)] = 0
 
     for i in range(1,13):
         thisYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0
+        uThisYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0 #Can just do uThisYearFrame = thisYearFrame?
         lastYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0
+        uLastYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0
 
     for day in range(thisMonthDays):
         thisMonthFrame[day+1] = 0
+        uThisMonthFrame[day+1] = 0
 
     for day in range(lastMonthDays):
         lastMonthFrame[day+1] = 0
+        uLastMonthFrame[day+1] = 0
 
     for scan in scans:
         scan_upvotes = len(scan['vote_users'])
@@ -324,6 +334,7 @@ def main(user_id):
         scan_day = int(date_time_obj_list[2])
 
         allTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(scan_month).zfill(2)]+=1
+        uAllTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(scan_month).zfill(2)]+=scan_upvotes
 
         aUpvotes+=scan_upvotes
 
@@ -331,29 +342,33 @@ def main(user_id):
             yTotalScans+=1
             yUpvotes+=scan_upvotes
             thisYearFrame[str(thisYear)[2:4]+"-"+str(scan_month).zfill(2)]+=1
+            uThisYearFrame[str(thisYear)[2:4]+"-"+str(scan_month).zfill(2)]+=scan_upvotes
             if scan_month==thisMonth: #Finding if scan in current month
                 mTotalScans+=1
                 mUpvotes+=scan_upvotes
                 thisMonthFrame[scan_day]+=1
+                uThisMonthFrame[scan_day]+=scan_upvotes
                 mResolvedScans, mPendingScans = check_scan_status(scan_status, mResolvedScans, mPendingScans)
             elif scan_month==lastMonth: #Finding if scan in last month
                 lmTotalScans+=1
                 lmUpvotes+=scan_upvotes
                 lastMonthFrame[scan_day]+=1
+                uLastMonthFrame[scan_day]+=scan_upvotes
                 lmResolvedScans, lmPendingScans = check_scan_status(scan_status, lmResolvedScans, lmPendingScans)
             yResolvedScans, yPendingScans = check_scan_status(scan_status, yResolvedScans, yPendingScans)
         elif scan_year==lastYear: #Finding if scan in last year
             lyTotalScans+=1
             lyUpvotes+=scan_upvotes
             lastYearFrame[str(lastYear)[2:4]+"-"+str(scan_month).zfill(2)]+=1
+            uLastYearFrame[str(lastYear)[2:4]+"-"+str(scan_month).zfill(2)]+=scan_upvotes
             lyResolvedScans, lyPendingScans = check_scan_status(scan_status, lyResolvedScans, lyPendingScans)
         aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
 
-    allTimeStats = {'dataset': allTimeFrame, 'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
-    thisYearStats = {'dataset': thisYearFrame, 'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
-    lastYearStats = {'dataset': lastYearFrame, 'totalScans': lyTotalScans, 'pendingScans': lyPendingScans, 'resolvedScans': lyResolvedScans, 'upvotes': lyUpvotes}
-    thisMonthStats = {'dataset': thisMonthFrame, 'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
-    lastMonthStats = {'dataset': lastMonthFrame, 'totalScans': lmTotalScans, 'pendingScans': lmPendingScans, 'resolvedScans': lmResolvedScans, 'upvotes': lmUpvotes}
+    allTimeStats = {'dataset': allTimeFrame, 'uDataset': uAllTimeFrame,'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
+    thisYearStats = {'dataset': thisYearFrame, 'uDataset': uThisYearFrame, 'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
+    lastYearStats = {'dataset': lastYearFrame, 'uDataset': uLastYearFrame, 'totalScans': lyTotalScans, 'pendingScans': lyPendingScans, 'resolvedScans': lyResolvedScans, 'upvotes': lyUpvotes}
+    thisMonthStats = {'dataset': thisMonthFrame, 'uDataset': uThisMonthFrame, 'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
+    lastMonthStats = {'dataset': lastMonthFrame, 'uDataset': uLastMonthFrame, 'totalScans': lmTotalScans, 'pendingScans': lmPendingScans, 'resolvedScans': lmResolvedScans, 'upvotes': lmUpvotes}
 
     print("allTimeStats: ", allTimeStats)
     print("thisYearStats: ", thisYearStats)

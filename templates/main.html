@@ -88,7 +88,7 @@
         <br />
       </ul>
     </div>
-    <div class="col dashboard-border dashboard-grad tab-content" id='tabContent'>
+    <div class="col-9 dashboard-border dashboard-grad tab-content" id='tabContent'>
       <div class="tab-pane fade active show" id="stats" role="tabpanel">
         <br>
         <div class="row">
@@ -111,33 +111,37 @@
         <div class="row">
           <div class="col">
             <h3><b>Total Scans:</b></h3>
-            <p>{{allTimeStats['totalScans']}}</p>
+            <p id="totalScansStat">{{allTimeStats['totalScans']}}</p>
           </div>
           <div class="col">
             <h3><b>Pending:</b></h3>
-            <p>{{allTimeStats['pendingScans']}}</p>
+            <p id="pendingScansStat">{{allTimeStats['pendingScans']}}</p>
           </div>
           <div class="col">
             <h3><b>Resolved:</b></h3>
-            <p>{{allTimeStats['resolvedScans']}}</p>
+            <p id="resolvedScansStat">{{allTimeStats['resolvedScans']}}</p>
           </div>
           <div class="col">
             <h3><b>Upvotes:</b></h3>
-            <p>{{allTimeStats['upvotes']}}</p>
+            <p id="totalUpvotesStat">{{allTimeStats['upvotes']}}</p>
           </div>
         </div>
         <div class="row">
           <div class="col">
             <h4>Total Scans:</h4>
-            <canvas id="totalScansGraph" style="width:50%; height:100px;"></canvas>
+            <div>
+              <canvas id="totalScansGraph" style="width:50%; height:10%;"></canvas>
+            </div>
           </div>
         </div>
-        <!-- <div class="row">
+        <div class="row">
           <div class="col">
             <h4>Total Upvotes:</h4>
-            <canvas id="totalUpvotesGraph" style="width:50%; height:100px;"></canvas>
+            <div>
+            <canvas id="totalUpvotesGraph" style="width:50%; height:10%;"></canvas>
+            </div>
           </div>
-        </div> -->
+        </div>
       </div>
 
       <div class="tab-pane fade" id="profile" role="tabpanel">
@@ -369,6 +373,36 @@
       maintainAspectRatio: false
     }
   });
+
+  var totalUpvotesGraph = new Chart("totalUpvotesGraph", {
+    type: "line",
+    data: {
+      labels: Object.keys(allTimeStats['uDataset']),
+      datasets: [{
+        pointHitRadius: 5,
+        pointRadius: 3,
+        showLine: false,
+        backgroundColor: "rgba(0,0,0,1.0)",
+        data: Object.values(allTimeStats['uDataset'])
+      }]
+    },
+    options: {
+      legend: {display: false},
+      scales: {
+        yAxes: [{
+          ticks: {
+            min: 0,
+            stepSize: 1,
+            suggestedMax: 10,
+            maxTicksLimit: 10
+          }
+        }]
+      },
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+
   function addData(chart, newLabel, newData) {
     newLabel.forEach(function(label){
       chart.data.labels.push(label);
@@ -393,8 +427,14 @@
   }
   function changeStats(newSet, setName){
     removeData(totalScansGraph);
+    removeData(totalUpvotesGraph);
     addData(totalScansGraph, Object.keys(newSet['dataset']), Object.values(newSet['dataset']));
+    addData(totalUpvotesGraph, Object.keys(newSet['uDataset']), Object.values(newSet['uDataset']));
     document.getElementById("statsDropDownMenu").textContent = setName;
+    document.getElementById("totalScansStat").textContent = newSet['totalScans'];
+    document.getElementById("pendingScansStat").textContent = newSet['pendingScans'];
+    document.getElementById("resolvedScansStat").textContent = newSet['resolvedScans'];
+    document.getElementById("totalUpvotesStat").textContent = newSet['upvotes'];
   }
 
 
