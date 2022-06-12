@@ -55,7 +55,6 @@ app = AddStaticFileHashFlask(__name__)
 minify(app=app, html=True, js=True, cssless=True, static=True)
 app.config.from_object(Config)
 
-
 css_map = {"static/css/theme.css": "static/css/theme.min.css"}
 
 
@@ -148,6 +147,29 @@ def create_rep(r, user):
             reps["description"] = r["des"]
         return reps
 
+#########Checking Scan Status###########################################
+
+
+def check_scan_status(status, resolved, pending):
+    if status:
+        return resolved+1, pending
+    else:
+        return resolved, pending+1
+
+#########Finding Number of Days In Month################################
+
+
+def find_days_month(month, year):
+    if month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12:
+        return 31
+    elif month == 4 or month == 6 or month == 9 or month == 11:
+        return 30
+    else:
+        if (year%4 == 0 and year%100 != 0) or (year%400 == 0): #If year is leapyear
+            return 29
+        else:
+            return 28
+
 ########################################################################
 #########################Forms##########################################
 ########################################################################
@@ -228,21 +250,125 @@ def gallery(user_id):
 def main(user_id):
     users = db['users']
     user = users.find_one({'_id': bson.ObjectId(session['logged_in_id'])})
-    scans = list(db.scans.find({'u_id': session['logged_in_id']}))
-    aTotalScans = len(scans)
+    scans = list(db.scans.find({'u_id': session['logged_in_id']}).sort("scandate", 1)) #Gets list of all scans from user in date order (oldest-->newest)
+    
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    today = datetime.utcnow().strftime('%Y-%m-%d').split("-")
+    thisYear=int(today[0])
+    thisMonth=int(today[1])
+    thisDay=int(today[2])
+    lastYear=thisYear-1
+    if thisMonth-1 == 0:
+        lastMonth = 12
+        lastMonthDays = find_days_month(lastMonth,lastYear)
+    else:
+        lastMonth = thisMonth-1
+        lastMonthDays = find_days_month(lastMonth,thisYear)
+    thisMonthDays = find_days_month(thisMonth,thisYear)
+    
+    aTotalScans = len(scans) #All Time Stats
     aPendingScans = 0
     aResolvedScans = 0
     aUpvotes = 0
+    firstScanDate = scans[0]["scandate"].strftime('%Y-%m-%d').split("-")
+    
+    yTotalScans = 0 #Yearly Stats
+    yPendingScans = 0
+    yResolvedScans = 0
+    yUpvotes = 0
+    
+    mTotalScans = 0 #Monthly Stats
+    mPendingScans = 0
+    mResolvedScans = 0
+    mUpvotes = 0
+
+    lyTotalScans = 0 #Last Yearly Stats
+    lyPendingScans = 0
+    lyResolvedScans = 0
+    lyUpvotes = 0
+
+    lmTotalScans = 0 #Last Monthly Stats
+    lmPendingScans = 0
+    lmResolvedScans = 0
+    lmUpvotes = 0
+    
+    allTimeFrame = {}
+    uAllTimeFrame = {}
+    thisYearFrame = {}
+    uThisYearFrame = {}
+    lastYearFrame = {}
+    uLastYearFrame = {}
+    thisMonthFrame = {}
+    uThisMonthFrame = {}
+    lastMonthFrame = {}
+    uLastMonthFrame = {}
+
+    increments = ((int(today[0])-int(firstScanDate[0]))+1)*12
+    iYearAdd = 0
+    for i in range (increments):
+        if i%12 == 0 and i!=0:
+            iYearAdd+=1
+        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(i%12+1).zfill(2)] = 0
+        uAllTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(i%12+1).zfill(2)] = 0
+
+    for i in range(1,13):
+        thisYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0
+        uThisYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0 #Can just do uThisYearFrame = thisYearFrame?
+        lastYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0
+        uLastYearFrame[str(thisYear)[2:4]+"-"+str(i).zfill(2)] = 0
+
+    for day in range(thisMonthDays):
+        thisMonthFrame[day+1] = 0
+        uThisMonthFrame[day+1] = 0
+
+    for day in range(lastMonthDays):
+        lastMonthFrame[day+1] = 0
+        uLastMonthFrame[day+1] = 0
 
     for scan in scans:
-        # if scan['status'] == 'pending': ### Status function currently unavailable
-        #     pendingScans+=1
-        # elif scan['status'] == 'resolved':
-        #     resolvedScans+=1
-        aUpvotes += len(scan['vote_users'])
+        scan_upvotes = len(scan['vote_users'])
+        scan_status = scan['status']
+        date_time_obj_list = scan['scandate'].strftime('%Y-%m-%d').split("-")
+        scan_year = int(date_time_obj_list[0])
+        scan_month = int(date_time_obj_list[1])
+        scan_day = int(date_time_obj_list[2])
 
-    allTimeStats = {'totalScans': aTotalScans, 'pendingScans': aPendingScans,
-                    'resolvedScans': aResolvedScans, 'upvotes': aUpvotes}
+        allTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(scan_month).zfill(2)]+=1
+        uAllTimeFrame[str(int(firstScanDate[0])+iYearAdd)[2:4]+"-"+str(scan_month).zfill(2)]+=scan_upvotes
+
+        aUpvotes+=scan_upvotes
+
+        if scan_year==thisYear: #Finding if scan in current year
+            yTotalScans+=1
+            yUpvotes+=scan_upvotes
+            thisYearFrame[str(thisYear)[2:4]+"-"+str(scan_month).zfill(2)]+=1
+            uThisYearFrame[str(thisYear)[2:4]+"-"+str(scan_month).zfill(2)]+=scan_upvotes
+            if scan_month==thisMonth: #Finding if scan in current month
+                mTotalScans+=1
+                mUpvotes+=scan_upvotes
+                thisMonthFrame[scan_day]+=1
+                uThisMonthFrame[scan_day]+=scan_upvotes
+                mResolvedScans, mPendingScans = check_scan_status(scan_status, mResolvedScans, mPendingScans)
+            elif scan_month==lastMonth: #Finding if scan in last month
+                lmTotalScans+=1
+                lmUpvotes+=scan_upvotes
+                lastMonthFrame[scan_day]+=1
+                uLastMonthFrame[scan_day]+=scan_upvotes
+                lmResolvedScans, lmPendingScans = check_scan_status(scan_status, lmResolvedScans, lmPendingScans)
+            yResolvedScans, yPendingScans = check_scan_status(scan_status, yResolvedScans, yPendingScans)
+        elif scan_year==lastYear: #Finding if scan in last year
+            lyTotalScans+=1
+            lyUpvotes+=scan_upvotes
+            lastYearFrame[str(lastYear)[2:4]+"-"+str(scan_month).zfill(2)]+=1
+            uLastYearFrame[str(lastYear)[2:4]+"-"+str(scan_month).zfill(2)]+=scan_upvotes
+            lyResolvedScans, lyPendingScans = check_scan_status(scan_status, lyResolvedScans, lyPendingScans)
+        aResolvedScans, aPendingScans = check_scan_status(scan_status, aResolvedScans, aPendingScans)
+
+    allTimeStats = {'dataset': allTimeFrame, 'uDataset': uAllTimeFrame,'totalScans': aTotalScans, 'pendingScans': aPendingScans, 'resolvedScans': aResolvedScans, 'upvotes': aUpvotes, 'firstScanDate': firstScanDate}
+    thisYearStats = {'dataset': thisYearFrame, 'uDataset': uThisYearFrame, 'totalScans': yTotalScans, 'pendingScans': yPendingScans, 'resolvedScans': yResolvedScans, 'upvotes': yUpvotes}
+    lastYearStats = {'dataset': lastYearFrame, 'uDataset': uLastYearFrame, 'totalScans': lyTotalScans, 'pendingScans': lyPendingScans, 'resolvedScans': lyResolvedScans, 'upvotes': lyUpvotes}
+    thisMonthStats = {'dataset': thisMonthFrame, 'uDataset': uThisMonthFrame, 'totalScans': mTotalScans, 'pendingScans': mPendingScans, 'resolvedScans': mResolvedScans, 'upvotes': mUpvotes}
+    lastMonthStats = {'dataset': lastMonthFrame, 'uDataset': uLastMonthFrame, 'totalScans': lmTotalScans, 'pendingScans': lmPendingScans, 'resolvedScans': lmResolvedScans, 'upvotes': lmUpvotes}
 
     if request.method == "POST":
         requestType = request.get_json()['requestType']
@@ -268,7 +394,7 @@ def main(user_id):
         elif requestType == "deleteAccount":
             users.delete_one(user)
             return jsonify({"error": "0", "message": "Account Successfully Deleted"})
-    return render_template("main.html", user=user, scans=scans, allTimeStats=allTimeStats)
+    return render_template("main.html", user=user, scans=scans, todayDate=today, allTimeStats=allTimeStats, thisYearStats=thisYearStats, lastYearStats=lastYearStats, thisMonthStats=thisMonthStats, lastMonthStats=lastMonthStats)
 
 
 @app.route('/login', methods=['GET', 'POST'])
