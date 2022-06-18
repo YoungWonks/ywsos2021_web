@@ -267,6 +267,8 @@ def main(user_id):
     thisMonthDays = find_days_month(thisMonth,thisYear)
     
     aTotalScans = len(scans) #All Time Stats
+    if aTotalScans == 0:
+        return render_template("main.html", user=user, scans=scans, no_scans=True)
     aPendingScans = 0
     aResolvedScans = 0
     aUpvotes = 0
