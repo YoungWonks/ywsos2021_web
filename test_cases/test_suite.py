@@ -159,8 +159,6 @@ class LoginTest(unittest.TestCase):
         self.driver.execute_script("arguments[0].click();",logoutButton1)
         logoutButton2 = self.driver.find_element_by_id("confirmLogout")
         self.driver.execute_script("arguments[0].click();",logoutButton2)
-        logoutButton1.click()
-        logoutButton2.click()
         WebDriverWait(self.driver, 15).until(expected_conditions.title_is('GeoRepair - About'))
 
     @classmethod
@@ -195,7 +193,7 @@ class UploadTest(unittest.TestCase):
         longInput = self.driver.find_element_by_id("long")
         longInput.send_keys("151.2153")
         print(os.getcwd() + "test_image.jpeg")
-        self.driver.find_element_by_id("file").send_keys("/Volumes/contents/ywsos2021_web/test_cases")
+        self.driver.find_element_by_id("file").send_keys("/Volumes/contents/ywsos2021_web/test_cases/test_image.jpeg")
         submitTest = self.driver.find_element_by_id("submit")
         submitTest.click()       
         self.assertIn("Form successfully submitted", self.driver.page_source)
